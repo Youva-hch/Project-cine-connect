@@ -1,3 +1,43 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    /* Light mode colors */
+    --color-background: #ffffff;
+    --color-foreground: #0f172a;
+    --color-card: #f8fafc;
+    --color-card-foreground: #1e293b;
+    --color-primary: #6366f1;
+    --color-primary-foreground: #ffffff;
+    --color-secondary: #f1f5f9;
+    --color-secondary-foreground: #475569;
+    --color-muted: #f1f5f9;
+    --color-muted-foreground: #64748b;
+    --color-accent: #e0e7ff;
+    --color-accent-foreground: #4338ca;
+    --color-border: #e2e8f0;
+  }
+
+  .dark {
+    /* Dark mode colors */
+    --color-background: #0f172a;
+    --color-foreground: #f8fafc;
+    --color-card: #1e293b;
+    --color-card-foreground: #e2e8f0;
+    --color-primary: #818cf8;
+    --color-primary-foreground: #1e1b4b;
+    --color-secondary: #334155;
+    --color-secondary-foreground: #cbd5e1;
+    --color-muted: #334155;
+    --color-muted-foreground: #94a3b8;
+    --color-accent: #312e81;
+    --color-accent-foreground: #c7d2fe;
+    --color-border: #334155;
+  }
+
+  body {
+    @apply bg-background text-foreground transition-colors duration-200;
+  }
+}
