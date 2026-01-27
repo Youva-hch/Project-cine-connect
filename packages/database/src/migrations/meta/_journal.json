@@ -1,0 +1,34 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1769425747033,
+      "tag": "0000_tearful_mole_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1769432259965,
+      "tag": "0001_overjoyed_drax",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1769441588477,
+      "tag": "0002_nice_tony_stark",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1769502400172,
+      "tag": "0003_bored_sabretooth",
+      "breakpoints": true
+    }
+  ]
+}
