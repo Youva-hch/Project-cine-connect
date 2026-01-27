@@ -30,8 +30,21 @@ export class UserService {
   /**
    * Crée un nouvel utilisateur
    */
-  static async createUser(data: { email: string; name: string }) {
-    const result = await db.insert(users).values(data).returning();
+  static async createUser(data: {
+    email: string;
+    name: string;
+    passwordHash?: string;
+    avatarUrl?: string | null;
+  }) {
+    const userData: any = {
+      email: data.email,
+      name: data.name,
+      passwordHash: data.passwordHash || '',
+      avatarUrl: data.avatarUrl || null,
+      isOnline: true,
+    };
+
+    const result = await db.insert(users).values(userData).returning();
     return result[0];
   }
 }
