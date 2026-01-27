@@ -15,10 +15,42 @@ pnpm install
 ### Connexion à la base de données
 
 ```typescript
-import { db } from '@cineconnect/database';
+import { db, users } from '@cineconnect/database';
 
 // Utiliser db pour vos requêtes
-const users = await db.select().from(users);
+const allUsers = await db.select().from(users);
+```
+
+### Types TypeScript
+
+Tous les types TypeScript sont automatiquement générés à partir des schémas :
+
+```typescript
+import type { 
+  User, 
+  NewUser,
+  Film,
+  NewFilm,
+  Category,
+  NewCategory,
+  Review,
+  NewReview,
+  Message,
+  NewMessage,
+  Friend,
+  NewFriend,
+  FilmCategory,
+  NewFilmCategory
+} from '@cineconnect/database';
+
+// Exemple d'utilisation
+const newUser: NewUser = {
+  email: 'user@example.com',
+  name: 'John Doe',
+  passwordHash: 'hashed_password',
+};
+
+const user: User = await db.insert(users).values(newUser).returning();
 ```
 
 ### Variables d'environnement
@@ -75,13 +107,29 @@ pnpm db:studio
 ```
 packages/database/
 ├── src/
-│   ├── index.ts        # Export principal (db, schema)
-│   ├── schema.ts       # Définition des tables
+│   ├── index.ts        # Export principal (db, schema, types)
+│   ├── schema.ts       # Définition des tables et types TypeScript
 │   ├── migrate.ts      # Script de migration
 │   ├── seed.ts         # Script de seed
 │   └── migrations/     # Fichiers de migration générés
 ├── drizzle.config.ts   # Configuration Drizzle Kit
 └── package.json
+```
+
+## 🔗 Relations
+
+Les relations entre tables sont définies dans `src/schema.ts` et peuvent être utilisées avec les requêtes Drizzle :
+
+```typescript
+import { db, users, reviews } from '@cineconnect/database';
+
+// Requête avec relations
+const userWithReviews = await db.query.users.findFirst({
+  where: eq(users.id, 1),
+  with: {
+    reviews: true,
+  },
+});
 ```
 
 ## 📝 Définir un schéma

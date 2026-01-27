@@ -9,7 +9,7 @@ import {
   primaryKey,
   unique,
 } from 'drizzle-orm/pg-core';
-import { relations } from 'drizzle-orm';
+import { relations, type InferSelectModel, type InferInsertModel } from 'drizzle-orm';
 
 // ============================================================================
 // Table: users
@@ -208,4 +208,36 @@ export const filmCategoriesRelations = relations(filmCategories, ({ one }) => ({
     references: [categories.id],
   }),
 }));
+
+// ============================================================================
+// TypeScript Types
+// ============================================================================
+
+// Types pour la table users
+export type User = InferSelectModel<typeof users>;
+export type NewUser = InferInsertModel<typeof users>;
+
+// Types pour la table films
+export type Film = InferSelectModel<typeof films>;
+export type NewFilm = InferInsertModel<typeof films>;
+
+// Types pour la table categories
+export type Category = InferSelectModel<typeof categories>;
+export type NewCategory = InferInsertModel<typeof categories>;
+
+// Types pour la table reviews
+export type Review = InferSelectModel<typeof reviews>;
+export type NewReview = InferInsertModel<typeof reviews>;
+
+// Types pour la table messages
+export type Message = InferSelectModel<typeof messages>;
+export type NewMessage = InferInsertModel<typeof messages>;
+
+// Types pour la table friends
+export type Friend = InferSelectModel<typeof friends>;
+export type NewFriend = InferInsertModel<typeof friends>;
+
+// Types pour la table film_categories
+export type FilmCategory = InferSelectModel<typeof filmCategories>;
+export type NewFilmCategory = InferInsertModel<typeof filmCategories>;
 
