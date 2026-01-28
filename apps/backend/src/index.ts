@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -16,8 +17,10 @@ const PORT = process.env.PORT || 3000;
 
 // Middlewares de sécurité
 app.use(helmet());
+// CORS : normaliser l'origine (sans slash final) pour matcher l'en-tête Origin du navigateur
+const frontendOrigin = (process.env.FRONTEND_URL || 'http://localhost:5173').replace(/\/$/, '');
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: [frontendOrigin, frontendOrigin + '/'],
   credentials: true,
 }));
 

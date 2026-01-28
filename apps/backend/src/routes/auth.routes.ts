@@ -3,6 +3,12 @@ import { AuthController } from '../controllers/auth.controller.js';
 
 const router = Router();
 
+// POST /auth/register - Inscription email / mot de passe
+router.post('/register', AuthController.register);
+
+// POST /auth/login - Connexion email / mot de passe
+router.post('/login', AuthController.login);
+
 // GET /auth/google - Initie l'authentification Google
 router.get('/google', AuthController.googleAuth);
 

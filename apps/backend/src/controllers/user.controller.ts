@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { UserService } from '../services/user.service.js';
+import type { AuthRequest } from '../middlewares/auth.middleware.js';
 
 /**
  * Contrôleur pour gérer les routes des utilisateurs
@@ -54,6 +55,52 @@ export class UserController {
       return res.status(500).json({
         success: false,
         message: 'Erreur lors de la récupération de l\'utilisateur',
+      });
+    }
+  }
+
+  /**
+   * PATCH /users/me - Met à jour le profil de l'utilisateur connecté
+   */
+  static async updateMe(req: AuthRequest, res: Response) {
+    try {
+      const userId = req.userId;
+      if (!userId) {
+        return res.status(401).json({
+          success: false,
+          message: 'Non authentifié',
+        });
+      }
+
+      const { name, bio, avatarUrl } = req.body as {
+        name?: string;
+        bio?: string | null;
+        avatarUrl?: string | null;
+      };
+
+      const updated = await UserService.updateUser(userId, {
+        name,
+        bio,
+        avatarUrl,
+      });
+
+      if (!updated) {
+        return res.status(404).json({
+          success: false,
+          message: 'Utilisateur non trouvé',
+        });
+      }
+
+      const { passwordHash, ...userWithoutPassword } = updated;
+      res.json({
+        success: true,
+        data: userWithoutPassword,
+      });
+    } catch (error) {
+      console.error('Error updating user:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Erreur lors de la mise à jour du profil',
       });
     }
   }

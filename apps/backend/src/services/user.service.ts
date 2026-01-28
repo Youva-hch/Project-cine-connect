@@ -47,5 +47,25 @@ export class UserService {
     const result = await db.insert(users).values(userData).returning();
     return result[0];
   }
+
+  /**
+   * Met à jour le profil d'un utilisateur (name, bio, avatarUrl).
+   */
+  static async updateUser(
+    id: number,
+    data: { name?: string; bio?: string | null; avatarUrl?: string | null }
+  ) {
+    const updates: Record<string, unknown> = { updatedAt: new Date() };
+    if (data.name !== undefined) updates.name = data.name;
+    if (data.bio !== undefined) updates.bio = data.bio;
+    if (data.avatarUrl !== undefined) updates.avatarUrl = data.avatarUrl;
+
+    const result = await db
+      .update(users)
+      .set(updates as Record<string, string | Date | null>)
+      .where(eq(users.id, id))
+      .returning();
+    return result[0] || null;
+  }
 }
 
