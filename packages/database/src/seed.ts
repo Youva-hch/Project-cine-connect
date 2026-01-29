@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import bcrypt from 'bcryptjs';
 import { db } from './index.js';
+import { sql } from 'drizzle-orm';
 import {
   users,
   categories,
@@ -14,6 +15,11 @@ import {
 /**
  * Seed function to populate the database with initial data
  * Run with: pnpm db:seed
+ * 
+ * Note: Si les données existent déjà, le script récupère les données existantes
+ * pour continuer avec les relations. Pour réinitialiser complètement :
+ * 1. Vider la base : TRUNCATE TABLE users, films, categories, reviews, messages, friends, film_categories CASCADE;
+ * 2. Réexécuter : pnpm db:seed
  */
 export async function seed() {
   try {
@@ -22,53 +28,71 @@ export async function seed() {
     // Hash password pour les utilisateurs (mot de passe par défaut: "password123")
     const hashedPassword = await bcrypt.hash('password123', 10);
 
-    // 1. Créer des utilisateurs
+    // 1. Créer des utilisateurs (ignore les doublons)
     console.log('📝 Creating users...');
-    const insertedUsers = await db
-      .insert(users)
-      .values([
-        {
-          email: 'admin@cineconnect.com',
-          name: 'Admin User',
-          passwordHash: hashedPassword,
-          avatarUrl: 'https://i.pravatar.cc/150?img=1',
-          bio: 'Administrateur de CinéConnect',
-          isOnline: true,
-        },
-        {
-          email: 'alice@cineconnect.com',
-          name: 'Alice Martin',
-          passwordHash: hashedPassword,
-          avatarUrl: 'https://i.pravatar.cc/150?img=5',
-          bio: 'Passionnée de cinéma indépendant',
-          isOnline: true,
-        },
-        {
-          email: 'bob@cineconnect.com',
-          name: 'Bob Dupont',
-          passwordHash: hashedPassword,
-          avatarUrl: 'https://i.pravatar.cc/150?img=12',
-          bio: 'Fan de films d\'action et de science-fiction',
-          isOnline: false,
-        },
-        {
-          email: 'charlie@cineconnect.com',
-          name: 'Charlie Brown',
-          passwordHash: hashedPassword,
-          avatarUrl: 'https://i.pravatar.cc/150?img=15',
-          bio: 'Critique de cinéma amateur',
-          isOnline: true,
-        },
-      ])
-      .returning();
+    let insertedUsers;
+    try {
+      insertedUsers = await db
+        .insert(users)
+        .values([
+          {
+            email: 'admin@cineconnect.com',
+            name: 'Admin User',
+            passwordHash: hashedPassword,
+            avatarUrl: 'https://i.pravatar.cc/150?img=1',
+            bio: 'Administrateur de CinéConnect',
+            isOnline: true,
+          },
+          {
+            email: 'alice@cineconnect.com',
+            name: 'Alice Martin',
+            passwordHash: hashedPassword,
+            avatarUrl: 'https://i.pravatar.cc/150?img=5',
+            bio: 'Passionnée de cinéma indépendant',
+            isOnline: true,
+          },
+          {
+            email: 'bob@cineconnect.com',
+            name: 'Bob Dupont',
+            passwordHash: hashedPassword,
+            avatarUrl: 'https://i.pravatar.cc/150?img=12',
+            bio: 'Fan de films d\'action et de science-fiction',
+            isOnline: false,
+          },
+          {
+            email: 'charlie@cineconnect.com',
+            name: 'Charlie Brown',
+            passwordHash: hashedPassword,
+            avatarUrl: 'https://i.pravatar.cc/150?img=15',
+            bio: 'Critique de cinéma amateur',
+            isOnline: true,
+          },
+        ])
+        .returning();
+    } catch (error: any) {
+      // Si erreur, récupérer les utilisateurs existants
+      if (error.code === '23505') {
+        console.log('⚠️  Users already exist, fetching existing users...');
+        insertedUsers = await db
+          .select()
+          .from(users)
+          .where(
+            sql`email IN ('admin@cineconnect.com', 'alice@cineconnect.com', 'bob@cineconnect.com', 'charlie@cineconnect.com')`
+          );
+      } else {
+        throw error;
+      }
+    }
 
     console.log(`✅ Created ${insertedUsers.length} users`);
 
     // 2. Créer des catégories
     console.log('📝 Creating categories...');
-    const insertedCategories = await db
-      .insert(categories)
-      .values([
+    let insertedCategories;
+    try {
+      insertedCategories = await db
+        .insert(categories)
+        .values([
         {
           name: 'Action',
           description: 'Films d\'action avec scènes de combat et poursuites',
@@ -101,14 +125,29 @@ export async function seed() {
         },
       ])
       .returning();
+    } catch (error: any) {
+      if (error.code === '23505') {
+        console.log('⚠️  Categories already exist, fetching existing categories...');
+        insertedCategories = await db
+          .select()
+          .from(categories)
+          .where(
+            sql`slug IN ('action', 'comedie', 'drame', 'science-fiction', 'thriller', 'horreur')`
+          );
+      } else {
+        throw error;
+      }
+    }
 
     console.log(`✅ Created ${insertedCategories.length} categories`);
 
     // 3. Créer des films
     console.log('📝 Creating films...');
-    const insertedFilms = await db
-      .insert(films)
-      .values([
+    let insertedFilms;
+    try {
+      insertedFilms = await db
+        .insert(films)
+        .values([
         {
           title: 'Inception',
           description:
@@ -177,6 +216,19 @@ export async function seed() {
         },
       ])
       .returning();
+    } catch (error: any) {
+      if (error.code === '23505') {
+        console.log('⚠️  Films already exist, fetching existing films...');
+        insertedFilms = await db
+          .select()
+          .from(films)
+          .where(
+            sql`title IN ('Inception', 'The Dark Knight', 'Pulp Fiction', 'The Matrix', 'Fight Club', 'Forrest Gump')`
+          );
+      } else {
+        throw error;
+      }
+    }
 
     console.log(`✅ Created ${insertedFilms.length} films`);
 

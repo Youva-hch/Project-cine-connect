@@ -13,7 +13,11 @@ import { Route as SearchRouteImport } from './routes/search'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as FilmsRouteImport } from './routes/films'
+import { Route as DiscussionRouteImport } from './routes/discussion'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as FilmsCategorieRouteImport } from './routes/films.$categorie'
+import { Route as FilmIdRouteImport } from './routes/film.$id'
 import { Route as FilmImdbIdRouteImport } from './routes/film.$imdbId'
 import { Route as AuthCallbackRouteImport } from './routes/auth/callback'
 
@@ -37,9 +41,29 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FilmsRoute = FilmsRouteImport.update({
+  id: '/films',
+  path: '/films',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DiscussionRoute = DiscussionRouteImport.update({
+  id: '/discussion',
+  path: '/discussion',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FilmsCategorieRoute = FilmsCategorieRouteImport.update({
+  id: '/$categorie',
+  path: '/$categorie',
+  getParentRoute: () => FilmsRoute,
+} as any)
+const FilmIdRoute = FilmIdRouteImport.update({
+  id: '/film/$id',
+  path: '/film/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FilmImdbIdRoute = FilmImdbIdRouteImport.update({
@@ -55,69 +79,96 @@ const AuthCallbackRoute = AuthCallbackRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/discussion': typeof DiscussionRoute
+  '/films': typeof FilmsRouteWithChildren
   '/login': typeof LoginRoute
   '/profile': typeof ProfileRoute
   '/register': typeof RegisterRoute
   '/search': typeof SearchRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/film/$id': typeof FilmIdRoute
   '/film/$imdbId': typeof FilmImdbIdRoute
+  '/films/$categorie': typeof FilmsCategorieRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/discussion': typeof DiscussionRoute
+  '/films': typeof FilmsRouteWithChildren
   '/login': typeof LoginRoute
   '/profile': typeof ProfileRoute
   '/register': typeof RegisterRoute
   '/search': typeof SearchRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/film/$id': typeof FilmIdRoute
   '/film/$imdbId': typeof FilmImdbIdRoute
+  '/films/$categorie': typeof FilmsCategorieRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/discussion': typeof DiscussionRoute
+  '/films': typeof FilmsRouteWithChildren
   '/login': typeof LoginRoute
   '/profile': typeof ProfileRoute
   '/register': typeof RegisterRoute
   '/search': typeof SearchRoute
   '/auth/callback': typeof AuthCallbackRoute
+  '/film/$id': typeof FilmIdRoute
   '/film/$imdbId': typeof FilmImdbIdRoute
+  '/films/$categorie': typeof FilmsCategorieRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/discussion'
+    | '/films'
     | '/login'
     | '/profile'
     | '/register'
     | '/search'
     | '/auth/callback'
+    | '/film/$id'
     | '/film/$imdbId'
+    | '/films/$categorie'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/discussion'
+    | '/films'
     | '/login'
     | '/profile'
     | '/register'
     | '/search'
     | '/auth/callback'
+    | '/film/$id'
     | '/film/$imdbId'
+    | '/films/$categorie'
   id:
     | '__root__'
     | '/'
+    | '/discussion'
+    | '/films'
     | '/login'
     | '/profile'
     | '/register'
     | '/search'
     | '/auth/callback'
+    | '/film/$id'
     | '/film/$imdbId'
+    | '/films/$categorie'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DiscussionRoute: typeof DiscussionRoute
+  FilmsRoute: typeof FilmsRouteWithChildren
   LoginRoute: typeof LoginRoute
   ProfileRoute: typeof ProfileRoute
   RegisterRoute: typeof RegisterRoute
   SearchRoute: typeof SearchRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
+  FilmIdRoute: typeof FilmIdRoute
   FilmImdbIdRoute: typeof FilmImdbIdRoute
 }
 
@@ -151,11 +202,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/films': {
+      id: '/films'
+      path: '/films'
+      fullPath: '/films'
+      preLoaderRoute: typeof FilmsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/discussion': {
+      id: '/discussion'
+      path: '/discussion'
+      fullPath: '/discussion'
+      preLoaderRoute: typeof DiscussionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/films/$categorie': {
+      id: '/films/$categorie'
+      path: '/$categorie'
+      fullPath: '/films/$categorie'
+      preLoaderRoute: typeof FilmsCategorieRouteImport
+      parentRoute: typeof FilmsRoute
+    }
+    '/film/$id': {
+      id: '/film/$id'
+      path: '/film/$id'
+      fullPath: '/film/$id'
+      preLoaderRoute: typeof FilmIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/film/$imdbId': {
@@ -175,13 +254,26 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface FilmsRouteChildren {
+  FilmsCategorieRoute: typeof FilmsCategorieRoute
+}
+
+const FilmsRouteChildren: FilmsRouteChildren = {
+  FilmsCategorieRoute: FilmsCategorieRoute,
+}
+
+const FilmsRouteWithChildren = FilmsRoute._addFileChildren(FilmsRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DiscussionRoute: DiscussionRoute,
+  FilmsRoute: FilmsRouteWithChildren,
   LoginRoute: LoginRoute,
   ProfileRoute: ProfileRoute,
   RegisterRoute: RegisterRoute,
   SearchRoute: SearchRoute,
   AuthCallbackRoute: AuthCallbackRoute,
+  FilmIdRoute: FilmIdRoute,
   FilmImdbIdRoute: FilmImdbIdRoute,
 }
 export const routeTree = rootRouteImport

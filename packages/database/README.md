@@ -92,6 +92,8 @@ Pour remplir la base de données avec des données initiales :
 pnpm db:seed
 ```
 
+**Note :** Si les données existent déjà, le script récupère les données existantes pour continuer avec les relations. Pour réinitialiser complètement les données de test, videz d'abord les tables ou supprimez et recréez la base de données.
+
 Modifiez `src/seed.ts` pour ajouter vos données de seed.
 
 ## 🎨 Drizzle Studio

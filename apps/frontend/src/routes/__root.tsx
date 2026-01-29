@@ -33,9 +33,21 @@ function RootLayout() {
                 >
                   Recherche
                 </Link>
+                <Link
+                  to="/films"
+                  className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+                >
+                  Films
+                </Link>
                 {!isLoading &&
                   (user ? (
                     <>
+                      <Link
+                        to="/discussion"
+                        className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+                      >
+                        Discussion
+                      </Link>
                       <Link
                         to="/profile"
                         className="flex items-center gap-2 text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
