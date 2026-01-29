@@ -20,11 +20,14 @@ export const filmsApi = {
     const response = await apiRequest<{ success: boolean; data: Film[] }>(
       `/films${queryString ? `?${queryString}` : ''}`
     )
-    return response.data
+    return response.data || []
   },
 
   getById: async (id: number): Promise<Film> => {
     const response = await apiRequest<{ success: boolean; data: Film }>(`/films/${id}`)
+    if (!response.data) {
+      throw new Error('Film non trouvé')
+    }
     return response.data
   },
 
@@ -32,19 +35,19 @@ export const filmsApi = {
     const response = await apiRequest<{ success: boolean; data: Film[] }>(
       `/films/category/${category}`
     )
-    return response.data
+    return response.data || []
   },
 
   getCategories: async (): Promise<Category[]> => {
     const response = await apiRequest<{ success: boolean; data: Category[] }>('/categories')
-    return response.data
+    return response.data || []
   },
 
   getReviews: async (filmId: number): Promise<Review[]> => {
     const response = await apiRequest<{ success: boolean; data: Review[] }>(
       `/films/${filmId}/reviews`
     )
-    return response.data
+    return response.data || []
   },
 }
 

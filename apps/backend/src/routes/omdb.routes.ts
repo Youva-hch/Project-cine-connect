@@ -12,7 +12,12 @@ router.get('/movie/title/:title', OMDbController.getByTitle);
 // GET /omdb/movie/:imdbId - Récupère un film par ID IMDb
 router.get('/movie/:imdbId', OMDbController.getByImdbId);
 
+// POST /omdb/sync - Synchronise les films depuis OMDb vers la base de données
+router.post('/sync', OMDbController.syncFilms);
+
 export { router as omdbRouter };
+
+
 
 
 

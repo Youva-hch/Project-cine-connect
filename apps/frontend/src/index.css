@@ -40,16 +40,4 @@
   body {
     @apply bg-background text-foreground transition-colors duration-200;
   }
-
-  /* Styles pour les inputs et textareas avec support dark mode */
-  input,
-  textarea,
-  select {
-    @apply bg-card text-foreground border-border;
-  }
-
-  input::placeholder,
-  textarea::placeholder {
-    @apply text-muted-foreground;
-  }
 }

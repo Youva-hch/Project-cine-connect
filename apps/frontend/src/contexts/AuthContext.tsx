@@ -7,6 +7,7 @@ interface AuthContextType {
   isLoading: boolean
   isAuthenticated: boolean
   login: (email: string, password: string) => Promise<void>
+  loginWithToken: (token: string, user: User) => void
   register: (name: string, email: string, password: string) => Promise<void>
   logout: () => void
 }
@@ -35,13 +36,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             // Si le token n'est plus valide, nettoyer
             authApi.logout()
           }
-        } else {
-          // Essayer de récupérer depuis l'API
-          const currentUser = await authApi.getCurrentUser()
-          if (currentUser) {
-            setUser(currentUser)
-          }
         }
+        // Ne pas appeler getCurrentUser() si pas de token pour éviter les erreurs inutiles
       } catch (error) {
         // Erreur silencieuse si l'utilisateur n'est pas connecté ou si l'API n'est pas disponible
         // Ne pas bloquer le rendu de l'application
@@ -59,6 +55,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('token', response.token)
     localStorage.setItem('user', JSON.stringify(response.user))
     setUser(response.user)
+  }
+
+  const loginWithToken = (token: string, user: User) => {
+    localStorage.setItem('token', token)
+    localStorage.setItem('user', JSON.stringify(user))
+    setUser(user)
   }
 
   const register = async (name: string, email: string, password: string) => {
@@ -80,6 +82,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isLoading,
         isAuthenticated: !!user,
         login,
+        loginWithToken,
         register,
         logout,
       }}

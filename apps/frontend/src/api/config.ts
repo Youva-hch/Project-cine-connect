@@ -24,15 +24,25 @@ async function apiRequest<T>(
     headers,
   })
 
+  const data = await response.json().catch(() => ({ message: 'Erreur inconnue' }))
+
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ message: 'Erreur inconnue' }))
-    throw new Error(error.message || `HTTP error! status: ${response.status}`)
+    // Le backend retourne { success: false, message: ... } en cas d'erreur
+    const errorMessage = data.message || data.error || `HTTP error! status: ${response.status}`
+    throw new Error(errorMessage)
   }
 
-  return response.json()
+  // Vérifier si la réponse a le format { success, data } du backend
+  if (data.success === false) {
+    throw new Error(data.message || 'Erreur inconnue')
+  }
+
+  return data
 }
 
 export default apiRequest
+
+
 
 
 
