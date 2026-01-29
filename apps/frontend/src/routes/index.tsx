@@ -10,28 +10,28 @@ function HomePage() {
       <div className="max-w-7xl mx-auto">
         {/* Hero Section */}
         <div className="text-center mb-16">
-          <h1 className="text-5xl font-extrabold text-gray-900 mb-4">
-            Bienvenue sur <span className="text-indigo-600">CinéConnect</span>
+          <h1 className="text-5xl font-extrabold text-foreground mb-4">
+            Bienvenue sur <span className="text-primary">CinéConnect</span>
           </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
             Découvrez, notez et partagez vos films préférés avec une communauté de passionnés de cinéma
           </p>
           <div className="flex justify-center gap-4">
             <Link
               to="/register"
-              className="px-6 py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors"
+              className="px-6 py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors"
             >
               Créer un compte
             </Link>
             <Link
               to="/films"
-              className="px-6 py-3 bg-white text-indigo-600 border-2 border-indigo-600 rounded-lg font-medium hover:bg-indigo-50 transition-colors"
+              className="px-6 py-3 bg-card text-foreground border-2 border-primary rounded-lg font-medium hover:bg-accent transition-colors"
             >
               Explorer les films
             </Link>
             <Link
               to="/search"
-              className="px-6 py-3 bg-white text-indigo-600 border-2 border-indigo-600 rounded-lg font-medium hover:bg-indigo-50 transition-colors"
+              className="px-6 py-3 bg-card text-foreground border-2 border-primary rounded-lg font-medium hover:bg-accent transition-colors"
             >
               Rechercher
             </Link>
@@ -40,24 +40,24 @@ function HomePage() {
 
         {/* Features */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-          <div className="text-center p-6 bg-white rounded-lg shadow-md">
+          <div className="text-center p-6 bg-card rounded-lg shadow-md border border-border">
             <div className="text-4xl mb-4">🎬</div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">Catalogue Complet</h3>
-            <p className="text-gray-600">
+            <h3 className="text-xl font-semibold text-foreground mb-2">Catalogue Complet</h3>
+            <p className="text-muted-foreground">
               Explorez une vaste collection de films avec des détails complets
             </p>
           </div>
-          <div className="text-center p-6 bg-white rounded-lg shadow-md">
+          <div className="text-center p-6 bg-card rounded-lg shadow-md border border-border">
             <div className="text-4xl mb-4">⭐</div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">Notez et Commentez</h3>
-            <p className="text-gray-600">
+            <h3 className="text-xl font-semibold text-foreground mb-2">Notez et Commentez</h3>
+            <p className="text-muted-foreground">
               Partagez vos avis et découvrez ce que pensent les autres
             </p>
           </div>
-          <div className="text-center p-6 bg-white rounded-lg shadow-md">
+          <div className="text-center p-6 bg-card rounded-lg shadow-md border border-border">
             <div className="text-4xl mb-4">👥</div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">Réseau Social</h3>
-            <p className="text-gray-600">
+            <h3 className="text-xl font-semibold text-foreground mb-2">Réseau Social</h3>
+            <p className="text-muted-foreground">
               Connectez-vous avec d'autres cinéphiles et discutez en temps réel
             </p>
           </div>
@@ -65,7 +65,7 @@ function HomePage() {
 
         {/* Popular Films Preview */}
         <div className="mb-16">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">Films Populaires</h2>
+          <h2 className="text-3xl font-bold text-foreground mb-6">Films Populaires</h2>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {[
               { title: 'Inception', year: 2010, rating: 4.5 },
@@ -75,16 +75,16 @@ function HomePage() {
             ].map((film, index) => (
               <div
                 key={index}
-                className="bg-white rounded-lg shadow-md p-4 hover:shadow-xl transition-shadow cursor-pointer"
+                className="bg-card rounded-lg shadow-md p-4 hover:shadow-xl transition-shadow cursor-pointer border border-border"
               >
-                <div className="aspect-[2/3] bg-gray-200 rounded mb-3 flex items-center justify-center text-gray-400 text-sm">
+                <div className="aspect-[2/3] bg-muted rounded mb-3 flex items-center justify-center text-muted-foreground text-sm">
                   Affiche
                 </div>
-                <h4 className="font-semibold text-gray-900 mb-1">{film.title}</h4>
-                <p className="text-sm text-gray-600 mb-2">{film.year}</p>
+                <h4 className="font-semibold text-foreground mb-1">{film.title}</h4>
+                <p className="text-sm text-muted-foreground mb-2">{film.year}</p>
                 <div className="flex items-center">
                   <span className="text-yellow-500">★</span>
-                  <span className="ml-1 text-sm font-medium text-gray-700">{film.rating}</span>
+                  <span className="ml-1 text-sm font-medium text-foreground">{film.rating}</span>
                 </div>
               </div>
             ))}
@@ -92,7 +92,7 @@ function HomePage() {
           <div className="text-center mt-6">
             <Link
               to="/films"
-              className="text-indigo-600 hover:text-indigo-700 font-medium"
+              className="text-primary hover:text-primary/80 font-medium"
             >
               Voir tous les films →
             </Link>
