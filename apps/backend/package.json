@@ -10,7 +10,8 @@
     "type-check": "tsc --noEmit",
     "lint": "eslint src --ext .ts",
     "seed:omdb": "tsx src/scripts/seed-omdb-films.ts",
-    "clean:films": "tsx src/scripts/clean-films-without-poster.ts"
+    "clean:films": "tsx src/scripts/clean-films-without-poster.ts",
+    "update:posters": "tsx src/scripts/update-missing-posters.ts"
   },
   "dependencies": {
     "@cineconnect/database": "workspace:*",

@@ -1,10 +1,99 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
+import { useAuth } from '@/context/AuthContext'
+import { useFilms } from '@/hooks/useFilms'
+import { useState, useEffect } from 'react'
+import { getFilmByTitle } from '@/api/omdb'
 
 export const Route = createFileRoute('/')({
   component: HomePage,
 })
 
+// Hook pour récupérer l'affiche depuis OMDb si elle manque
+function usePosterUrl(film: { title: string; releaseYear: number | null; posterUrl: string | null }) {
+  const [posterUrl, setPosterUrl] = useState<string | null>(film.posterUrl)
+
+  useEffect(() => {
+    // Si l'affiche existe et est valide, l'utiliser
+    if (film.posterUrl && film.posterUrl !== 'N/A' && film.posterUrl !== '') {
+      setPosterUrl(film.posterUrl)
+      return
+    }
+
+    // Sinon, chercher dans OMDb
+    const fetchPoster = async () => {
+      try {
+        const omdbData = await getFilmByTitle(film.title, film.releaseYear || undefined)
+        if (omdbData.Poster && omdbData.Poster !== 'N/A' && omdbData.Poster !== '') {
+          setPosterUrl(omdbData.Poster)
+        }
+      } catch (error) {
+        // Ignorer les erreurs silencieusement
+        console.debug(`Impossible de récupérer l'affiche pour ${film.title}`)
+      }
+    }
+
+    fetchPoster()
+  }, [film.title, film.releaseYear, film.posterUrl])
+
+  return posterUrl
+}
+
+// Composant pour afficher une carte de film avec récupération automatique de l'affiche
+function FilmCard({ film }: { film: { id: number; title: string; releaseYear: number | null; ratingAverage: string; posterUrl: string | null } }) {
+  const posterUrl = usePosterUrl(film)
+
+  return (
+    <Link
+      to="/film/$id"
+      params={{ id: film.id.toString() }}
+      className="bg-card rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow cursor-pointer border border-border block"
+    >
+      <div className="aspect-[2/3] bg-muted overflow-hidden relative">
+        {posterUrl && posterUrl !== 'N/A' ? (
+          <img
+            src={posterUrl}
+            alt={film.title}
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              e.currentTarget.style.display = 'none'
+              e.currentTarget.nextElementSibling?.classList.remove('hidden')
+            }}
+          />
+        ) : null}
+        <div className={`w-full h-full flex flex-col items-center justify-center text-muted-foreground text-sm ${posterUrl && posterUrl !== 'N/A' ? 'hidden' : ''}`}>
+          <svg className="w-12 h-12 mb-2 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z" />
+          </svg>
+          <p className="text-xs text-center px-2 font-medium">{film.title}</p>
+        </div>
+      </div>
+      <div className="p-4">
+        <h4 className="font-semibold text-foreground mb-1 truncate">{film.title}</h4>
+        <p className="text-sm text-muted-foreground mb-2">{film.releaseYear || 'N/A'}</p>
+        <div className="flex items-center">
+          <span className="text-yellow-500">★</span>
+          <span className="ml-1 text-sm font-medium text-foreground">
+            {Number(film.ratingAverage).toFixed(1)}
+          </span>
+        </div>
+      </div>
+    </Link>
+  )
+}
+
 function HomePage() {
+  const { user, isLoading } = useAuth()
+  const { data: allFilms = [], isLoading: filmsLoading } = useFilms({ limit: 50 })
+  
+  // Trier les films par note moyenne (décroissant) et prendre les 4 premiers
+  const popularFilms = [...allFilms]
+    .sort((a, b) => {
+      const ratingA = Number(a.ratingAverage) || 0
+      const ratingB = Number(b.ratingAverage) || 0
+      return ratingB - ratingA
+    })
+    .slice(0, 4)
+
   return (
     <div className="px-4 py-12">
       <div className="max-w-7xl mx-auto">
@@ -17,12 +106,14 @@ function HomePage() {
             Découvrez, notez et partagez vos films préférés avec une communauté de passionnés de cinéma
           </p>
           <div className="flex justify-center gap-4">
-            <Link
-              to="/register"
-              className="px-6 py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors"
-            >
-              Créer un compte
-            </Link>
+            {!isLoading && !user && (
+              <Link
+                to="/register"
+                className="px-6 py-3 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors"
+              >
+                Créer un compte
+              </Link>
+            )}
             <Link
               to="/films"
               className="px-6 py-3 bg-card text-foreground border-2 border-primary rounded-lg font-medium hover:bg-accent transition-colors"
@@ -66,37 +157,31 @@ function HomePage() {
         {/* Popular Films Preview */}
         <div className="mb-16">
           <h2 className="text-3xl font-bold text-foreground mb-6">Films Populaires</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            {[
-              { title: 'Inception', year: 2010, rating: 4.5 },
-              { title: 'The Dark Knight', year: 2008, rating: 4.8 },
-              { title: 'Pulp Fiction', year: 1994, rating: 4.6 },
-              { title: 'The Matrix', year: 1999, rating: 4.7 },
-            ].map((film, index) => (
-              <div
-                key={index}
-                className="bg-card rounded-lg shadow-md p-4 hover:shadow-xl transition-shadow cursor-pointer border border-border"
-              >
-                <div className="aspect-[2/3] bg-muted rounded mb-3 flex items-center justify-center text-muted-foreground text-sm">
-                  Affiche
-                </div>
-                <h4 className="font-semibold text-foreground mb-1">{film.title}</h4>
-                <p className="text-sm text-muted-foreground mb-2">{film.year}</p>
-                <div className="flex items-center">
-                  <span className="text-yellow-500">★</span>
-                  <span className="ml-1 text-sm font-medium text-foreground">{film.rating}</span>
-                </div>
+          {filmsLoading ? (
+            <div className="text-center py-12">
+              <p className="text-muted-foreground">Chargement des films...</p>
+            </div>
+          ) : popularFilms.length > 0 ? (
+            <>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                {popularFilms.map((film) => (
+                  <FilmCard key={film.id} film={film} />
+                ))}
               </div>
-            ))}
-          </div>
-          <div className="text-center mt-6">
-            <Link
-              to="/films"
-              className="text-primary hover:text-primary/80 font-medium"
-            >
-              Voir tous les films →
-            </Link>
-          </div>
+              <div className="text-center mt-6">
+                <Link
+                  to="/films"
+                  className="text-primary hover:text-primary/80 font-medium"
+                >
+                  Voir tous les films →
+                </Link>
+              </div>
+            </>
+          ) : (
+            <div className="text-center py-12">
+              <p className="text-muted-foreground">Aucun film disponible pour le moment</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

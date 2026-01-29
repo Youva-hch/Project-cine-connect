@@ -13,7 +13,12 @@
     "db:migrate": "pnpm --filter @cineconnect/database migrate",
     "db:generate": "pnpm --filter @cineconnect/database generate",
     "db:seed": "pnpm --filter @cineconnect/database seed",
-    "db:studio": "pnpm --filter @cineconnect/database studio"
+    "db:studio": "pnpm --filter @cineconnect/database studio",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:build": "docker-compose build",
+    "docker:logs": "docker-compose logs -f",
+    "docker:dev": "docker-compose -f docker-compose.dev.yml up -d"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^6.21.0",

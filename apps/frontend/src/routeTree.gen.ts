@@ -17,8 +17,8 @@ import { Route as FilmsRouteImport } from './routes/films'
 import { Route as DiscussionRouteImport } from './routes/discussion'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as FilmsCategorieRouteImport } from './routes/films.$categorie'
-import { Route as FilmIdRouteImport } from './routes/film.$id'
 import { Route as FilmImdbIdRouteImport } from './routes/film.$imdbId'
+import { Route as FilmIdRouteImport } from './routes/film.$id'
 import { Route as AuthCallbackRouteImport } from './routes/auth/callback'
 
 const SearchRoute = SearchRouteImport.update({
@@ -61,14 +61,14 @@ const FilmsCategorieRoute = FilmsCategorieRouteImport.update({
   path: '/$categorie',
   getParentRoute: () => FilmsRoute,
 } as any)
-const FilmIdRoute = FilmIdRouteImport.update({
-  id: '/film/$id',
-  path: '/film/$id',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const FilmImdbIdRoute = FilmImdbIdRouteImport.update({
   id: '/film/$imdbId',
   path: '/film/$imdbId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FilmIdRoute = FilmIdRouteImport.update({
+  id: '/film/$id',
+  path: '/film/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthCallbackRoute = AuthCallbackRouteImport.update({
@@ -230,18 +230,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FilmsCategorieRouteImport
       parentRoute: typeof FilmsRoute
     }
-    '/film/$id': {
-      id: '/film/$id'
-      path: '/film/$id'
-      fullPath: '/film/$id'
-      preLoaderRoute: typeof FilmIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/film/$imdbId': {
       id: '/film/$imdbId'
       path: '/film/$imdbId'
       fullPath: '/film/$imdbId'
       preLoaderRoute: typeof FilmImdbIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/film/$id': {
+      id: '/film/$id'
+      path: '/film/$id'
+      fullPath: '/film/$id'
+      preLoaderRoute: typeof FilmIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/callback': {
