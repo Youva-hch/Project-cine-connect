@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 import { ThemeProvider } from './contexts'
 import { routeTree } from './routeTree.gen'
-import { AuthProvider } from './contexts/AuthContext'
+import { AuthProvider } from '@/context/AuthContext'
 import './index.css'
 
 // Créer le client Query avec gestion d'erreurs améliorée
