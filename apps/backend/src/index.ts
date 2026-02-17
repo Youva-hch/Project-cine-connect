@@ -55,9 +55,24 @@ app.get('/', (_req, res) => {
 });
 
 // Démarrage du serveur
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`🚀 Serveur démarré sur le port ${PORT}`);
   console.log(`📍 Health check: http://localhost:${PORT}/health`);
+});
+
+server.on('error', (err: NodeJS.ErrnoException) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(`❌ Erreur: Le port ${PORT} est déjà utilisé.`);
+    console.error(`💡 Solutions:`);
+    console.error(`   1. Arrêter le processus qui utilise le port ${PORT}`);
+    console.error(`   2. Changer le port en définissant PORT=<autre_port> dans votre fichier .env`);
+    console.error(`   3. Sous Windows, utiliser: netstat -ano | findstr :${PORT} pour trouver le PID`);
+    console.error(`      Puis: taskkill /PID <PID> /F pour arrêter le processus`);
+    process.exit(1);
+  } else {
+    console.error('❌ Erreur lors du démarrage du serveur:', err);
+    process.exit(1);
+  }
 });
 
 export default app;

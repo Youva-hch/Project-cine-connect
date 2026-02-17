@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useEffect } from 'react'
-import { useAuth } from '@/contexts/AuthContext'
-import type { User } from '@/api/types'
+import { useAuth } from '@/context/AuthContext'
+import type { User } from '@/api/auth'
 
 export const Route = createFileRoute('/auth/callback')({
   component: AuthCallbackPage,
@@ -9,7 +9,7 @@ export const Route = createFileRoute('/auth/callback')({
 
 function AuthCallbackPage() {
   const navigate = useNavigate()
-  const { loginWithToken } = useAuth()
+  const { login } = useAuth()
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
@@ -29,7 +29,7 @@ function AuthCallbackPage() {
           createdAt: new Date(),
           updatedAt: new Date(),
         }
-        loginWithToken(token, user)
+        login(token, user)
         navigate({ to: '/', replace: true })
         return
       } catch {
@@ -37,7 +37,7 @@ function AuthCallbackPage() {
       }
     }
     navigate({ to: '/login', replace: true })
-  }, [loginWithToken, navigate])
+  }, [login, navigate])
 
   return (
     <div className="flex justify-center items-center min-h-[40vh]">
