@@ -1,6 +1,33 @@
 import { Link } from "react-router-dom";
-import { Star, MessageCircle } from "lucide-react";
+import { Star, MessageCircle, Film } from "lucide-react";
+import { useState } from "react";
 import type { OmdbMovie } from "@/lib/omdb";
+
+// Génère un dégradé unique basé sur le titre du film
+function getPosterGradient(title: string) {
+  const gradients = [
+    ["#1a0533", "#3b0764", "#7c3aed"],
+    ["#0f172a", "#1e3a5f", "#2563eb"],
+    ["#1a0a00", "#431407", "#c2410c"],
+    ["#0a1628", "#0c4a6e", "#0284c7"],
+    ["#0f0a1e", "#2d1b69", "#5b21b6"],
+    ["#150d00", "#451a03", "#b45309"],
+    ["#0a1a0a", "#14532d", "#16a34a"],
+    ["#1a0a1a", "#581c87", "#9333ea"],
+  ];
+  let hash = 0;
+  for (let i = 0; i < title.length; i++) hash += title.charCodeAt(i);
+  return gradients[hash % gradients.length];
+}
+
+function getInitials(title: string) {
+  return title
+    .split(" ")
+    .filter((w) => w.length > 2)
+    .slice(0, 2)
+    .map((w) => w[0].toUpperCase())
+    .join("") || title.slice(0, 2).toUpperCase();
+}
 
 interface FilmCardProps {
   film: OmdbMovie;
@@ -8,7 +35,8 @@ interface FilmCardProps {
 }
 
 export function FilmCard({ film, size = "normal" }: FilmCardProps) {
-  const hasPoster = film.Poster && film.Poster !== "N/A";
+  const [imgError, setImgError] = useState(false);
+  const hasPoster = !imgError && film.Poster && film.Poster !== "N/A";
   const isLarge = size === "large";
 
   return (
@@ -44,14 +72,61 @@ export function FilmCard({ film, size = "normal" }: FilmCardProps) {
             alt={film.Title}
             className="w-full h-full object-cover"
             loading="lazy"
+            onError={() => setImgError(true)}
           />
         ) : (
-          <div className="w-full h-full bg-muted flex flex-col items-center justify-center gap-2">
-            <Star className="h-10 w-10 text-muted-foreground" />
-            <span className="text-xs text-muted-foreground text-center px-2 leading-tight">
-              {film.Title}
-            </span>
-          </div>
+          (() => {
+            const [c1, c2, c3] = getPosterGradient(film.Title);
+            const initials = getInitials(film.Title);
+            return (
+              <div
+                className="w-full h-full flex flex-col items-center justify-between p-3 select-none"
+                style={{
+                  background: `linear-gradient(160deg, ${c1} 0%, ${c2} 55%, ${c3}33 100%)`,
+                }}
+              >
+                {/* Haut : icône + type */}
+                <div className="w-full flex items-center justify-between">
+                  <Film className="h-3.5 w-3.5 opacity-40" style={{ color: c3 }} />
+                  <span
+                    className="text-[9px] font-bold uppercase tracking-widest opacity-50"
+                    style={{ color: c3 }}
+                  >
+                    {film.Year}
+                  </span>
+                </div>
+
+                {/* Centre : initiales géantes */}
+                <div className="flex flex-col items-center gap-1">
+                  <span
+                    className="font-display leading-none select-none"
+                    style={{
+                      fontSize: "clamp(2.5rem, 6vw, 4rem)",
+                      color: c3,
+                      opacity: 0.25,
+                      letterSpacing: "0.05em",
+                    }}
+                  >
+                    {initials}
+                  </span>
+                </div>
+
+                {/* Bas : titre */}
+                <div className="w-full">
+                  <div
+                    className="w-8 h-0.5 mb-2 rounded-full"
+                    style={{ background: c3, opacity: 0.5 }}
+                  />
+                  <p
+                    className="text-white font-semibold leading-tight text-[11px] line-clamp-3"
+                    style={{ textShadow: "0 1px 4px rgba(0,0,0,0.8)" }}
+                  >
+                    {film.Title}
+                  </p>
+                </div>
+              </div>
+            );
+          })()
         )}
 
         {/* Top badge — type */}
