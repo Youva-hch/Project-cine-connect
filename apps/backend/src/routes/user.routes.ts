@@ -1,8 +1,8 @@
-import { Router } from 'express';
+import { Router, type IRouter } from 'express';
 import { UserController } from '../controllers/user.controller.js';
 import { requireAuth } from '../middlewares/auth.middleware.js';
 
-const router = Router();
+const router: IRouter = Router();
 
 // GET /users - Récupère tous les utilisateurs
 router.get('/', UserController.getAllUsers);

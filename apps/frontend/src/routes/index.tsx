@@ -39,7 +39,7 @@ function usePosterUrl(film: { title: string; releaseYear: number | null; posterU
 }
 
 // Composant pour afficher une carte de film avec récupération automatique de l'affiche
-function FilmCard({ film }: { film: { id: number; title: string; releaseYear: number | null; ratingAverage: string; posterUrl: string | null } }) {
+function FilmCard({ film }: { film: { id: number; title: string; releaseYear: number | null; ratingAverage: number | string; posterUrl: string | null } }) {
   const posterUrl = usePosterUrl(film)
 
   return (
@@ -73,7 +73,7 @@ function FilmCard({ film }: { film: { id: number; title: string; releaseYear: nu
         <div className="flex items-center">
           <span className="text-yellow-500">★</span>
           <span className="ml-1 text-sm font-medium text-foreground">
-            {Number(film.ratingAverage).toFixed(1)}
+            {Number(film.ratingAverage ?? 0).toFixed(1)}
           </span>
         </div>
       </div>
@@ -83,8 +83,10 @@ function FilmCard({ film }: { film: { id: number; title: string; releaseYear: nu
 
 function HomePage() {
   const { user, isLoading } = useAuth()
-  const { data: allFilms = [], isLoading: filmsLoading } = useFilms({ limit: 50 })
-  
+  const { data: filmsResponse, isLoading: filmsLoading, isError: filmsError, error: filmsErrorObj } = useFilms({ limit: 50 })
+  const allFilms = filmsResponse?.data ?? []
+  const filmsErrorMessage = filmsErrorObj instanceof Error ? filmsErrorObj.message : null
+
   // Trier les films par note moyenne (décroissant) et prendre les 4 premiers
   const popularFilms = [...allFilms]
     .sort((a, b) => {
@@ -122,6 +124,7 @@ function HomePage() {
             </Link>
             <Link
               to="/search"
+              search={{ q: '', page: 1 }}
               className="px-6 py-3 bg-card text-foreground border-2 border-primary rounded-lg font-medium hover:bg-accent transition-colors"
             >
               Rechercher
@@ -157,7 +160,12 @@ function HomePage() {
         {/* Popular Films Preview */}
         <div className="mb-16">
           <h2 className="text-3xl font-bold text-foreground mb-6">Films Populaires</h2>
-          {filmsLoading ? (
+          {filmsError && filmsErrorMessage ? (
+            <div className="text-center py-12 rounded-lg bg-destructive/10 border border-destructive/20">
+              <p className="text-destructive font-medium">{filmsErrorMessage}</p>
+              <p className="text-sm text-muted-foreground mt-2">À la racine du projet, lancez : pnpm db:migrate (avec la base démarrée)</p>
+            </div>
+          ) : filmsLoading ? (
             <div className="text-center py-12">
               <p className="text-muted-foreground">Chargement des films...</p>
             </div>

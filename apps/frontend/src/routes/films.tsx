@@ -11,11 +11,13 @@ function Films() {
   const [search, setSearch] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('all')
   
-  const { data: films = [], isLoading: filmsLoading } = useFilms({
+  const { data: filmsResponse, isLoading: filmsLoading, isError: filmsError, error: filmsErrorObj } = useFilms({
     search: search || undefined,
     category: selectedCategory !== 'all' ? selectedCategory : undefined,
-    limit: 200, // Augmenter la limite pour afficher plus de films
+    limit: 200,
   })
+  const films = filmsResponse?.data ?? []
+  const filmsErrorMessage = filmsErrorObj instanceof Error ? filmsErrorObj.message : null
   const { data: categories = [] } = useCategories()
 
   const filteredFilms = films.filter((film) => {
@@ -68,7 +70,12 @@ function Films() {
         </div>
 
         {/* Grille de films */}
-        {filmsLoading ? (
+        {filmsError && filmsErrorMessage ? (
+          <div className="text-center py-12 rounded-lg bg-destructive/10 border border-destructive/20">
+            <p className="text-destructive font-medium">{filmsErrorMessage}</p>
+            <p className="text-sm text-muted-foreground mt-2">À la racine du projet, lancez : pnpm db:migrate (avec la base démarrée)</p>
+          </div>
+        ) : filmsLoading ? (
           <div className="text-center py-12">
             <p className="text-gray-500">Chargement des films...</p>
           </div>
@@ -118,7 +125,7 @@ function Films() {
           </div>
         )}
 
-        {filteredFilms.length === 0 && (
+        {!filmsError && !filmsLoading && filteredFilms.length === 0 && (
           <div className="text-center py-12">
             <p className="text-gray-500">Aucun film trouvé</p>
           </div>

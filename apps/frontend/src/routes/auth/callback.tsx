@@ -26,8 +26,8 @@ function AuthCallbackPage() {
           avatarUrl: (decoded.avatarUrl as string) ?? null,
           bio: (decoded.bio as string) ?? null,
           isOnline: true,
-          createdAt: new Date(),
-          updatedAt: new Date(),
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
         }
         login(token, user)
         navigate({ to: '/', replace: true })

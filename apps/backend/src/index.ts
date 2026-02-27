@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import express from 'express';
+import express, { type Express } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import session from 'express-session';
@@ -12,7 +12,7 @@ import { categoryRouter } from './routes/category.routes.js';
 import { omdbRouter } from './routes/omdb.routes.js';
 import { authRouter } from './routes/auth.routes.js';
 
-const app = express();
+const app: Express = express();
 const PORT = process.env.PORT || 3000;
 
 // Middlewares de sécurité
@@ -45,7 +45,7 @@ app.use(passport.session());
 app.use('/health', healthRouter);
 app.use('/api/auth', authRouter);
 app.use('/users', userRouter);
-app.use('/films', filmRouter);
+app.use('/api/films', filmRouter);
 app.use('/categories', categoryRouter);
 app.use('/omdb', omdbRouter);
 
@@ -54,8 +54,8 @@ app.get('/', (_req, res) => {
   res.json({ message: 'CinéConnect API - Bienvenue !' });
 });
 
-// Démarrage du serveur
-const server = app.listen(PORT, () => {
+// Démarrage du serveur (0.0.0.0 pour être joignable depuis l'extérieur du conteneur Docker)
+const server = app.listen(Number(PORT), '0.0.0.0', () => {
   console.log(`🚀 Serveur démarré sur le port ${PORT}`);
   console.log(`📍 Health check: http://localhost:${PORT}/health`);
 });

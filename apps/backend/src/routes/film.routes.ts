@@ -1,19 +1,29 @@
-import { Router } from 'express';
+import { Router, type IRouter } from 'express';
 import { FilmController } from '../controllers/film.controller.js';
+import { requireAdmin } from '../middlewares/auth.middleware.js';
 
-const router = Router();
+const router: IRouter = Router();
 
-// GET /films - Récupère tous les films avec filtres optionnels
+// GET /api/films - Liste avec filtres (catégorie, année, note) et pagination
 router.get('/', FilmController.getAllFilms);
 
-// GET /films/category/:slug - Récupère les films d'une catégorie
+// GET /api/films/category/:slug - Films d'une catégorie
 router.get('/category/:slug', FilmController.getFilmsByCategory);
 
-// GET /films/:id/reviews - Récupère les avis d'un film
+// GET /api/films/:id/reviews - Avis d'un film
 router.get('/:id/reviews', FilmController.getFilmReviews);
 
-// GET /films/:id - Récupère un film par son ID
+// GET /api/films/:id - Détail d'un film
 router.get('/:id', FilmController.getFilmById);
+
+// POST /api/films - Créer un film (admin uniquement)
+router.post('/', requireAdmin, FilmController.createFilm);
+
+// PATCH /api/films/:id - Modifier un film (admin uniquement)
+router.patch('/:id', requireAdmin, FilmController.updateFilm);
+
+// DELETE /api/films/:id - Supprimer un film (admin uniquement)
+router.delete('/:id', requireAdmin, FilmController.deleteFilm);
 
 export { router as filmRouter };
 

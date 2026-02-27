@@ -23,7 +23,7 @@ function FilmDetailPage() {
         <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
           {error instanceof Error ? error.message : 'Erreur lors du chargement'}
         </div>
-        <Link to="/search" className="mt-4 inline-block text-indigo-600 hover:underline">
+        <Link to="/search" search={{ q: '', page: 1 }} className="mt-4 inline-block text-indigo-600 hover:underline">
           Retour à la recherche
         </Link>
       </div>
@@ -34,7 +34,7 @@ function FilmDetailPage() {
     return (
       <div className="max-w-2xl mx-auto px-4 py-8">
         <p className="text-gray-500">Film introuvable.</p>
-        <Link to="/search" className="mt-4 inline-block text-indigo-600 hover:underline">
+        <Link to="/search" search={{ q: '', page: 1 }} className="mt-4 inline-block text-indigo-600 hover:underline">
           Retour à la recherche
         </Link>
       </div>
@@ -46,6 +46,7 @@ function FilmDetailPage() {
       <div className="max-w-4xl mx-auto">
         <Link
           to="/search"
+          search={{ q: '', page: 1 }}
           className="inline-flex items-center text-indigo-600 hover:underline mb-6"
         >
           ← Retour à la recherche

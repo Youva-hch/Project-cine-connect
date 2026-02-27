@@ -30,7 +30,11 @@ COPY packages/database ./packages/database
 COPY apps/backend ./apps/backend
 COPY tsconfig.json ./
 
-# Build
+# Build du package database (nécessaire pour que le backend importe du JS en prod)
+WORKDIR /app/packages/database
+RUN pnpm build
+
+# Build du backend
 WORKDIR /app/apps/backend
 RUN pnpm build
 
@@ -40,11 +44,18 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
-# Copier les fichiers nécessaires
+# Copier les fichiers nécessaires (root + packages pour workspace, backend node_modules pour dotenv/express/etc.)
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/packages ./packages
+COPY --from=builder /app/apps/backend/node_modules ./apps/backend/node_modules
 COPY --from=builder /app/apps/backend/dist ./apps/backend/dist
 COPY --from=builder /app/apps/backend/package.json ./apps/backend/
+
+# En prod Node exécute du JS : le package database doit pointer vers dist/ (en dev on garde src/ pour tsx)
+RUN sed -i.bak \
+    -e 's|"main": "./src/index.ts"|"main": "./dist/index.js"|' \
+    -e 's|"types": "./src/index.ts"|"types": "./dist/index.d.ts"|' \
+    packages/database/package.json && rm -f packages/database/package.json.bak
 
 WORKDIR /app/apps/backend
 

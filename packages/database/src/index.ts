@@ -19,7 +19,7 @@ export const db = drizzle(client, { schema });
 export * from './schema.js';
 
 // Export commonly used drizzle-orm functions
-export { eq, and, or, not, sql, desc, asc, like, inArray, isNull } from 'drizzle-orm';
+export { eq, and, or, not, sql, desc, asc, like, inArray, isNull, gte, lte } from 'drizzle-orm';
 
 // Export types
 export type Database = typeof db;

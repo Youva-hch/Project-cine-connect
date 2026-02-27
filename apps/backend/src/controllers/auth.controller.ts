@@ -5,10 +5,12 @@ import bcrypt from 'bcryptjs';
 import { UserService } from '../services/user.service.js';
 
 function signToken(user: { id: number; email: string }) {
+  const secret = process.env.JWT_SECRET || 'your-secret-key';
+  const expiresIn = process.env.JWT_EXPIRES_IN || '24h';
   return jwt.sign(
     { userId: user.id, email: user.email },
-    process.env.JWT_SECRET || 'your-secret-key',
-    { expiresIn: process.env.JWT_EXPIRES_IN || '24h' }
+    secret,
+    { expiresIn } as jwt.SignOptions
   );
 }
 
@@ -62,7 +64,7 @@ export class AuthController {
       }
       const token = signToken(user);
       const { passwordHash: _, ...rest } = user;
-      res.status(201).json({
+      return res.status(201).json({
         success: true,
         data: { token, user: toUserResponse(rest as { id: number; email: string; name: string; avatarUrl: string | null; bio?: string | null }) },
       });
@@ -76,7 +78,7 @@ export class AuthController {
           : message.includes('relation') || message.includes('does not exist')
             ? ' Exécutez les migrations : pnpm --filter @cineconnect/database run migrate'
             : '';
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         message: isDev ? message + hint : 'Erreur lors de l\'inscription',
       });
@@ -111,13 +113,13 @@ export class AuthController {
       }
       const token = signToken(user);
       const { passwordHash: _, ...rest } = user;
-      res.json({
+      return res.json({
         success: true,
         data: { token, user: toUserResponse(rest as { id: number; email: string; name: string; avatarUrl: string | null; bio?: string | null }) },
       });
     } catch (error) {
       console.error('Auth login error:', error);
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         message: 'Erreur lors de la connexion',
       });
@@ -134,26 +136,55 @@ export class AuthController {
   }
 
   /**
+   * Redirige vers la page login avec un message d'erreur (message tronqué pour l'URL)
+   */
+  static redirectLoginError(res: Response, message: string) {
+    const frontendUrl = (process.env.FRONTEND_URL || 'http://localhost:5173').replace(/\/$/, '');
+    const params = new URLSearchParams({ error: 'auth_failed' });
+    const safeMsg = message.slice(0, 200);
+    params.set('message', safeMsg);
+    return res.redirect(`${frontendUrl}/auth?${params.toString()}`);
+  }
+
+  /**
    * Callback après authentification Google
    */
   static googleCallback(req: Request, res: Response) {
-    passport.authenticate('google', { session: false }, (err: any, user: any) => {
-      const frontendUrl = (process.env.FRONTEND_URL || 'http://localhost:5173').replace(/\/$/, '');
+    const frontendUrl = (process.env.FRONTEND_URL || 'http://localhost:5173').replace(/\/$/, '');
+
+    // Erreur renvoyée par Google dans l'URL (ex: access_denied, redirect_uri_mismatch)
+    const googleError = req.query.error as string | undefined;
+    if (googleError) {
+      const desc = (req.query.error_description as string) || googleError;
+      console.error('Google OAuth error from redirect:', googleError, desc);
+      const msg =
+        googleError === 'access_denied'
+          ? 'Connexion annulée'
+          : googleError === 'redirect_uri_mismatch'
+            ? 'URL de redirection incorrecte (vérifiez Google Cloud Console)'
+            : desc;
+      return AuthController.redirectLoginError(res, msg);
+    }
+
+    passport.authenticate('google', { session: false }, (err: unknown, user: unknown) => {
       if (err) {
-        console.error('Google callback error:', err);
-        return res.redirect(`${frontendUrl}/login?error=auth_failed`);
+        const msg = err instanceof Error ? err.message : String(err);
+        console.error('Google callback error:', msg, err instanceof Error ? err.stack : '');
+        return AuthController.redirectLoginError(res, msg);
       }
       if (!user) {
-        return res.redirect(`${frontendUrl}/login?error=auth_failed`);
+        console.error('Google callback: no user returned from strategy (check strategy logs above)');
+        return AuthController.redirectLoginError(res, 'Aucun utilisateur retourné');
       }
 
-      const token = signToken(user);
+      const u = user as { id: number; email: string; name: string; avatarUrl?: string | null; bio?: string | null };
+      const token = signToken(u);
       const userPayload = {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        avatarUrl: user.avatarUrl ?? null,
-        bio: user.bio ?? null,
+        id: u.id,
+        email: u.email,
+        name: u.name,
+        avatarUrl: u.avatarUrl ?? null,
+        bio: u.bio ?? null,
       };
       res.redirect(
         `${frontendUrl}/auth/callback?token=${encodeURIComponent(token)}&user=${encodeURIComponent(JSON.stringify(userPayload))}`
@@ -194,12 +225,12 @@ export class AuthController {
       // Ne pas retourner le mot de passe
       const { passwordHash, ...userWithoutPassword } = user;
 
-      res.json({
+      return res.json({
         success: true,
         data: userWithoutPassword,
       });
     } catch (error) {
-      res.status(401).json({
+      return res.status(401).json({
         success: false,
         message: 'Token invalide',
       });

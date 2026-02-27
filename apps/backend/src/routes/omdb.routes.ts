@@ -1,7 +1,7 @@
-import { Router } from 'express';
+import { Router, type IRouter } from 'express';
 import { OMDbController } from '../controllers/omdb.controller.js';
 
-const router = Router();
+const router: IRouter = Router();
 
 // GET /omdb/search - Recherche de films
 router.get('/search', OMDbController.search);

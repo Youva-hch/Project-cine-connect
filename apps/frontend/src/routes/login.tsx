@@ -21,7 +21,14 @@ function LoginPage() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     if (params.get('error') === 'auth_failed') {
-      setError('La connexion avec Google a échoué. Réessayez ou connectez-vous avec email.')
+      const msg = params.get('message')
+      let text = msg
+        ? `Connexion Google échouée : ${msg}`
+        : 'La connexion avec Google a échoué. Réessayez ou connectez-vous avec email.'
+      if (msg && (msg.includes('users') || msg.includes('relation') || msg.includes('Failed query'))) {
+        text += ' Exécutez les migrations : pnpm db:migrate (à la racine du projet, avec la base démarrée).'
+      }
+      setError(text)
     }
   }, [])
 

@@ -15,7 +15,7 @@ export const usersApi = {
     return response.data
   },
 
-  updateProfile: async (id: number, data: Partial<User>): Promise<User> => {
+  updateProfile: async (_id: number, data: Partial<User>): Promise<User> => {
     const response = await apiRequest<{ success: boolean; data: User; message?: string }>('/users/me', {
       method: 'PATCH',
       body: JSON.stringify(data),

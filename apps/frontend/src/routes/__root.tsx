@@ -50,6 +50,7 @@ function RootLayout() {
                 </Link>
                 <Link
                   to="/search"
+                  search={{ q: '', page: 1 }}
                   className="text-muted-foreground hover:text-foreground px-3 py-2 rounded-md text-sm font-medium transition-colors"
                 >
                   Recherche

@@ -5,7 +5,7 @@
  */
 
 import 'dotenv/config';
-import { db, films, eq, isNull, or, sql } from '@cineconnect/database';
+import { db, films, eq, isNull, or } from '@cineconnect/database';
 import { OMDbService } from '../services/omdb.service.js';
 
 /**

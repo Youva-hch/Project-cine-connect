@@ -3,26 +3,28 @@
  * Ce composant montre comment rechercher des films et afficher leurs détails
  */
 import { useState } from 'react'
-import { useOmdbSearch, useOmdbMovieByImdbId } from '@/hooks/useOmdb'
+import { useFilms, useFilmDetails } from '@/hooks/useOmdb'
+import type { OMDbSearchItem } from '@/api/omdb'
 
 export function OmdbSearchExample() {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedImdbId, setSelectedImdbId] = useState<string | null>(null)
 
   const {
-    data: searchResults,
+    films,
+    totalResults,
     isLoading: isSearching,
     error: searchError,
-  } = useOmdbSearch(searchTerm, {
+  } = useFilms({
+    s: searchTerm,
     type: 'movie',
-    enabled: searchTerm.length >= 3, // Rechercher seulement si au moins 3 caractères
   })
 
   const {
-    data: movieDetails,
+    film: movieDetails,
     isLoading: isLoadingDetails,
     error: detailsError,
-  } = useOmdbMovieByImdbId(selectedImdbId, !!selectedImdbId)
+  } = useFilmDetails(selectedImdbId)
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
@@ -70,13 +72,13 @@ export function OmdbSearchExample() {
       )}
 
       {/* Résultats de recherche */}
-      {searchResults && searchResults.Search && (
+      {films.length > 0 && (
         <div className="space-y-4">
           <p className="text-sm text-gray-600">
-            {searchResults.totalResults} résultat(s) trouvé(s)
+            {totalResults} résultat(s) trouvé(s)
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {searchResults.Search.map((movie) => (
+            {films.map((movie: OMDbSearchItem) => (
               <div
                 key={movie.imdbID}
                 onClick={() => setSelectedImdbId(movie.imdbID)}

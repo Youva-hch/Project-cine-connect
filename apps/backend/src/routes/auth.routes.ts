@@ -1,7 +1,7 @@
-import { Router } from 'express';
+import { Router, type IRouter } from 'express';
 import { AuthController } from '../controllers/auth.controller.js';
 
-const router = Router();
+const router: IRouter = Router();
 
 // POST /auth/register - Inscription email / mot de passe
 router.post('/register', AuthController.register);

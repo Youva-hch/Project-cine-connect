@@ -16,14 +16,14 @@ if (hasGoogleConfig) {
           process.env.GOOGLE_CALLBACK_URL ||
           'http://localhost:3000/api/auth/google/callback',
       },
-      async (accessToken, refreshToken, profile, done) => {
+      async (_accessToken, _refreshToken, profile, done) => {
         try {
           const email = profile.emails?.[0]?.value?.trim()
           if (!email) {
-            return done(new Error('Email Google non fourni'), null)
+            return done(new Error('Email Google non fourni'), undefined)
           }
 
-          let user = await UserService.getUserByEmail(email)
+          const user = await UserService.getUserByEmail(email)
           if (user) {
             return done(null, user)
           }
@@ -46,12 +46,12 @@ if (hasGoogleConfig) {
             avatarUrl,
           })
           if (!newUser) {
-            return done(new Error('Erreur création compte'), null)
+            return done(new Error('Erreur création compte'), undefined)
           }
           return done(null, newUser)
         } catch (error) {
           console.error('Google strategy error:', error)
-          return done(error, null)
+          return done(error as Error, undefined)
         }
       }
     )
@@ -62,15 +62,15 @@ if (hasGoogleConfig) {
   )
 }
 
-passport.serializeUser((user: { id: number }, done) => {
-  done(null, user.id)
+passport.serializeUser((user: unknown, done: (err: unknown, id?: number) => void) => {
+  done(null, (user as { id: number }).id)
 })
 
 passport.deserializeUser(async (id: number, done) => {
   try {
     const user = await UserService.getUserById(id)
-    done(null, user)
+    done(null, user ?? undefined)
   } catch (error) {
-    done(error, null)
+    done(error, undefined)
   }
 })

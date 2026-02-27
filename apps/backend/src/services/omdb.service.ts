@@ -79,7 +79,7 @@ export class OMDbService {
         throw new Error(`OMDb API error: ${response.status} ${response.statusText}`);
       }
 
-      const data = await response.json();
+      const data = (await response.json()) as { Response?: string; Error?: string } & T;
 
       // Vérifier si OMDb a retourné une erreur
       if (data.Response === 'False') {

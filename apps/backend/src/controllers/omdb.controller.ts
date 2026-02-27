@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { OMDbService } from '../services/omdb.service.js';
-import { db, films, categories, filmCategories, eq, sql, and } from '@cineconnect/database';
+import { db, films, categories, filmCategories, eq, and } from '@cineconnect/database';
 
 // Mapping des genres OMDb vers nos catégories
 const genreToCategoryMap: Record<string, string> = {
@@ -111,13 +111,13 @@ export class OMDbController {
         year: year ? parseInt(year as string, 10) : undefined,
       });
 
-      res.json({
+      return res.json({
         success: true,
         data: result,
       });
     } catch (error) {
       console.error('Error searching OMDb:', error);
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         message: error instanceof Error ? error.message : 'Erreur lors de la recherche OMDb',
       });
@@ -140,13 +140,13 @@ export class OMDbController {
 
       const movie = await OMDbService.getByImdbId(imdbId);
 
-      res.json({
+      return res.json({
         success: true,
         data: movie,
       });
     } catch (error) {
       console.error('Error fetching movie from OMDb:', error);
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         message: error instanceof Error ? error.message : 'Erreur lors de la récupération du film',
       });
@@ -173,13 +173,13 @@ export class OMDbController {
         year ? parseInt(year as string, 10) : undefined
       );
 
-      res.json({
+      return res.json({
         success: true,
         data: movie,
       });
     } catch (error) {
       console.error('Error fetching movie from OMDb:', error);
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         message: error instanceof Error ? error.message : 'Erreur lors de la récupération du film',
       });
@@ -193,7 +193,7 @@ export class OMDbController {
     try {
       const { count = 200 } = req.body;
       
-      res.json({
+      return res.json({
         success: true,
         message: 'Synchronisation démarrée en arrière-plan',
       });
@@ -288,7 +288,7 @@ export class OMDbController {
       })();
     } catch (error) {
       console.error('Error starting sync:', error);
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         message: error instanceof Error ? error.message : 'Erreur lors du démarrage de la synchronisation',
       });

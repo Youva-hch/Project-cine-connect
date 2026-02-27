@@ -12,13 +12,13 @@ export class UserController {
   static async getAllUsers(_req: Request, res: Response) {
     try {
       const allUsers = await UserService.getAllUsers();
-      res.json({
+      return res.json({
         success: true,
         data: allUsers,
       });
     } catch (error) {
       console.error('Error fetching users:', error);
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         message: 'Erreur lors de la récupération des utilisateurs',
       });
@@ -92,13 +92,13 @@ export class UserController {
       }
 
       const { passwordHash, ...userWithoutPassword } = updated;
-      res.json({
+      return res.json({
         success: true,
         data: userWithoutPassword,
       });
     } catch (error) {
       console.error('Error updating user:', error);
-      res.status(500).json({
+      return res.status(500).json({
         success: false,
         message: 'Erreur lors de la mise à jour du profil',
       });
