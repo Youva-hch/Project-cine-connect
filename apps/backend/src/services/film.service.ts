@@ -1,6 +1,7 @@
 import {
   db,
   films,
+  users,
   categories,
   filmCategories,
   reviews,
@@ -180,14 +181,127 @@ export class FilmService {
   }
 
   /**
-   * Récupère les avis d'un film
+   * Récupère les avis d'un film (avec infos utilisateur)
    */
   static async getFilmReviews(filmId: number) {
     return db
-      .select()
+      .select({
+        id: reviews.id,
+        userId: reviews.userId,
+        filmId: reviews.filmId,
+        rating: reviews.rating,
+        comment: reviews.comment,
+        createdAt: reviews.createdAt,
+        updatedAt: reviews.updatedAt,
+        user: {
+          id: users.id,
+          name: users.name,
+          avatarUrl: users.avatarUrl,
+        },
+      })
       .from(reviews)
+      .innerJoin(users, eq(reviews.userId, users.id))
       .where(eq(reviews.filmId, filmId))
       .orderBy(desc(reviews.createdAt));
+  }
+
+  /**
+   * Crée un avis sur un film (une seule review par utilisateur)
+   */
+  static async createReview(data: {
+    userId: number;
+    filmId: number;
+    rating: number;
+    comment?: string;
+  }) {
+    const [review] = await db
+      .insert(reviews)
+      .values({
+        userId: data.userId,
+        filmId: data.filmId,
+        rating: data.rating,
+        comment: data.comment ?? null,
+      })
+      .returning();
+
+    if (review) {
+      await FilmService.recalculateRating(data.filmId);
+    }
+
+    return review;
+  }
+
+  /**
+   * Met à jour un avis (uniquement par son auteur)
+   * Retourne null si non trouvé, 'forbidden' si pas l'auteur
+   */
+  static async updateReview(
+    reviewId: number,
+    userId: number,
+    data: { rating?: number; comment?: string }
+  ) {
+    const [existing] = await db
+      .select()
+      .from(reviews)
+      .where(eq(reviews.id, reviewId))
+      .limit(1);
+
+    if (!existing) return null;
+    if (existing.userId !== userId) return 'forbidden' as const;
+
+    const [updated] = await db
+      .update(reviews)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(reviews.id, reviewId))
+      .returning();
+
+    if (updated) {
+      await FilmService.recalculateRating(existing.filmId);
+    }
+
+    return updated;
+  }
+
+  /**
+   * Supprime un avis (uniquement par son auteur)
+   * Retourne null si non trouvé, 'forbidden' si pas l'auteur
+   */
+  static async deleteReview(reviewId: number, userId: number) {
+    const [existing] = await db
+      .select()
+      .from(reviews)
+      .where(eq(reviews.id, reviewId))
+      .limit(1);
+
+    if (!existing) return null;
+    if (existing.userId !== userId) return 'forbidden' as const;
+
+    await db.delete(reviews).where(eq(reviews.id, reviewId));
+    await FilmService.recalculateRating(existing.filmId);
+
+    return true;
+  }
+
+  /**
+   * Recalcule et met à jour la note moyenne d'un film
+   */
+  private static async recalculateRating(filmId: number) {
+    const [result] = await db
+      .select({
+        avg: sql<string>`COALESCE(ROUND(AVG(${reviews.rating})::numeric, 2), 0)`,
+        count: sql<number>`COUNT(*)::int`,
+      })
+      .from(reviews)
+      .where(eq(reviews.filmId, filmId));
+
+    await db
+      .update(films)
+      .set({
+        ratingAverage: result?.avg ?? '0.00',
+        ratingCount: result?.count ?? 0,
+        updatedAt: new Date(),
+      })
+      .where(eq(films.id, filmId));
   }
 
   /**
@@ -269,6 +383,56 @@ export class FilmService {
   static async deleteFilm(id: number) {
     const [deleted] = await db.delete(films).where(eq(films.id, id)).returning({ id: films.id });
     return deleted != null;
+  }
+
+  /**
+   * Upsert un film depuis OMDB (crée s'il n'existe pas, retourne l'existant sinon)
+   */
+  static async upsertByImdbId(data: {
+    imdbId: string;
+    title: string;
+    posterUrl?: string;
+    director?: string;
+    releaseYear?: number;
+    description?: string;
+  }) {
+    const [existing] = await db
+      .select()
+      .from(films)
+      .where(eq(films.imdbId, data.imdbId))
+      .limit(1);
+
+    if (existing) return existing;
+
+    const [created] = await db
+      .insert(films)
+      .values({
+        imdbId: data.imdbId,
+        title: data.title,
+        posterUrl: data.posterUrl ?? null,
+        director: data.director ?? null,
+        releaseYear: data.releaseYear ?? null,
+        description: data.description ?? null,
+        ratingAverage: '0.00',
+        ratingCount: 0,
+      })
+      .returning();
+
+    return created;
+  }
+
+  /**
+   * Récupère les avis d'un film via son imdbId (retourne [] si film pas encore en BDD)
+   */
+  static async getReviewsByImdbId(imdbId: string) {
+    const [film] = await db
+      .select({ id: films.id })
+      .from(films)
+      .where(eq(films.imdbId, imdbId))
+      .limit(1);
+
+    if (!film) return [];
+    return FilmService.getFilmReviews(film.id);
   }
 }
 

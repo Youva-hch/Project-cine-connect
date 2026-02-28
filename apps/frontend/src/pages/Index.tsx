@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { Star, MessageCircle, TrendingUp, ArrowRight } from "lucide-react";
-import { searchMovies } from "@/lib/omdb";
+import { Star, MessageCircle, TrendingUp } from "lucide-react";
+import { searchMovies, getMovieById } from "@/lib/omdb";
 import { FilmRow } from "@/components/FilmRow";
 import { Button } from "@/components/ui/button";
 
@@ -17,16 +17,22 @@ const SECTIONS = [
   { title: "Drame", query: "drama" },
 ];
 
+// Dune: Part Two (2024)
+const HERO_IMDB_ID = "tt15239678";
+
 export default function Index() {
+  const { data: heroFilm } = useQuery({
+    queryKey: ["hero-film", HERO_IMDB_ID],
+    queryFn: () => getMovieById(HERO_IMDB_ID),
+    staleTime: Infinity,
+  });
+
   const sectionQueries = SECTIONS.map((section) =>
     useQuery({
       queryKey: ["home-films", section.query],
       queryFn: () => searchMovies(section.query, 1),
     })
   );
-
-  const allFilms = sectionQueries.flatMap((q) => q.data?.Search ?? []);
-  const heroFilm = allFilms.find((f) => f.Poster && f.Poster !== "N/A");
 
   return (
     <div className="min-h-screen -mt-16 bg-cinema-gradient">
@@ -82,14 +88,21 @@ export default function Index() {
             {heroFilm?.Year && (
               <span className="font-medium text-white/80">{heroFilm.Year}</span>
             )}
-            <span className="flex items-center gap-1 text-accent font-semibold">
-              <Star className="h-4 w-4 fill-current" />
-              Soyez le premier à noter
-            </span>
+            {heroFilm?.Runtime && heroFilm.Runtime !== "N/A" && (
+              <span>{heroFilm.Runtime}</span>
+            )}
+            {heroFilm?.imdbRating && heroFilm.imdbRating !== "N/A" && (
+              <span className="flex items-center gap-1 text-accent font-semibold">
+                <Star className="h-4 w-4 fill-current" />
+                {heroFilm.imdbRating}/10 IMDb
+              </span>
+            )}
           </div>
 
           <p className="text-sm md:text-base text-white/65 max-w-md leading-relaxed">
-            Notez, critiquiez et discutez de vos films préférés avec une communauté de vrais passionnés du cinéma.
+            {heroFilm?.Plot && heroFilm.Plot !== "N/A"
+              ? heroFilm.Plot
+              : "Notez, critiquiez et discutez de vos films préférés avec une communauté de vrais passionnés du cinéma."}
           </p>
 
           {/* CTAs */}

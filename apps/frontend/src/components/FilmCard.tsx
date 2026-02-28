@@ -1,7 +1,8 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Star, MessageCircle, Film } from "lucide-react";
 import { useState } from "react";
 import type { OmdbMovie } from "@/lib/omdb";
+import { ReviewModal } from "@/components/ReviewModal";
 
 // Génère un dégradé unique basé sur le titre du film
 function getPosterGradient(title: string) {
@@ -36,10 +37,13 @@ interface FilmCardProps {
 
 export function FilmCard({ film, size = "normal" }: FilmCardProps) {
   const [imgError, setImgError] = useState(false);
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const navigate = useNavigate();
   const hasPoster = !imgError && film.Poster && film.Poster !== "N/A";
   const isLarge = size === "large";
 
   return (
+    <>
     <Link
       to={`/film/${film.imdbID}`}
       className={`group relative block flex-shrink-0 ${
@@ -166,17 +170,19 @@ export function FilmCard({ film, size = "normal" }: FilmCardProps) {
               title="Noter"
               className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-[11px] font-semibold text-white transition-all duration-150 hover:brightness-110"
               style={{
-                background:
-                  "linear-gradient(135deg, hsl(265,78%,58%) 0%, hsl(265,60%,44%) 100%)",
+                background: "linear-gradient(135deg, hsl(265,78%,58%) 0%, hsl(265,60%,44%) 100%)",
               }}
-              onClick={(e) => e.preventDefault()}
+              onClick={(e) => {
+                e.preventDefault();
+                setShowReviewModal(true);
+              }}
             >
               <Star className="h-3 w-3 fill-current" />
               Noter
             </button>
-            {/* Discuter */}
+            {/* Avis */}
             <button
-              title="Discuter"
+              title="Voir les avis"
               className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-[11px] font-semibold transition-all duration-150 hover:bg-white/20"
               style={{
                 border: "1px solid rgba(255,255,255,0.2)",
@@ -184,7 +190,10 @@ export function FilmCard({ film, size = "normal" }: FilmCardProps) {
                 background: "rgba(255,255,255,0.08)",
                 backdropFilter: "blur(4px)",
               }}
-              onClick={(e) => e.preventDefault()}
+              onClick={(e) => {
+                e.preventDefault();
+                navigate(`/film/${film.imdbID}`);
+              }}
             >
               <MessageCircle className="h-3 w-3" />
               Avis
@@ -193,5 +202,10 @@ export function FilmCard({ film, size = "normal" }: FilmCardProps) {
         </div>
       </div>
     </Link>
+
+    {showReviewModal && (
+      <ReviewModal film={film} onClose={() => setShowReviewModal(false)} />
+    )}
+  </>
   );
 }

@@ -8,6 +8,7 @@ import './strategies/google.strategy.js';
 import { healthRouter } from './routes/health.routes.js';
 import { userRouter } from './routes/user.routes.js';
 import { filmRouter } from './routes/film.routes.js';
+import { reviewRouter } from './routes/review.routes.js';
 import { categoryRouter } from './routes/category.routes.js';
 import { omdbRouter } from './routes/omdb.routes.js';
 import { authRouter } from './routes/auth.routes.js';
@@ -46,6 +47,7 @@ app.use('/health', healthRouter);
 app.use('/api/auth', authRouter);
 app.use('/users', userRouter);
 app.use('/api/films', filmRouter);
+app.use('/api/reviews', reviewRouter);
 app.use('/categories', categoryRouter);
 app.use('/omdb', omdbRouter);
 

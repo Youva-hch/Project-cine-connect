@@ -31,6 +31,7 @@ export const users = pgTable('users', {
 // ============================================================================
 export const films = pgTable('films', {
   id: serial('id').primaryKey(),
+  imdbId: text('imdb_id').unique(),
   title: text('title').notNull(),
   description: text('description'),
   director: text('director'),

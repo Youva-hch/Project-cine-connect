@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { FilmService } from '../services/film.service.js';
+import type { AuthRequest } from '../middlewares/auth.middleware.js';
 
 function getErrorMessage(error: unknown): string {
   if (error instanceof Error) return error.message;
@@ -284,6 +285,91 @@ export class FilmController {
         success: false,
         message: 'Erreur lors de la récupération des avis',
       });
+    }
+  }
+
+  /**
+   * POST /api/films/:id/reviews - Ajouter un avis (auth requis)
+   */
+  static async createReview(req: AuthRequest, res: Response) {
+    try {
+      const filmId = parseInt(req.params.id, 10);
+      if (isNaN(filmId)) {
+        return res.status(400).json({ success: false, message: 'ID film invalide' });
+      }
+
+      const { rating, comment } = req.body;
+      const ratingNum = parseInt(String(rating), 10);
+
+      if (!rating || isNaN(ratingNum) || ratingNum < 1 || ratingNum > 5) {
+        return res.status(400).json({
+          success: false,
+          message: 'La note doit être un entier entre 1 et 5',
+        });
+      }
+
+      const review = await FilmService.createReview({
+        userId: req.userId!,
+        filmId,
+        rating: ratingNum,
+        comment: typeof comment === 'string' ? comment.trim() : undefined,
+      });
+
+      return res.status(201).json({ success: true, data: review });
+    } catch (error: unknown) {
+      const pgError = error as { code?: string };
+      if (pgError?.code === '23505') {
+        return res.status(409).json({
+          success: false,
+          message: 'Vous avez déjà noté ce film',
+        });
+      }
+      console.error('Error creating review:', error);
+      return res.status(500).json({
+        success: false,
+        message: "Erreur lors de la création de l'avis",
+      });
+    }
+  }
+
+  /**
+   * POST /api/films/omdb-sync - Upsert un film OMDB dans la BDD, retourne l'id interne
+   */
+  static async omdbSync(req: Request, res: Response) {
+    try {
+      const { imdbId, title, posterUrl, director, releaseYear, description } = req.body;
+
+      if (!imdbId || !title) {
+        return res.status(400).json({ success: false, message: 'imdbId et title sont requis' });
+      }
+
+      const film = await FilmService.upsertByImdbId({
+        imdbId,
+        title,
+        posterUrl,
+        director,
+        releaseYear: releaseYear ? parseInt(String(releaseYear), 10) : undefined,
+        description,
+      });
+
+      return res.json({ success: true, data: film });
+    } catch (error) {
+      console.error('Error syncing OMDB film:', error);
+      return res.status(500).json({ success: false, message: 'Erreur lors de la synchronisation du film' });
+    }
+  }
+
+  /**
+   * GET /api/films/by-imdb/:imdbId/reviews - Reviews d'un film via imdbId
+   */
+  static async getReviewsByImdbId(req: Request, res: Response) {
+    try {
+      const { imdbId } = req.params;
+      const reviews = await FilmService.getReviewsByImdbId(imdbId);
+      return res.json({ success: true, data: reviews });
+    } catch (error) {
+      console.error('Error fetching reviews by imdbId:', error);
+      return res.status(500).json({ success: false, message: 'Erreur lors de la récupération des avis' });
     }
   }
 }

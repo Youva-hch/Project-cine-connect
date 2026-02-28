@@ -52,8 +52,8 @@ export function FilmRow({ title, films, size = "normal" }: FilmRowProps) {
           className="flex gap-2 overflow-x-auto scrollbar-hide px-4 md:px-14 pb-8"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
-          {films.map((film) => (
-            <FilmCard key={film.imdbID} film={film} size={size} />
+          {Array.from(new Map(films.map((f) => [f.imdbID, f])).values()).map((film, i) => (
+            <FilmCard key={`${film.imdbID}-${i}`} film={film} size={size} />
           ))}
         </div>
 
