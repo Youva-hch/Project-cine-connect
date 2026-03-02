@@ -1,14 +1,57 @@
-import { useState, useEffect, useRef } from "react";
-import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
-import { Search, Film as FilmIcon, Loader2 } from "lucide-react";
+import { useState, useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { Search, Film as FilmIcon, X } from "lucide-react";
 import { searchMovies } from "@/lib/omdb";
 import { FilmCard } from "@/components/FilmCard";
 import { Input } from "@/components/ui/input";
-import { apiRequest } from "@/api/config";
 import type { OmdbMovie } from "@/lib/omdb";
 
-const POPULAR_SEARCHES = [
+// ─── Genre tags ─────────────────────────────────────────────────────────────
+const GENRES: { label: string; queries: string[] }[] = [
+  {
+    label: "Action",
+    queries: ["john wick", "mad max", "die hard", "mission impossible", "terminator", "top gun", "gladiator", "batman begins"],
+  },
+  {
+    label: "Comedie",
+    queries: ["superbad", "hangover", "bridesmaids", "step brothers", "anchorman", "tropic thunder", "game night", "knives out"],
+  },
+  {
+    label: "Horreur",
+    queries: ["conjuring", "halloween", "it pennywise", "get out", "hereditary", "midsommar", "sinister", "quiet place"],
+  },
+  {
+    label: "Drame",
+    queries: ["shawshank", "godfather", "forrest gump", "schindler", "whiplash", "parasite", "joker", "1917"],
+  },
+  {
+    label: "Sci-Fi",
+    queries: ["dune", "inception", "interstellar", "blade runner", "matrix", "arrival", "gravity", "ex machina"],
+  },
+  {
+    label: "Thriller",
+    queries: ["gone girl", "prestige", "fight club", "zodiac", "silence lambs", "seven 1995", "memento", "nightcrawler"],
+  },
+  {
+    label: "Animation",
+    queries: ["toy story", "lion king", "frozen", "finding nemo", "shrek", "kung fu panda", "moana", "spider-man animated"],
+  },
+  {
+    label: "Aventure",
+    queries: ["indiana jones", "jurassic park", "pirates caribbean", "lord of the rings", "avatar", "back future", "king kong", "jungle book"],
+  },
+  {
+    label: "Crime",
+    queries: ["pulp fiction", "goodfellas", "heat 1995", "ocean eleven", "scarface", "casino royale", "training day", "departed"],
+  },
+  {
+    label: "Romance",
+    queries: ["titanic", "la la land", "notebook", "pride prejudice", "before sunrise", "eternal sunshine", "about time", "her 2013"],
+  },
+];
+
+// ─── Films populaires par défaut ─────────────────────────────────────────
+const POPULAR_QUERIES = [
   "batman", "marvel", "star wars", "harry potter", "lord of the rings",
   "spider-man", "iron man", "avengers", "james bond", "fast furious",
   "mission impossible", "transformers", "pirates caribbean", "jurassic park", "matrix",
@@ -25,140 +68,152 @@ const POPULAR_SEARCHES = [
   "rocky", "karate kid", "casino royale", "ocean eleven", "heat 1995",
 ];
 
-export default function Films() {
-  const [search, setSearch] = useState("");
-  const [query, setQuery] = useState("");
-  const loaderRef = useRef<HTMLDivElement>(null);
-
-  // When no search query, load many popular films from multiple searches
-  const { data: popularData, isLoading: popularLoading } = useQuery({
-    queryKey: ["popular-films"],
-    queryFn: async () => {
-      const results = await Promise.all(
-        POPULAR_SEARCHES.map((q) => searchMovies(q, 1))
-      );
-      // Merge all results, deduplicate by imdbID
-      const seen = new Set<string>();
-      const allFilms: OmdbMovie[] = [];
-      for (const res of results) {
-        for (const film of res.Search ?? []) {
-          if (!seen.has(film.imdbID)) {
-            seen.add(film.imdbID);
-            allFilms.push(film);
-          }
-        }
-      }
-      return allFilms;
-    },
-    enabled: !query,
-  });
-
-  // When user searches, use infinite query for pagination
-  const {
-    data: searchData,
-    isLoading: searchLoading,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-  } = useInfiniteQuery({
-    queryKey: ["search-films", query],
-    queryFn: ({ pageParam = 1 }) => searchMovies(query, pageParam),
-    getNextPageParam: (lastPage, allPages) => {
-      if (!lastPage.totalResults) return undefined;
-      const totalPages = Math.ceil(Number(lastPage.totalResults) / 10);
-      const nextPage = allPages.length + 1;
-      return nextPage <= totalPages ? nextPage : undefined;
-    },
-    initialPageParam: 1,
-    enabled: !!query,
-  });
-
-  // Flatten search results and deduplicate
-  const searchFilms = (() => {
-    if (!searchData) return [];
-    const seen = new Set<string>();
-    const films: OmdbMovie[] = [];
-    for (const page of searchData.pages) {
-      for (const film of page.Search ?? []) {
-        if (!seen.has(film.imdbID)) {
-          seen.add(film.imdbID);
-          films.push(film);
-        }
+async function fetchFilmsForQueries(queries: string[]): Promise<OmdbMovie[]> {
+  const results = await Promise.allSettled(queries.map((q) => searchMovies(q, 1)));
+  const seen = new Set<string>();
+  const films: OmdbMovie[] = [];
+  for (const result of results) {
+    if (result.status === "rejected") continue;
+    for (const film of result.value.Search ?? []) {
+      if (!seen.has(film.imdbID)) {
+        seen.add(film.imdbID);
+        films.push(film);
       }
     }
-    return films;
-  })();
+  }
+  return films;
+}
 
-  const films = query ? searchFilms : (popularData ?? []);
-  const isLoading = query ? searchLoading : popularLoading;
+export default function Films() {
+  const [search, setSearch] = useState("");
+  const [activeGenre, setActiveGenre] = useState<string | null>(null);
 
-  // Infinite scroll observer
-  useEffect(() => {
-    if (!query || !hasNextPage) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
-          fetchNextPage();
-        }
-      },
-      { threshold: 0.1 }
-    );
-    if (loaderRef.current) observer.observe(loaderRef.current);
-    return () => observer.disconnect();
-  }, [query, hasNextPage, isFetchingNextPage, fetchNextPage]);
-
-  const { data: categories } = useQuery({
-    queryKey: ["categories"],
-    queryFn: async () => {
-      const res = await apiRequest<{ success?: boolean; data?: { id: number; name: string; slug: string }[] }>("/categories");
-      return res.data ?? [];
-    },
+  // Films populaires (défaut)
+  const { data: popularFilms, isLoading: popularLoading } = useQuery({
+    queryKey: ["popular-films"],
+    queryFn: () => fetchFilmsForQueries(POPULAR_QUERIES),
+    staleTime: Infinity,
+    enabled: !activeGenre,
   });
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    setQuery(search.trim());
+  // Films par genre
+  const activeGenreData = GENRES.find((g) => g.label === activeGenre);
+  const { data: genreFilms, isLoading: genreLoading } = useQuery({
+    queryKey: ["genre-films", activeGenre],
+    queryFn: () => fetchFilmsForQueries(activeGenreData!.queries),
+    staleTime: Infinity,
+    enabled: !!activeGenre && !!activeGenreData,
+  });
+
+  const baseFilms = activeGenre ? (genreFilms ?? []) : (popularFilms ?? []);
+  const isLoading = activeGenre ? genreLoading : popularLoading;
+
+  // Filtrage local par texte en temps réel
+  const films = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return baseFilms;
+    return baseFilms.filter((f) =>
+      f.Title.toLowerCase().includes(q) || f.Year.includes(q)
+    );
+  }, [baseFilms, search]);
+
+  const handleGenreClick = (label: string) => {
+    setActiveGenre((prev) => (prev === label ? null : label));
+    setSearch("");
+  };
+
+  const clearFilters = () => {
+    setActiveGenre(null);
+    setSearch("");
   };
 
   return (
     <div className="container mx-auto px-4 py-8 space-y-8">
       {/* Header */}
-      <div className="text-center space-y-4">
+      <div className="text-center space-y-2">
         <h1 className="font-display text-5xl text-gradient-cinema">Films</h1>
-        <p className="text-muted-foreground">
-          {query
-            ? `Résultats pour "${query}" — ${searchData?.pages?.[0]?.totalResults ?? 0} films trouvés`
-            : `${films.length} films populaires à découvrir`}
+        <p style={{ color: "rgba(255,255,255,0.55)" }} className="text-sm">
+          {isLoading
+            ? "Chargement des films..."
+            : activeGenre
+            ? `Genre : ${activeGenre} — ${films.length} films`
+            : search
+            ? `"${search}" — ${films.length} films`
+            : `${baseFilms.length} films a decouvrir`}
         </p>
       </div>
 
-      {/* Search */}
-      <form onSubmit={handleSearch} className="max-w-xl mx-auto relative">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+      {/* Barre de recherche */}
+      <div className="max-w-xl mx-auto relative">
+        <Search
+          className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5"
+          style={{ color: "rgba(255,255,255,0.4)" }}
+        />
         <Input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Rechercher un film..."
+          placeholder="Rechercher parmi les films..."
           className="pl-12 h-12 text-base"
+          style={{
+            background: "rgba(255,255,255,0.05)",
+            border: "1px solid rgba(255,255,255,0.12)",
+            color: "white",
+          }}
         />
-      </form>
+        {search && (
+          <button
+            onClick={() => setSearch("")}
+            className="absolute right-4 top-1/2 -translate-y-1/2"
+            style={{ color: "rgba(255,255,255,0.4)" }}
+          >
+            <X className="h-4 w-4" />
+          </button>
+        )}
+      </div>
 
-      {/* Categories */}
-      {categories && categories.length > 0 && (
-        <div className="flex flex-wrap justify-center gap-2">
-          {categories.map((cat: { id: number; name: string; slug: string }) => (
-            <Link
-              key={cat.id}
-              to={`/films/${cat.slug}`}
-              className="px-4 py-2 rounded-full border border-border bg-card text-card-foreground text-xs font-medium hover:bg-primary hover:text-primary-foreground transition-colors"
+      {/* Tags genres */}
+      <div className="flex flex-wrap justify-center gap-2">
+        {GENRES.map((genre) => {
+          const isActive = activeGenre === genre.label;
+          return (
+            <button
+              key={genre.label}
+              onClick={() => handleGenreClick(genre.label)}
+              className="px-4 py-2 rounded-full text-sm font-medium transition-all duration-200"
+              style={{
+                background: isActive
+                  ? "linear-gradient(135deg, hsl(265,78%,55%), hsl(280,70%,45%))"
+                  : "rgba(255,255,255,0.06)",
+                border: isActive
+                  ? "1px solid hsl(265,78%,72%)"
+                  : "1px solid rgba(255,255,255,0.12)",
+                color: isActive ? "white" : "rgba(255,255,255,0.7)",
+                boxShadow: isActive ? "0 0 16px rgba(147,51,234,0.4)" : "none",
+                transform: isActive ? "scale(1.05)" : "scale(1)",
+              }}
             >
-              {cat.name}
-            </Link>
-          ))}
-        </div>
-      )}
+              {genre.label}
+            </button>
+          );
+        })}
 
-      {/* Results */}
+        {/* Bouton reset si filtre actif */}
+        {(activeGenre || search) && (
+          <button
+            onClick={clearFilters}
+            className="px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 flex items-center gap-1"
+            style={{
+              background: "rgba(239,68,68,0.15)",
+              border: "1px solid rgba(239,68,68,0.35)",
+              color: "rgb(252,165,165)",
+            }}
+          >
+            <X className="h-3 w-3" /> Tout effacer
+          </button>
+        )}
+      </div>
+
+      {/* Résultats */}
       {isLoading ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
           {Array.from({ length: 20 }).map((_, i) => (
@@ -172,29 +227,27 @@ export default function Films() {
           ))}
         </div>
       ) : films.length > 0 ? (
-        <>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
-            {films.map((film) => (
-              <FilmCard key={film.imdbID} film={film} />
-            ))}
-          </div>
-
-          {/* Infinite scroll loader */}
-          {query && hasNextPage && (
-            <div ref={loaderRef} className="flex justify-center py-8">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            </div>
-          )}
-          {query && isFetchingNextPage && (
-            <div className="flex justify-center py-4">
-              <p className="text-sm text-muted-foreground">Chargement de plus de films...</p>
-            </div>
-          )}
-        </>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
+          {films.map((film) => (
+            <FilmCard key={film.imdbID} film={film} />
+          ))}
+        </div>
       ) : (
-        <div className="text-center py-20 text-muted-foreground">
+        <div className="text-center py-20" style={{ color: "rgba(255,255,255,0.4)" }}>
           <FilmIcon className="h-16 w-16 mx-auto mb-4 opacity-30" />
-          <p>Aucun film trouvé. Essayez une autre recherche.</p>
+          <p className="text-lg">Aucun film trouve</p>
+          {search && (
+            <p className="text-sm mt-2">
+              Essayez un autre titre ou{" "}
+              <button
+                onClick={clearFilters}
+                style={{ color: "hsl(265,78%,72%)" }}
+                className="underline"
+              >
+                effacez les filtres
+              </button>
+            </p>
+          )}
         </div>
       )}
     </div>

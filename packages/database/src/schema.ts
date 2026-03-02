@@ -124,6 +124,22 @@ export const friends = pgTable(
 );
 
 // ============================================================================
+// Table: notifications
+// ============================================================================
+export const notifications = pgTable('notifications', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  type: text('type').notNull(), // 'friend_request' | 'friend_accepted' | 'message'
+  relatedUserId: integer('related_user_id')
+    .references(() => users.id, { onDelete: 'cascade' }),
+  message: text('message').notNull(),
+  isRead: boolean('is_read').default(false).notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+// ============================================================================
 // Table de liaison: film_categories (N-N)
 // ============================================================================
 export const filmCategories = pgTable(
@@ -151,6 +167,7 @@ export const usersRelations = relations(users, ({ many }) => ({
   receivedMessages: many(messages, { relationName: 'receiver' }),
   friendships: many(friends, { relationName: 'user' }),
   friendOf: many(friends, { relationName: 'friend' }),
+  notifications: many(notifications, { relationName: 'notifTarget' }),
 }));
 
 export const filmsRelations = relations(films, ({ many }) => ({
@@ -241,4 +258,8 @@ export type NewFriend = InferInsertModel<typeof friends>;
 // Types pour la table film_categories
 export type FilmCategory = InferSelectModel<typeof filmCategories>;
 export type NewFilmCategory = InferInsertModel<typeof filmCategories>;
+
+// Types pour la table notifications
+export type Notification = InferSelectModel<typeof notifications>;
+export type NewNotification = InferInsertModel<typeof notifications>;
 

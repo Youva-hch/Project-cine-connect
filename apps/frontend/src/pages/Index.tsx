@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Star, MessageCircle, TrendingUp } from "lucide-react";
@@ -17,13 +18,34 @@ const SECTIONS = [
   { title: "Drame", query: "drama" },
 ];
 
-// Dune: Part Two (2024)
-const HERO_IMDB_ID = "tt15239678";
+// Films mis en avant — un est choisi aléatoirement à chaque chargement
+const HERO_FILMS = [
+  "tt15239678", // Dune: Part Two (2024)
+  "tt15398776", // Oppenheimer (2023)
+  "tt1877830",  // The Batman (2022)
+  "tt1745960",  // Top Gun: Maverick (2022)
+  "tt6710474",  // Everything Everywhere All at Once (2022)
+  "tt4154796",  // Avengers: Endgame (2019)
+  "tt7286456",  // Joker (2019)
+  "tt6751668",  // Parasite (2019)
+  "tt8579674",  // 1917 (2019)
+  "tt1392190",  // Mad Max: Fury Road (2015)
+  "tt1856101",  // Blade Runner 2049 (2017)
+  "tt0816692",  // Interstellar (2014)
+  "tt1375666",  // Inception (2010)
+  "tt0468569",  // The Dark Knight (2008)
+  "tt0111161",  // The Shawshank Redemption (1994)
+];
 
 export default function Index() {
+  // Choix aléatoire au montage du composant (change à chaque rechargement)
+  const [heroId] = useState(
+    () => HERO_FILMS[Math.floor(Math.random() * HERO_FILMS.length)]
+  );
+
   const { data: heroFilm } = useQuery({
-    queryKey: ["hero-film", HERO_IMDB_ID],
-    queryFn: () => getMovieById(HERO_IMDB_ID),
+    queryKey: ["hero-film", heroId],
+    queryFn: () => getMovieById(heroId),
     staleTime: Infinity,
   });
 
@@ -107,7 +129,7 @@ export default function Index() {
 
           {/* CTAs */}
           <div className="flex items-center gap-3 pt-1">
-            <Link to={heroFilm ? `/film/${heroFilm.imdbID}` : "/films"}>
+            <Link to={`/film/${heroId}`}>
               <Button
                 size="lg"
                 className="gap-2 font-semibold rounded-sm px-7 text-white"

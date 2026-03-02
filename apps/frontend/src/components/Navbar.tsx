@@ -1,12 +1,14 @@
 import { Link, useLocation } from "react-router-dom";
-import { Film, Home, MessageCircle, User, LogIn, LogOut, Menu, X, Search } from "lucide-react";
+import { Film, Home, MessageCircle, User, LogIn, LogOut, Menu, X, Search, Users } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
+import { NotificationBell } from "@/components/NotificationBell";
 import { useState, useEffect } from "react";
 
 const navItems = [
   { to: "/", label: "Accueil", icon: Home },
   { to: "/films", label: "Films", icon: Film },
+  { to: "/amis", label: "Amis", icon: Users },
   { to: "/discussion", label: "Discussion", icon: MessageCircle },
 ];
 
@@ -111,6 +113,7 @@ export function Navbar() {
 
           {user ? (
             <>
+              <NotificationBell />
               <Link to="/profil">
                 <button
                   className="w-8 h-8 rounded-full flex items-center justify-center transition-all"

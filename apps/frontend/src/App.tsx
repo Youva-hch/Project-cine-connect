@@ -13,6 +13,8 @@ import Auth from "./pages/Auth";
 import AuthCallback from "./pages/AuthCallback";
 import Profile from "./pages/Profile";
 import Discussion from "./pages/Discussion";
+import Friends from "./pages/Friends";
+import Chat from "./pages/Chat";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -35,6 +37,8 @@ const App = () => (
               <Route path="/auth/callback" element={<AuthCallback />} />
               <Route path="/profil" element={<Profile />} />
               <Route path="/discussion" element={<Discussion />} />
+              <Route path="/amis" element={<Friends />} />
+              <Route path="/chat/:friendId" element={<Chat />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </div>
