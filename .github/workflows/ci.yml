@@ -1,0 +1,34 @@
+
+
+name: Tests CI
+
+on:
+  push:
+    branches: ['*']
+  pull_request:
+    branches: ['*']
+
+jobs:
+  tests:
+    name: Lancer les tests
+    runs-on: ubuntu-latest  
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Installer Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Installer pnpm
+        run: corepack enable && corepack prepare pnpm@8.15.0 --activate
+
+      - name: Installer les dépendances
+        run: pnpm install --store-dir ~/.pnpm-store
+
+      - name: Tests backend
+        run: pnpm --filter backend test
+
+      - name: Tests frontend
+        run: pnpm --filter frontend test
