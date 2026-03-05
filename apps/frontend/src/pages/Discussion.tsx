@@ -29,19 +29,6 @@ interface Message {
   senderAvatar?: string | null;
 }
 
-// Socket singleton
-let socket: Socket | null = null;
-
-function getSocket(token: string): Socket {
-  if (!socket || !socket.connected) {
-    socket = io(API || "http://localhost:3000", {
-      auth: { token },
-      transports: ["websocket"],
-    });
-  }
-  return socket;
-}
-
 function Avatar({ name, src, size = 40 }: { name: string; src?: string | null; size?: number }) {
   if (src) {
     return (
@@ -79,6 +66,7 @@ export default function Discussion() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const bottomRef = useRef<HTMLDivElement>(null);
+  const socketRef = useRef<Socket | null>(null);
   const token = getToken();
 
   const selectedId = searchParams.get("with") ? parseInt(searchParams.get("with")!, 10) : null;
@@ -114,21 +102,24 @@ export default function Discussion() {
 
   // Connexion socket
   useEffect(() => {
-    if (!token || !selectedId || !user) return;
-    const s = getSocket(token);
-    s.on("receiveMessage", (msg: Message) => {
-      const isRelevant =
-        (msg.senderId === selectedId && Number(user.id) === msg.receiverId) ||
-        (Number(user.id) === msg.senderId && msg.receiverId === selectedId);
-      if (isRelevant) {
-        setMessages((prev) => {
-          if (prev.some((m) => m.id === msg.id)) return prev;
-          return [...prev, msg];
-        });
-      }
+    if (!token || !user) return;
+
+    socketRef.current = io(API || "http://localhost:3000", {
+      auth: { token },
+      transports: ["websocket"],
     });
-    return () => { s.off("receiveMessage"); };
-  }, [token, selectedId, user?.id]);
+
+    socketRef.current.on("receiveMessage", (msg: Message) => {
+      setMessages((prev) => {
+        if (prev.some((m) => m.id === msg.id)) return prev;
+        return [...prev, msg];
+      });
+    });
+
+    return () => {
+      socketRef.current?.disconnect();
+    };
+  }, [token, user?.id]);
 
   // Scroll auto
   useEffect(() => {
@@ -137,8 +128,8 @@ export default function Discussion() {
 
   const sendMessage = () => {
     const content = input.trim();
-    if (!content || !selectedId) return;
-    getSocket(token).emit("sendMessage", { receiverId: selectedId, content });
+    if (!content || !selectedId || !socketRef.current) return;
+    socketRef.current.emit("sendMessage", { receiverId: selectedId, content });
     setInput("");
   };
 

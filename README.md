@@ -1,198 +1,167 @@
-# 🎬 CineConnect
+# CinéConnect
 
-CineConnect est une application web full‑stack dédiée aux passionnés de cinéma. Elle permet de découvrir des films, de les noter, de laisser des avis, d’interagir avec ses amis et de discuter en temps réel.
-
-Ce projet a été réalisé dans un cadre **étudiant**, avec une architecture moderne **backend + frontend**, en respectant de bonnes pratiques professionnelles (API REST, authentification JWT, WebSocket, tests, documentation).
+Application web full-stack dédiée aux passionnés de cinéma. Découvrez des films, laissez des avis, ajoutez des amis et discutez en temps réel.
 
 ---
 
-## 🚀 Fonctionnalités principales
+## Fonctionnalités
 
-### 🔐 Authentification
-
-* Inscription et connexion des utilisateurs
-* Authentification sécurisée avec **JWT**
-* Gestion des sessions et protection des routes
-
-### 🎥 Films
-
-* Liste des films avec filtres (catégorie, année, note)
-* Détail d’un film
-* Système de notation (étoiles) et commentaires
-* Calcul automatique de la note moyenne
-
-### 👥 Réseau social
-
-* Système d’amis (demande, acceptation, refus)
-* Liste d’amis
-* Profil utilisateur personnalisable
-
-### 💬 Chat en temps réel
-
-* Messagerie instantanée entre amis
-* WebSocket avec **Socket.io**
-* Indicateurs de présence (en ligne / hors ligne)
-
-### 📄 Documentation
-
-* Documentation complète de l’API avec **Swagger**
+- **Authentification** — Inscription, connexion, Google OAuth, JWT
+- **Films** — Liste avec filtres (catégorie, année, note), détail, avis et notation
+- **Amis** — Demandes d'amis, acceptation, refus, suppression
+- **Messagerie** — Chat en temps réel entre amis (Socket.io)
+- **Notifications** — Alertes pour les demandes d'amis et messages reçus
+- **Profil** — Modification du nom et de l'avatar
+- **API documentée** — Interface Swagger accessible sur `/api-docs`
 
 ---
 
-## 🛠️ Stack technique
+## Stack technique
 
 ### Backend
-
-* **Node.js**
-* **Express.js**
-* **MongoDB** (Mongoose)
-* **JWT** (authentification)
-* **Socket.io** (temps réel)
-* **Swagger** (documentation API)
-* **Jest / Supertest** (tests)
+- **Node.js** + **TypeScript**
+- **Express.js** — serveur HTTP
+- **PostgreSQL** — base de données relationnelle
+- **Drizzle ORM** — requêtes et migrations
+- **JWT** — authentification
+- **Socket.io** — messagerie temps réel
+- **Swagger** (swagger-jsdoc + swagger-ui-express) — documentation API
+- **Vitest** + **Supertest** — tests
 
 ### Frontend
-
-* **React**
-* **TypeScript**
-* **Vite**
-* **Axios**
-* **TanStack Query**
-* **Socket.io‑client**
-* **React Context API**
+- **React 18** + **TypeScript**
+- **Vite** — bundler
+- **React Router DOM** — navigation
+- **TanStack Query** — gestion des requêtes et du cache
+- **Tailwind CSS** + **Radix UI** — interface
+- **React Hook Form** + **Zod** — formulaires et validation
+- **Socket.io-client** — messagerie temps réel
+- **Vitest** — tests unitaires
 
 ### Outils
-
-* Git & GitHub
-* PNPM
-* Docker (optionnel)
+- **pnpm workspaces** — monorepo
+- **Docker** + **docker-compose** — base de données PostgreSQL
+- **OMDb API** — données des films
 
 ---
 
-## 📁 Architecture du projet
+## Architecture du projet
 
-```text
-cineconnect/
-├── Project-cine-connect/
-│   ├── backend/
-│   │   ├── src/
+```
+Project-cine-connect/
+├── apps/
+│   ├── backend/          # API Express
+│   │   └── src/
 │   │       ├── controllers/
 │   │       ├── routes/
-│   │       ├── models/
-│   │       ├── middlewares/
-│   │       ├── utils/
-│   │       └── app.ts
-│   └── tests/
-│
-│   ├── frontend/
-│   │   ├── src/
-│   │       ├── components/
-│   │       ├── pages/
-│   │       ├── context/
-│   │       ├── hooks/
 │   │       ├── services/
-│   │       └── main.tsx
-│
+│   │       ├── middlewares/
+│   │       └── __tests__/
+│   └── frontend/         # React + Vite
+│       └── src/
+│           ├── components/
+│           ├── pages/
+│           ├── context/
+│           └── __tests__/
+├── packages/
+│   └── database/         # Schéma Drizzle + migrations
+├── docker-compose.yml
+├── .env.example
 └── README.md
 ```
 
 ---
 
-## ⚙️ Installation et lancement
+## Installation et lancement
 
 ### Prérequis
 
-* Node.js >= 18
-* PNPM
-* MongoDB
+- Node.js >= 18
+- pnpm (`npm install -g pnpm`)
+- Docker + Docker Compose
 
-### 1️⃣ Cloner le projet
+### 1. Cloner le projet
 
 ```bash
 git clone https://github.com/Youva-hch/Project-cine-connect.git
 cd Project-cine-connect
 ```
 
-### 2️⃣ Backend
+### 2. Configurer les variables d'environnement
 
-```bash
-cd backend
-pnpm install
-pnpm dev
-```
-
-Créer un fichier `.env` :
+Créer un fichier `.env` à la racine (voir `.env.example`) :
 
 ```env
-PORT=5000
-MONGO_URI=mongodb://localhost:27017/cineconnect
-JWT_SECRET=supersecret
-JWT_EXPIRES_IN=1d
+JWT_SECRET=votre_secret_jwt
+OMDB_API_KEY=votre_clé_omdb
+GOOGLE_CLIENT_ID=votre_client_id_google
+GOOGLE_CLIENT_SECRET=votre_secret_google
+GOOGLE_CALLBACK_URL=http://localhost:3000/api/auth/google/callback
+FRONTEND_URL=http://localhost:5173
 ```
 
-### 3️⃣ Frontend
+### 3. Lancer la base de données
 
 ```bash
-cd frontend
+docker-compose up -d
+```
+
+### 4. Installer les dépendances et migrer
+
+```bash
 pnpm install
+pnpm db:migrate
+```
+
+### 5. Lancer le projet
+
+```bash
+# Backend (port 3000)
+cd apps/backend
+pnpm dev
+
+# Frontend (port 5173) — dans un autre terminal
+cd apps/frontend
 pnpm dev
 ```
 
+L'application est disponible sur `http://localhost:5173`
+
 ---
 
-## 🧪 Tests
-
-### Backend
+## Tests
 
 ```bash
+# Tests backend (depuis apps/backend)
+pnpm test
+
+# Tests frontend (depuis apps/frontend)
 pnpm test
 ```
 
-### Frontend
+Les tests couvrent :
+- Génération et vérification des tokens JWT
+- Routes de l'API (health check, routes protégées)
+- Logique de filtrage des films (côté frontend)
 
-```bash
-pnpm test
+---
+
+## Documentation API
+
+La documentation Swagger est disponible une fois le backend lancé :
+
+```
+http://localhost:3000/api-docs
 ```
 
 ---
 
-## 📚 Documentation API
+## Auteurs
 
-La documentation Swagger est accessible à l’adresse :
-
-```
-http://localhost:5000/api-docs
-```
+- **Youva HCH**
 
 ---
 
-## 📈 Améliorations possibles
+## Licence
 
-* Filtres avancés (réalisateur, durée)
-* Notifications temps réel
-* Déploiement cloud (Docker / VPS)
-* Mode sombre
-
----
-
-## 👨‍🎓 Contexte pédagogique
-
-Ce projet a été réalisé dans le cadre d’un **projet scolaire**, avec pour objectifs :
-
-* Mettre en pratique une architecture full‑stack
-* Travailler en équipe avec Git
-* Concevoir une API REST sécurisée
-* Utiliser le temps réel avec WebSocket
-
----
-
-## 👥 Auteurs
-
-* **Youva HCH**
-* Projet étudiant
-
----
-
-## 📜 Licence
-
-Projet à but pédagogique – libre d’utilisation pour l’apprentissage.
+Projet réalisé dans un cadre scolaire — libre d'utilisation pour l'apprentissage.

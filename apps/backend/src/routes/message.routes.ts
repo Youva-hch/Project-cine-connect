@@ -7,7 +7,36 @@ import { FriendService } from '../services/friend.service.js';
 
 export const messageRouter: IRouter = Router();
 
-// GET /api/messages/:friendId — historique de la conversation
+/**
+ * @swagger
+ * tags:
+ *   name: Messages
+ *   description: Messages privés entre amis
+ */
+
+/**
+ * @swagger
+ * /api/messages/{friendId}:
+ *   get:
+ *     summary: Historique de la conversation avec un ami
+ *     tags: [Messages]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: friendId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID de l'ami avec qui on veut voir la conversation
+ *     responses:
+ *       200:
+ *         description: Liste des messages de la conversation
+ *       403:
+ *         description: Vous ne pouvez voir que vos conversations avec vos amis
+ *       401:
+ *         description: Non authentifié
+ */
 messageRouter.get('/:friendId', requireAuth, async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.userId!;

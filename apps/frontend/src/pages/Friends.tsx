@@ -10,17 +10,16 @@ function getToken() {
   return localStorage.getItem("token") ?? "";
 }
 
-async function apiFetch<T>(path: string, options?: RequestInit): Promise<T> {
+async function apiFetch(path: string, options?: RequestInit) {
   const res = await fetch(`${API}${path}`, {
     ...options,
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${getToken()}`,
-      ...(options?.headers ?? {}),
     },
   });
   const json = await res.json();
-  if (!json.success) throw new Error(json.message ?? "Erreur");
+  if (!json.success) throw new Error(json.message || "Erreur");
   return json.data;
 }
 
@@ -96,22 +95,22 @@ export default function Friends() {
   // ── Queries ──────────────────────────────────────────────────────────────
   const { data: friends = [], isLoading: friendsLoading } = useQuery({
     queryKey: ["friends"],
-    queryFn: () => apiFetch<FriendUser[]>("/api/friends"),
+    queryFn: () => apiFetch("/api/friends"),
   });
 
   const { data: requests = [], isLoading: requestsLoading } = useQuery({
     queryKey: ["friend-requests"],
-    queryFn: () => apiFetch<RequestUser[]>("/api/friends/requests"),
+    queryFn: () => apiFetch("/api/friends/requests"),
   });
 
   const { data: sent = [] } = useQuery({
     queryKey: ["friend-sent"],
-    queryFn: () => apiFetch<SentUser[]>("/api/friends/sent"),
+    queryFn: () => apiFetch("/api/friends/sent"),
   });
 
   const { data: searchResults = [], isFetching: searching } = useQuery({
     queryKey: ["user-search", searchQuery],
-    queryFn: () => apiFetch<SearchUser[]>(`/api/friends/search?q=${encodeURIComponent(searchQuery)}`),
+    queryFn: () => apiFetch(`/api/friends/search?q=${encodeURIComponent(searchQuery)}`),
     enabled: searchQuery.trim().length >= 2,
   });
 

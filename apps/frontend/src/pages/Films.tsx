@@ -69,19 +69,23 @@ const POPULAR_QUERIES = [
 ];
 
 async function fetchFilmsForQueries(queries: string[]): Promise<OmdbMovie[]> {
-  const results = await Promise.allSettled(queries.map((q) => searchMovies(q, 1)));
-  const seen = new Set<string>();
-  const films: OmdbMovie[] = [];
+  const allFilms: OmdbMovie[] = [];
+  const seenIds: string[] = [];
+
+  const promises = queries.map((q) => searchMovies(q, 1).catch(() => null));
+  const results = await Promise.all(promises);
+
   for (const result of results) {
-    if (result.status === "rejected") continue;
-    for (const film of result.value.Search ?? []) {
-      if (!seen.has(film.imdbID)) {
-        seen.add(film.imdbID);
-        films.push(film);
+    if (!result || !result.Search) continue;
+    for (const film of result.Search) {
+      if (!seenIds.includes(film.imdbID)) {
+        seenIds.push(film.imdbID);
+        allFilms.push(film);
       }
     }
   }
-  return films;
+
+  return allFilms;
 }
 
 export default function Films() {

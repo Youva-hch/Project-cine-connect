@@ -4,10 +4,7 @@ import type { AuthRequest } from '../middlewares/auth.middleware.js';
 
 function getErrorMessage(error: unknown): string {
   if (error instanceof Error) return error.message;
-  const err = error as { message?: string; cause?: unknown };
-  if (err.message) return String(err.message);
-  if (err.cause instanceof Error) return err.cause.message;
-  return String(error);
+  return "Une erreur est survenue";
 }
 
 /**

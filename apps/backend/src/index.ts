@@ -20,6 +20,7 @@ import { notificationRouter } from './routes/notification.routes.js';
 import { messageRouter } from './routes/message.routes.js';
 import { MessageService } from './services/message.service.js';
 import { FriendService } from './services/friend.service.js';
+import { setupSwagger } from './swagger.js';
 
 const app: Express = express();
 const PORT = process.env.PORT || 3000;
@@ -60,6 +61,9 @@ app.use('/api/messages', messageRouter);
 app.get('/', (_req, res) => {
   res.json({ message: 'CinéConnect API - Bienvenue !' });
 });
+
+// Documentation Swagger (accessible sur /api-docs)
+setupSwagger(app);
 
 // ─── Serveur HTTP + Socket.io ─────────────────────────────────────────────
 const server = http.createServer(app);
@@ -131,6 +135,9 @@ io.on('connection', (socket) => {
     console.log(`🔴 User ${userId} déconnecté`);
   });
 });
+
+// Export de l'app pour les tests
+export { app };
 
 // Démarrage
 server.listen(Number(PORT), '0.0.0.0', () => {
