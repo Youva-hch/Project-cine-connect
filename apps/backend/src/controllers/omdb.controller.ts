@@ -116,6 +116,13 @@ export class OMDbController {
         data: result,
       });
     } catch (error) {
+      // "Movie not found!" n'est pas une erreur serveur, juste aucun résultat
+      if (error instanceof Error && error.message === 'Movie not found!') {
+        return res.json({
+          success: true,
+          data: { Search: [], totalResults: '0', Response: 'False' },
+        });
+      }
       console.error('Error searching OMDb:', error);
       return res.status(500).json({
         success: false,
