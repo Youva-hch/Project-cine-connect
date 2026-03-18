@@ -29,7 +29,7 @@ const Navbar: React.FC<NavbarProps> = ({ onSearch }) => {
             <Link
               to="/"
               className="text-lg text-green-700 transition hover:text-green-500"
-              activeProps={{ className: "text-green-500 text-lg" }}
+              activeProps={{ className: "text-lg text-green-500" }}
             >
               Accueil
             </Link>
@@ -37,7 +37,7 @@ const Navbar: React.FC<NavbarProps> = ({ onSearch }) => {
             <Link
               to="/films"
               className="text-lg text-green-700 transition hover:text-green-500"
-              activeProps={{ className: "text-green-500 text-lg" }}
+              activeProps={{ className: "text-lg text-green-500" }}
             >
               Films
             </Link>
@@ -45,9 +45,25 @@ const Navbar: React.FC<NavbarProps> = ({ onSearch }) => {
             <Link
               to="/browse"
               className="text-lg text-green-700 transition hover:text-green-500"
-              activeProps={{ className: "text-green-500 text-lg" }}
+              activeProps={{ className: "text-lg text-green-500" }}
             >
               Explorer
+            </Link>
+
+            <Link
+              to="/profil"
+              className="text-lg text-green-700 transition hover:text-green-500"
+              activeProps={{ className: "text-lg text-green-500" }}
+            >
+              Profil
+            </Link>
+
+            <Link
+              to="/discussion"
+              className="text-lg text-green-700 transition hover:text-green-500"
+              activeProps={{ className: "text-lg text-green-500" }}
+            >
+              Discussion
             </Link>
           </div>
         </div>
@@ -70,3 +86,4 @@ const Navbar: React.FC<NavbarProps> = ({ onSearch }) => {
 };
 
 export default Navbar;
+

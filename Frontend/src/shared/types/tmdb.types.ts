@@ -35,3 +35,4 @@ export interface TmdbMovieDetail extends TmdbMovie {
     cast: TmdbCastMember[];
   };
 }
+
