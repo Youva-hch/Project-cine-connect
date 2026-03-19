@@ -29,7 +29,7 @@ export default function Hero({ movie }: HeroProps) {
 
       <div className="relative mx-auto flex min-h-[70vh] max-w-7xl items-end px-6 pb-16 pt-28">
         <div className="max-w-2xl">
-          <p className="mb-3 text-sm uppercase tracking-[0.35em] text-red-500">
+          <p className="mb-3 text-sm uppercase tracking-[0.35em] text-amber-400">
             Film mis en avant
           </p>
 
@@ -47,7 +47,7 @@ export default function Hero({ movie }: HeroProps) {
             <Link
               to="/film/$id"
               params={{ id: movie.imdbID }}
-              className="rounded-xl bg-red-600 px-6 py-3 font-semibold text-white transition hover:bg-red-700"
+              className="rounded-xl bg-amber-500 px-6 py-3 font-semibold text-black transition hover:bg-amber-600"
             >
               Voir le film
             </Link>

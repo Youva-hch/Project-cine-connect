@@ -24,7 +24,7 @@ export default function DiscussionPage() {
     <div className="min-h-screen bg-black px-6 pb-20 pt-28 text-white">
       <div className="mx-auto max-w-6xl">
         <div className="mb-10">
-          <p className="mb-2 text-sm uppercase tracking-[0.3em] text-red-500">
+          <p className="mb-2 text-sm uppercase tracking-[0.3em] text-amber-400">
             Communauté
           </p>
           <h1 className="text-5xl font-black tracking-tight">Discussion</h1>
@@ -44,7 +44,7 @@ export default function DiscussionPage() {
                     key={room}
                     className={`w-full rounded-xl px-4 py-3 text-left transition ${
                       room === "Général"
-                        ? "bg-red-600 text-white"
+                        ? "bg-amber-500 text-black"
                         : "bg-black/40 text-zinc-300 hover:bg-white/5"
                     }`}
                   >
@@ -65,10 +65,7 @@ export default function DiscussionPage() {
 
             <div className="mt-6 space-y-4">
               {messages.map((message) => (
-                <div
-                  key={message.id}
-                  className="rounded-2xl bg-black/40 p-4"
-                >
+                <div key={message.id} className="rounded-2xl bg-black/40 p-4">
                   <div className="mb-2 flex items-center justify-between">
                     <span className="font-semibold text-white">
                       {message.author}
@@ -85,9 +82,9 @@ export default function DiscussionPage() {
               <input
                 type="text"
                 placeholder="Écrire un message..."
-                className="flex-1 rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none placeholder:text-zinc-500 focus:border-red-500"
+                className="flex-1 rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-white outline-none placeholder:text-zinc-500 focus:border-amber-400"
               />
-              <button className="rounded-xl bg-red-600 px-6 py-3 font-semibold text-white transition hover:bg-red-700">
+              <button className="rounded-xl bg-amber-500 px-6 py-3 font-semibold text-black transition hover:bg-amber-600">
                 Envoyer
               </button>
             </div>

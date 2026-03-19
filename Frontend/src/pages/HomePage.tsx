@@ -32,7 +32,8 @@ export default function HomePage() {
 
   const { data, isLoading } = useSearchMovies(randomQuery);
   const movies = cleanMovies(data?.Search ?? []);
-  const featuredMovie = movies[0];
+  const featuredMovie =
+    movies.find((movie) => movie.Title.length <= 25) ?? movies[0];
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -49,7 +50,7 @@ export default function HomePage() {
             </p>
             <Link
               to="/browse"
-              className="mt-8 inline-flex rounded-xl bg-red-600 px-6 py-3 font-semibold text-white transition hover:bg-red-700"
+              className="mt-8 inline-flex rounded-xl bg-amber-500 px-6 py-3 font-semibold text-black transition hover:bg-amber-600"
             >
               Explorer les films
             </Link>
@@ -73,7 +74,7 @@ export default function HomePage() {
                 key={genre.key}
                 to="/films/$categorie"
                 params={{ categorie: genre.key }}
-                className="rounded-xl border border-white/10 bg-zinc-900 px-6 py-3 text-base font-medium text-white transition hover:border-red-500 hover:bg-red-600"
+                className="rounded-xl border border-white/10 bg-zinc-900 px-6 py-3 text-base font-medium text-white transition hover:border-amber-400 hover:bg-amber-500 hover:text-black"
               >
                 {genre.label}
               </Link>

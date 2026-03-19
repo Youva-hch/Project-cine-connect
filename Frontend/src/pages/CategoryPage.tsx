@@ -54,7 +54,7 @@ export default function CategoryPage() {
       : FALLBACK_BACKDROP;
 
   const categoryTitle =
-    categoryLabels[categorie.toLowerCase()] ?? categorie;
+    categorie ? categoryLabels[categorie.toLowerCase()] ?? categorie : "Catégorie";
 
   return (
     <div className="min-h-screen bg-black p-6 text-white">
@@ -84,7 +84,7 @@ export default function CategoryPage() {
                 <Link
                   to="/film/$id"
                   params={{ id: selectedMovie.imdbID }}
-                  className="rounded-lg bg-white px-6 py-3 font-semibold text-black transition hover:bg-gray-300"
+                  className="rounded-lg bg-amber-500 px-6 py-3 font-semibold text-black transition hover:bg-amber-600"
                 >
                   Lecture
                 </Link>
@@ -103,11 +103,7 @@ export default function CategoryPage() {
 
         <div className="flex gap-4 overflow-x-auto pb-4 scroll-smooth">
           {movies.map((movie) => (
-            <Link
-              key={movie.imdbID}
-              to="/film/$id"
-              params={{ id: movie.imdbID }}
-            >
+            <Link key={movie.imdbID} to="/film/$id" params={{ id: movie.imdbID }}>
               <div className="w-[150px] overflow-hidden rounded-lg bg-zinc-900">
                 <div className="aspect-[2/3] w-full overflow-hidden bg-zinc-800">
                   <img
@@ -128,4 +124,3 @@ export default function CategoryPage() {
     </div>
   );
 }
-

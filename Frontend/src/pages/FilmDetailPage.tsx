@@ -3,7 +3,7 @@ import { useMovieDetail } from "../hooks/useMovies";
 import { useState } from "react";
 
 const FALLBACK_POSTER =
-  "https://via.placeholder.com/500x750?text=No+Image";
+  "https://via.placeholder.com/500x750/18181b/ffffff?text=No+Image";
 
 export default function FilmDetailPage() {
   const { id } = useParams({ from: "/film/$id" });
@@ -32,7 +32,7 @@ export default function FilmDetailPage() {
           <div className="max-w-3xl">
             <Link
               to="/films"
-              className="mb-6 inline-block text-sm font-medium text-red-400"
+              className="mb-6 inline-block text-sm font-medium text-amber-300"
             >
               Retour aux films
             </Link>
@@ -57,7 +57,7 @@ export default function FilmDetailPage() {
                   key={genre.trim()}
                   to="/films/$categorie"
                   params={{ categorie: genre.trim().toLowerCase() }}
-                  className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white"
+                  className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white transition hover:border-amber-400"
                 >
                   {genre.trim()}
                 </Link>
@@ -65,7 +65,7 @@ export default function FilmDetailPage() {
             </div>
 
             <div className="mt-8">
-              <p className="mb-3 text-sm uppercase tracking-[0.25em] text-red-500">
+              <p className="mb-3 text-sm uppercase tracking-[0.25em] text-amber-400">
                 Votre note
               </p>
 
@@ -75,7 +75,7 @@ export default function FilmDetailPage() {
                     key={star}
                     type="button"
                     onClick={() => setRating(star)}
-                    className={star <= rating ? "text-yellow-400" : "text-zinc-600"}
+                    className={star <= rating ? "text-amber-400" : "text-zinc-600"}
                   >
                     ★
                   </button>

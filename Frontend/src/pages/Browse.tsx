@@ -3,15 +3,14 @@ import MovieCard from "../components/MovieCard";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { useSearchMovies } from "../hooks/useMovies";
 import type { OmdbMovie } from "../shared/types/omdb.types";
+import { cleanMovies } from "../shared/movieFilters";
 
 export function Browse() {
   const [searchQuery, setSearchQuery] = useState("movie");
 
   const { data, isLoading, error } = useSearchMovies(searchQuery);
   const movies = data?.Search ?? [];
-  const visibleMovies = movies.filter(
-    (movie: OmdbMovie) => movie.Poster && movie.Poster !== "N/A"
-  );
+  const visibleMovies = cleanMovies(movies as OmdbMovie[]);
 
   return (
     <div className="min-h-screen bg-black px-4 pb-20 pt-24 md:px-12">
@@ -69,3 +68,4 @@ export function Browse() {
 }
 
 export default Browse;
+

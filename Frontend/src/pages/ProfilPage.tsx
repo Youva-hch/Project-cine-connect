@@ -3,7 +3,7 @@ export default function ProfilPage() {
     <div className="min-h-screen bg-black px-6 pb-20 pt-28 text-white">
       <div className="mx-auto max-w-5xl">
         <div className="mb-10">
-          <p className="mb-2 text-sm uppercase tracking-[0.3em] text-red-500">
+          <p className="mb-2 text-sm uppercase tracking-[0.3em] text-amber-400">
             Mon espace
           </p>
           <h1 className="text-5xl font-black tracking-tight">Profil</h1>
@@ -15,7 +15,7 @@ export default function ProfilPage() {
         <div className="grid gap-6 md:grid-cols-[280px_1fr]">
           <div className="rounded-2xl border border-white/5 bg-zinc-900 p-6">
             <div className="flex flex-col items-center text-center">
-              <div className="flex h-24 w-24 items-center justify-center rounded-full bg-red-600 text-3xl font-bold text-white">
+              <div className="flex h-24 w-24 items-center justify-center rounded-full bg-amber-500 text-3xl font-bold text-black">
                 N
               </div>
 
@@ -58,17 +58,17 @@ export default function ProfilPage() {
               <h3 className="text-2xl font-bold">Activité</h3>
               <div className="mt-4 grid gap-4 sm:grid-cols-3">
                 <div className="rounded-xl bg-black/40 p-4 text-center">
-                  <p className="text-3xl font-black text-red-500">12</p>
+                  <p className="text-3xl font-black text-amber-400">12</p>
                   <p className="mt-2 text-sm text-zinc-400">Films vus</p>
                 </div>
 
                 <div className="rounded-xl bg-black/40 p-4 text-center">
-                  <p className="text-3xl font-black text-red-500">5</p>
+                  <p className="text-3xl font-black text-amber-400">5</p>
                   <p className="mt-2 text-sm text-zinc-400">Avis publiés</p>
                 </div>
 
                 <div className="rounded-xl bg-black/40 p-4 text-center">
-                  <p className="text-3xl font-black text-red-500">4</p>
+                  <p className="text-3xl font-black text-amber-400">4</p>
                   <p className="mt-2 text-sm text-zinc-400">Genres favoris</p>
                 </div>
               </div>
