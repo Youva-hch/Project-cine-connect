@@ -2,6 +2,8 @@ import 'dotenv/config';
 
 const OMDB_API_URL = 'https://www.omdbapi.com/';
 const API_KEY = process.env.OMDB_API_KEY;
+const CACHE_TTL_MS = Number.parseInt(process.env.OMDB_CACHE_TTL_MS ?? '3600000', 10); // 1h
+const CACHE_MAX_ENTRIES = Number.parseInt(process.env.OMDB_CACHE_MAX_ENTRIES ?? '500', 10);
 
 if (!API_KEY) {
   console.warn('OMDB_API_KEY is not set in environment variables');
@@ -55,10 +57,98 @@ export interface OMDbError {
   Error: string;
 }
 
+export class OMDbApiError extends Error {
+  public readonly statusCode: number;
+  public readonly omdbMessage?: string;
+
+  constructor(message: string, statusCode: number, omdbMessage?: string) {
+    super(message);
+    this.name = 'OMDbApiError';
+    this.statusCode = statusCode;
+    this.omdbMessage = omdbMessage;
+  }
+}
+
+interface CacheEntry<T> {
+  data: T;
+  expiresAt: number;
+}
+
 /**
  * Service pour interagir avec l'API OMDb
  */
 export class OMDbService {
+  private static cache = new Map<string, CacheEntry<unknown>>();
+
+  private static getCacheKey(params: Record<string, string>): string {
+    const sortedEntries = Object.entries(params).sort(([a], [b]) => a.localeCompare(b));
+    return sortedEntries.map(([key, value]) => `${key}=${value}`).join('&');
+  }
+
+  private static getFromCache<T>(key: string): T | null {
+    if (CACHE_TTL_MS <= 0) {
+      return null;
+    }
+
+    const cached = this.cache.get(key);
+    if (!cached) {
+      return null;
+    }
+
+    if (Date.now() > cached.expiresAt) {
+      this.cache.delete(key);
+      return null;
+    }
+
+    return cached.data as T;
+  }
+
+  private static setCache<T>(key: string, data: T): void {
+    if (CACHE_TTL_MS <= 0) {
+      return;
+    }
+
+    // Politique FIFO simple pour limiter la mémoire
+    if (this.cache.size >= CACHE_MAX_ENTRIES) {
+      const firstKey = this.cache.keys().next().value;
+      if (typeof firstKey === 'string') {
+        this.cache.delete(firstKey);
+      }
+    }
+
+    this.cache.set(key, {
+      data,
+      expiresAt: Date.now() + CACHE_TTL_MS,
+    });
+  }
+
+  static clearCache(): void {
+    this.cache.clear();
+  }
+
+  static getCacheStats() {
+    return {
+      size: this.cache.size,
+      ttlMs: CACHE_TTL_MS,
+      maxEntries: CACHE_MAX_ENTRIES,
+    };
+  }
+
+  static getCacheSnapshot(limit: number = 50) {
+    const now = Date.now();
+    const entries = Array.from(this.cache.entries())
+      .slice(0, Math.max(0, limit))
+      .map(([key, value]) => ({
+        key,
+        expiresInMs: Math.max(0, value.expiresAt - now),
+      }));
+
+    return {
+      ...this.getCacheStats(),
+      entries,
+    };
+  }
+
   /**
    * Effectue une requête à l'API OMDb
    */
@@ -72,21 +162,43 @@ export class OMDbService {
       ...params,
     });
 
+    const cacheKey = this.getCacheKey(params);
+    const cachedResult = this.getFromCache<T>(cacheKey);
+    if (cachedResult) {
+      return cachedResult;
+    }
+
     try {
       const response = await fetch(`${OMDB_API_URL}?${searchParams.toString()}`);
 
-      if (!response.ok) {
-        throw new Error(`OMDb API error: ${response.status} ${response.statusText}`);
+      let data: ({ Response?: string; Error?: string } & T) | null = null;
+      try {
+        data = (await response.json()) as { Response?: string; Error?: string } & T;
+      } catch {
+        data = null;
       }
 
-      const data = (await response.json()) as { Response?: string; Error?: string } & T;
+      if (!response.ok) {
+        const omdbErrorMessage = data?.Error;
+        const statusMessage = response.status === 401
+          ? 'OMDb request unauthorized. Verify your OMDB_API_KEY value, account activation, and daily quota.'
+          : `OMDb API error: ${response.status} ${response.statusText}`;
+
+        throw new OMDbApiError(statusMessage, response.status, omdbErrorMessage);
+      }
+
+      if (!data) {
+        throw new OMDbApiError('OMDb API returned an unreadable response body', response.status);
+      }
 
       // Vérifier si OMDb a retourné une erreur
       if (data.Response === 'False') {
-        throw new Error(data.Error || 'Unknown OMDb API error');
+        throw new OMDbApiError(data.Error || 'Unknown OMDb API error', response.status, data.Error);
       }
 
-      return data as T;
+      const typedData = data as T;
+      this.setCache(cacheKey, typedData);
+      return typedData;
     } catch (error) {
       if (error instanceof Error) {
         throw error;

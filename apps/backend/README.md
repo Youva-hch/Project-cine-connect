@@ -60,5 +60,8 @@ Variables d'environnement (à créer dans `.env`) :
 ```
 PORT=3000
 NODE_ENV=development
+OMDB_API_KEY=your_omdb_api_key
+OMDB_CACHE_TTL_MS=3600000
+OMDB_CACHE_MAX_ENTRIES=500
 ```
 

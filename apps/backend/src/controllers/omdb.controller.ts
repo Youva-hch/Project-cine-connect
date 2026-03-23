@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { OMDbService } from '../services/omdb.service.js';
+import { OMDbApiError, OMDbService } from '../services/omdb.service.js';
 import { db, films, categories, filmCategories, eq, and } from '@cineconnect/database';
 
 // Mapping des genres OMDb vers nos catégories
@@ -92,6 +92,23 @@ async function linkFilmToCategories(filmId: number, genres: string[]) {
  */
 export class OMDbController {
   /**
+   * GET /omdb/cache - Affiche l'etat du cache OMDb
+   */
+  static async getCache(_req: Request, res: Response) {
+    try {
+      return res.json({
+        success: true,
+        data: OMDbService.getCacheSnapshot(),
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: error instanceof Error ? error.message : 'Erreur lors de la lecture du cache OMDb',
+      });
+    }
+  }
+
+  /**
    * GET /omdb/search - Recherche de films via OMDb
    */
   static async search(req: Request, res: Response) {
@@ -123,6 +140,18 @@ export class OMDbController {
           data: { Search: [], totalResults: '0', Response: 'False' },
         });
       }
+
+      if (error instanceof OMDbApiError) {
+        const isUnauthorized = error.statusCode === 401;
+        return res.status(isUnauthorized ? 503 : 502).json({
+          success: false,
+          message: isUnauthorized
+            ? 'Service OMDb indisponible: clé API invalide/expirée ou quota dépassé.'
+            : error.message,
+          details: error.omdbMessage,
+        });
+      }
+
       console.error('Error searching OMDb:', error);
       return res.status(500).json({
         success: false,
@@ -152,6 +181,17 @@ export class OMDbController {
         data: movie,
       });
     } catch (error) {
+      if (error instanceof OMDbApiError) {
+        const isUnauthorized = error.statusCode === 401;
+        return res.status(isUnauthorized ? 503 : 502).json({
+          success: false,
+          message: isUnauthorized
+            ? 'Service OMDb indisponible: clé API invalide/expirée ou quota dépassé.'
+            : error.message,
+          details: error.omdbMessage,
+        });
+      }
+
       console.error('Error fetching movie from OMDb:', error);
       return res.status(500).json({
         success: false,
@@ -185,6 +225,17 @@ export class OMDbController {
         data: movie,
       });
     } catch (error) {
+      if (error instanceof OMDbApiError) {
+        const isUnauthorized = error.statusCode === 401;
+        return res.status(isUnauthorized ? 503 : 502).json({
+          success: false,
+          message: isUnauthorized
+            ? 'Service OMDb indisponible: clé API invalide/expirée ou quota dépassé.'
+            : error.message,
+          details: error.omdbMessage,
+        });
+      }
+
       console.error('Error fetching movie from OMDb:', error);
       return res.status(500).json({
         success: false,

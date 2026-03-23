@@ -5,6 +5,7 @@ import { Star, MessageCircle, TrendingUp } from 'lucide-react';
 import { searchMovies, getMovieById } from '@/lib/omdb';
 import { FilmRow } from '@/components/FilmRow';
 import { Button } from '@/components/ui/button';
+import styles from './Index.module.css';
 
 const SECTIONS = [
   { title: 'Tendances actuelles', query: '2024' },
@@ -78,19 +79,14 @@ export default function Index() {
             <img
               src={heroPoster}
               alt=""
-              className="absolute inset-0 w-full h-full object-cover"
+              className={`absolute inset-0 w-full h-full object-cover ${styles.heroPoster}`}
               loading="eager"
               fetchPriority="high"
               decoding="async"
-              style={{ filter: 'saturate(0.88) brightness(0.58)', objectPosition: 'center 22%' }}
             />
             {/* Grain overlay for cinematic feel */}
             <div
-              className="absolute inset-0 opacity-15"
-              style={{
-                backgroundImage:
-                  "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.4'/%3E%3C/svg%3E\")",
-              }}
+              className={`absolute inset-0 opacity-15 ${styles.grainOverlay}`}
             />
           </>
         )}
@@ -100,20 +96,13 @@ export default function Index() {
         <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/40 to-transparent" />
         {/* Violet ambient glow bottom */}
         <div
-          className="absolute bottom-0 left-0 right-0 h-64 opacity-20"
-          style={{
-            background: 'radial-gradient(ellipse at 20% 100%, hsl(265,78%,50%), transparent 70%)',
-          }}
+          className={`absolute bottom-0 left-0 right-0 h-64 opacity-20 ${styles.bottomGlow}`}
         />
 
         {/* Hero content */}
         <div className="relative z-10 px-4 md:px-14 pb-20 md:pb-28 max-w-2xl space-y-5 animate-fade-in">
           {/* Badge */}
-          <span className="pill-violet inline-flex items-center gap-1.5" style={{
-                  background: 'linear-gradient(135deg, hsl(265,78%,58%, 0.4) 0%, hsl(265,60%,44%, 0.4) 100%)',
-                  boxShadow: '0 4px 24px rgba(139,92,246,0.1)',
-                  backdropFilter: 'blur(8px)',
-                }}>
+          <span className={`pill-violet inline-flex items-center gap-1.5 ${styles.heroBadge}`}>
             <TrendingUp className="h-3 w-3" />
             Film mis en avant
           </span>
@@ -136,14 +125,7 @@ export default function Index() {
           </div>
 
           <p
-            className="text-sm md:text-base text-white/65 max-w-md leading-relaxed"
-            style={{
-              background: 'rgba(255,255,255,0.08)',
-              backdropFilter: 'blur(8px)',
-              border: '1px solid rgba(255,255,255,0.15)',
-              color: 'white',
-              padding: '1rem',
-            }}
+            className={`text-sm md:text-base text-white/65 max-w-md leading-relaxed ${styles.heroSynopsis}`}
           >
             {heroFilm?.Plot && heroFilm.Plot !== 'N/A'
               ? heroFilm.Plot
@@ -155,11 +137,7 @@ export default function Index() {
             <Link to={`/film/${heroId}`}>
               <Button
                 size="lg"
-                className="gap-2 font-semibold rounded-sm px-7 text-white"
-                style={{
-                  background: 'linear-gradient(135deg, hsl(265,78%,58%) 0%, hsl(265,60%,44%) 100%)',
-                  boxShadow: '0 4px 24px rgba(139,92,246,0.4)',
-                }}
+                className={`gap-2 font-semibold rounded-sm px-7 text-white ${styles.primaryCta}`}
               >
                 <Star className="h-5 w-5 fill-current" />
                 Noter ce film
@@ -169,13 +147,7 @@ export default function Index() {
               <Button
                 size="lg"
                 variant="secondary"
-                className="gap-2 rounded-sm px-7 font-semibold"
-                style={{
-                  background: 'rgba(255,255,255,0.08)',
-                  backdropFilter: 'blur(8px)',
-                  border: '1px solid rgba(255,255,255,0.15)',
-                  color: 'white',
-                }}
+                className={`gap-2 rounded-sm px-7 font-semibold ${styles.secondaryCta}`}
               >
                 <MessageCircle className="h-5 w-5" />
                 Discuter

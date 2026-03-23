@@ -28,9 +28,19 @@ export function requireAuth(req: AuthRequest, res: Response, next: NextFunction)
     const decoded = jwt.verify(
       token,
       process.env.JWT_SECRET || 'your-secret-key'
-    ) as { userId: number; email: string };
-    req.userId = decoded.userId;
-    req.userEmail = decoded.email;
+    ) as { userId?: number; id?: number; email?: string };
+
+    const resolvedUserId = decoded.userId ?? decoded.id;
+    if (typeof resolvedUserId !== 'number' || Number.isNaN(resolvedUserId)) {
+      res.status(401).json({
+        success: false,
+        message: 'Token invalide',
+      });
+      return;
+    }
+
+    req.userId = resolvedUserId;
+    req.userEmail = typeof decoded.email === 'string' ? decoded.email : undefined;
     next();
   } catch {
     res.status(401).json({

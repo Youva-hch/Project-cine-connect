@@ -3,6 +3,9 @@ import { OMDbController } from '../controllers/omdb.controller.js';
 
 const router: IRouter = Router();
 
+// GET /omdb/cache - Etat du cache en memoire
+router.get('/cache', OMDbController.getCache);
+
 // GET /omdb/search - Recherche de films
 router.get('/search', OMDbController.search);
 

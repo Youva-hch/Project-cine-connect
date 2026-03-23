@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { FilmCard } from "./FilmCard";
+import { FilmCard } from "@/components/FilmCard";
 import type { OmdbMovie } from "@/lib/omdb";
 
 interface FilmRowProps {
