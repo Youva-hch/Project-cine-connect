@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Star, MessageCircle, TrendingUp } from 'lucide-react';
-import { searchMovies, getMovieById } from '@/lib/omdb';
-import { FilmRow } from '@/components/FilmRow';
+import { searchMovies, getMovieById } from '../../lib/omdb';
+import { FilmRow } from '../../components/FilmRow/';
 import { Button } from '@/components/ui/button';
 import styles from './Index.module.css';
 
@@ -147,7 +147,7 @@ export default function Index() {
               <Button
                 size="lg"
                 variant="secondary"
-                className={`gap-2 rounded-sm px-7 font-semibold ${styles.secondaryCta}`}
+                className={`gap-2 rounded-sm px-7 font-semibold text-white ${styles.secondaryCta}`}
               >
                 <MessageCircle className="h-5 w-5" />
                 Discuter

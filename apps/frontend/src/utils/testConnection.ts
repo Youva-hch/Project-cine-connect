@@ -4,7 +4,7 @@
 export async function testBackendConnection(): Promise<{
   success: boolean
   message: string
-  details?: any
+  details?: unknown
 }> {
   const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000'
   

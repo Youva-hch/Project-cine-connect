@@ -18,7 +18,9 @@ export default function AuthCallback() {
           localStorage.setItem("refreshToken", refreshToken);
         }
         localStorage.setItem("user", JSON.stringify({ ...user, id: String(user.id) }));
-      } catch (_) {}
+      } catch {
+        // Ignore invalid callback payload
+      }
     }
     // Reload complet pour que AuthProvider relise le localStorage
     window.location.replace("/");

@@ -91,7 +91,7 @@ export class UserController {
         });
       }
 
-      const { passwordHash, ...userWithoutPassword } = updated;
+      const { passwordHash: _passwordHash, ...userWithoutPassword } = updated;
       return res.json({
         success: true,
         data: userWithoutPassword,

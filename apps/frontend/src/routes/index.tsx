@@ -26,7 +26,7 @@ function usePosterUrl(film: { title: string; releaseYear: number | null; posterU
         if (omdbData.Poster && omdbData.Poster !== 'N/A' && omdbData.Poster !== '') {
           setPosterUrl(omdbData.Poster)
         }
-      } catch (error) {
+      } catch {
         // Ignorer les erreurs silencieusement
         console.debug(`Impossible de récupérer l'affiche pour ${film.title}`)
       }

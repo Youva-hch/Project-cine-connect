@@ -39,7 +39,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           }
         }
         // Ne pas appeler getCurrentUser() si pas de token pour éviter les erreurs inutiles
-      } catch (error) {
+      } catch {
         // Erreur silencieuse si l'utilisateur n'est pas connecté ou si l'API n'est pas disponible
         // Ne pas bloquer le rendu de l'application
         authApi.logout()
