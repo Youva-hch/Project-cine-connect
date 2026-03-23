@@ -27,8 +27,36 @@ const PORT = process.env.PORT || 3000;
 
 app.use(helmet());
 const frontendOrigin = (process.env.FRONTEND_URL || 'http://localhost:5173').replace(/\/$/, '');
+const envOrigins = (process.env.FRONTEND_ORIGINS || '')
+  .split(',')
+  .map((origin) => origin.trim().replace(/\/$/, ''))
+  .filter(Boolean);
+const allowedOrigins = Array.from(new Set([
+  frontendOrigin,
+  'http://localhost:5173',
+  'http://127.0.0.1:5173',
+  'http://localhost:4173',
+  'http://127.0.0.1:4173',
+  ...envOrigins,
+]));
+
 app.use(cors({
-  origin: [frontendOrigin, frontendOrigin + '/'],
+  origin: (origin, callback) => {
+    // Permettre les clients sans en-tête Origin (curl, mobile app, health checks)
+    if (!origin) {
+      return callback(null, true);
+    }
+
+    const normalizedOrigin = origin.replace(/\/$/, '');
+    const isLocalDevOrigin = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(normalizedOrigin);
+
+    if (allowedOrigins.includes(normalizedOrigin) || isLocalDevOrigin) {
+      return callback(null, true);
+    }
+
+    // Ne pas lever d'erreur ici: un throw provoquerait une 500 sans en-tête CORS.
+    return callback(null, false);
+  },
   credentials: true,
 }));
 
@@ -70,7 +98,7 @@ const server = http.createServer(app);
 
 export const io = new Server(server, {
   cors: {
-    origin: [frontendOrigin, frontendOrigin + '/'],
+    origin: allowedOrigins,
     credentials: true,
   },
 });
