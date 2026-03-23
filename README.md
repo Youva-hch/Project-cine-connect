@@ -328,46 +328,6 @@ cd apps/frontend
 pnpm test
 ```
 
-## Depannage
-
-### Erreur 404 sur `//omdb/search`
-
-Cause: `VITE_API_URL` avec un slash final.
-
-Correction:
-
-```env
-VITE_API_URL=http://localhost:3000
-```
-
-### Echec migration Postgres (authentification)
-
-Causes frequentes:
-- mauvais identifiants en `.env`
-- conflit de port 5432 avec un Postgres local Windows
-
-Verifications:
-
-```bash
-docker ps
-pnpm db:migrate
-```
-
-### Probleme CORS
-
-Verifier `FRONTEND_URL` cote backend. Valeur locale attendue:
-
-```env
-FRONTEND_URL=http://localhost:5173
-```
-
-## Documentation complementaire
-
-- Schema base de donnees: `docs/database-schema.md`
-- Setup Docker detaille: `DOCKER_SETUP.md`
-- Setup DB detaille: `DATABASE_SETUP.md`
-- Etat d'avancement: `AVANCE.md`
-
 ## Auteurs
 
 - Youva HCH
