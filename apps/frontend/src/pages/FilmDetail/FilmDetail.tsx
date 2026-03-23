@@ -156,8 +156,8 @@ export default function FilmDetail() {
       <div className="container mx-auto px-4 py-12">
         <div className="animate-pulse space-y-6">
           <div className="h-10 bg-muted rounded w-1/2" />
-          <div className="flex gap-8">
-            <div className="w-64 aspect-[2/3] bg-muted rounded-xl" />
+            <div className="flex gap-8">
+            <div className="w-[500px] md:w-[500px] aspect-[2/3] bg-muted rounded-xl" />
             <div className="flex-1 space-y-4">
               <div className="h-6 bg-muted rounded w-3/4" />
               <div className="h-4 bg-muted rounded" />
@@ -176,8 +176,8 @@ export default function FilmDetail() {
   return (
     <div className="container mx-auto px-4 py-8 space-y-10">
       {/* ── Film info ── */}
-      <div className="flex flex-col md:flex-row gap-8">
-        <div className="w-full md:w-64 shrink-0">
+        <div className="flex flex-col md:flex-row gap-8">
+        <div className="w-full md:w-[500px] shrink-0">
           {hasPoster ? (
             <img src={movie.Poster} alt={movie.Title} className="w-full rounded-xl shadow-2xl" />
           ) : (

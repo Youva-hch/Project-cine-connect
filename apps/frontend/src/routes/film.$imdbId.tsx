@@ -53,7 +53,7 @@ function FilmDetailPage() {
         </Link>
 
         <article className="flex flex-col md:flex-row gap-8">
-          <div className="flex-shrink-0 w-full md:w-72">
+          <div className="flex-shrink-0 w-full md:w-[500px]">
             <div className="aspect-[2/3] rounded-xl overflow-hidden bg-gray-200">
               {film.Poster && film.Poster !== 'N/A' ? (
                 <img
