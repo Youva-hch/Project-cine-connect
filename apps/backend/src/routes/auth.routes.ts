@@ -71,6 +71,30 @@ router.post('/login', AuthController.login);
 
 /**
  * @swagger
+ * /api/auth/refresh:
+ *   post:
+ *     summary: Renouveler la session via refresh token
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [refreshToken]
+ *             properties:
+ *               refreshToken:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Nouveau access token et refresh token
+ *       401:
+ *         description: Refresh token invalide
+ */
+router.post('/refresh', AuthController.refreshToken);
+
+/**
+ * @swagger
  * /api/auth/google:
  *   get:
  *     summary: Connexion via Google OAuth

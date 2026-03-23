@@ -7,12 +7,16 @@ export default function AuthCallback() {
 
   useEffect(() => {
     const token = searchParams.get("token");
+    const refreshToken = searchParams.get("refreshToken");
     const userStr = searchParams.get("user");
 
     if (token && userStr) {
       try {
         const user = JSON.parse(decodeURIComponent(userStr));
         localStorage.setItem("token", token);
+        if (refreshToken) {
+          localStorage.setItem("refreshToken", refreshToken);
+        }
         localStorage.setItem("user", JSON.stringify({ ...user, id: String(user.id) }));
       } catch (_) {}
     }

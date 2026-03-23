@@ -8,7 +8,7 @@ interface AuthContextType {
   isLoading: boolean
   isAuthenticated: boolean
   login: (email: string, password: string) => Promise<void>
-  loginWithToken: (token: string, user: User) => void
+  loginWithToken: (token: string, user: User, refreshToken?: string) => void
   register: (name: string, email: string, password: string) => Promise<void>
   logout: () => void
 }
@@ -54,12 +54,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (email: string, password: string) => {
     const response = await authApi.login({ email, password })
     localStorage.setItem('token', response.token)
+    localStorage.setItem('refreshToken', response.refreshToken)
     localStorage.setItem('user', JSON.stringify(response.user))
     setUser(response.user)
   }
 
-  const loginWithToken = (token: string, user: User) => {
+  const loginWithToken = (token: string, user: User, refreshToken?: string) => {
     localStorage.setItem('token', token)
+    if (refreshToken) {
+      localStorage.setItem('refreshToken', refreshToken)
+    }
     localStorage.setItem('user', JSON.stringify(user))
     setUser(user)
   }
@@ -67,6 +71,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const register = async (name: string, email: string, password: string) => {
     const response = await authApi.register({ name, email, password })
     localStorage.setItem('token', response.token)
+    localStorage.setItem('refreshToken', response.refreshToken)
     localStorage.setItem('user', JSON.stringify(response.user))
     setUser(response.user)
   }

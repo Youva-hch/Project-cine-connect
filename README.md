@@ -94,6 +94,9 @@ PORT=3000
 NODE_ENV=development
 FRONTEND_URL=http://localhost:5173
 JWT_SECRET=change_me
+JWT_EXPIRES_IN=15m
+JWT_REFRESH_SECRET=change_me_refresh
+JWT_REFRESH_EXPIRES_IN=7d
 SESSION_SECRET=change_me_too
 
 # OMDb

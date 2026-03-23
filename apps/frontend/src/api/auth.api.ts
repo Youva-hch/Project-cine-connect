@@ -14,6 +14,7 @@ export interface RegisterData {
 
 export interface AuthResponse {
   token: string
+  refreshToken: string
   user: User
 }
 
@@ -46,6 +47,7 @@ export const authApi = {
 
   logout: () => {
     localStorage.removeItem('token')
+    localStorage.removeItem('refreshToken')
     localStorage.removeItem('user')
   },
 

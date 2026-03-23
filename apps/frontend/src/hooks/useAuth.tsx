@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { setAuthTokens, clearAuthTokens } from "@/api/config";
 
 export interface AppUser {
   id: string;
@@ -57,9 +58,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
     const data = await res.json();
     if (!res.ok || !data.success) throw new Error(data.message || "Erreur inscription");
-    const { token, user: u } = data.data;
+    const { token, refreshToken, user: u } = data.data;
     const appUser = toAppUser(u);
-    localStorage.setItem("token", token);
+    setAuthTokens(token, refreshToken);
     localStorage.setItem("user", JSON.stringify(appUser));
     setUser(appUser);
   };
@@ -72,15 +73,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
     const data = await res.json();
     if (!res.ok || !data.success) throw new Error(data.message || "Erreur connexion");
-    const { token, user: u } = data.data;
+    const { token, refreshToken, user: u } = data.data;
     const appUser = toAppUser(u);
-    localStorage.setItem("token", token);
+    setAuthTokens(token, refreshToken);
     localStorage.setItem("user", JSON.stringify(appUser));
     setUser(appUser);
   };
 
   const signOut = async () => {
-    localStorage.removeItem("token");
+    clearAuthTokens();
     localStorage.removeItem("user");
     setUser(null);
   };

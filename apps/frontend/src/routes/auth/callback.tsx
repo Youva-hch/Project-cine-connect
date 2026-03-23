@@ -14,6 +14,7 @@ function AuthCallbackPage() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
     const token = params.get('token')
+    const refreshToken = params.get('refreshToken')
     const userStr = params.get('user')
 
     if (token && userStr) {
@@ -29,7 +30,7 @@ function AuthCallbackPage() {
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         }
-        login(token, user)
+        login(token, user, refreshToken ?? undefined)
         navigate({ to: '/', replace: true })
         return
       } catch {

@@ -4,11 +4,21 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import { UserService } from '../services/user.service.js';
 
-function signToken(user: { id: number; email: string }) {
+function signAccessToken(user: { id: number; email: string }) {
   const secret = process.env.JWT_SECRET || 'your-secret-key';
   const expiresIn = process.env.JWT_EXPIRES_IN || '24h';
   return jwt.sign(
     { userId: user.id, email: user.email },
+    secret,
+    { expiresIn } as jwt.SignOptions
+  );
+}
+
+function signRefreshToken(user: { id: number; email: string }) {
+  const secret = process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET || 'your-secret-key';
+  const expiresIn = process.env.JWT_REFRESH_EXPIRES_IN || '7d';
+  return jwt.sign(
+    { userId: user.id, email: user.email, type: 'refresh' },
     secret,
     { expiresIn } as jwt.SignOptions
   );
@@ -28,6 +38,16 @@ function toUserResponse(user: { id: number; email: string; name: string; avatarU
  * Contrôleur pour gérer l'authentification
  */
 export class AuthController {
+  static buildAuthPayload(user: { id: number; email: string; name: string; avatarUrl: string | null; bio?: string | null }) {
+    const token = signAccessToken(user);
+    const refreshToken = signRefreshToken(user);
+    return {
+      token,
+      refreshToken,
+      user: toUserResponse(user),
+    };
+  }
+
   /**
    * POST /auth/register - Inscription email / mot de passe
    */
@@ -62,11 +82,10 @@ export class AuthController {
       if (!user) {
         return res.status(500).json({ success: false, message: 'Erreur lors de la création du compte' });
       }
-      const token = signToken(user);
       const { passwordHash: _, ...rest } = user;
       return res.status(201).json({
         success: true,
-        data: { token, user: toUserResponse(rest as { id: number; email: string; name: string; avatarUrl: string | null; bio?: string | null }) },
+        data: AuthController.buildAuthPayload(rest as { id: number; email: string; name: string; avatarUrl: string | null; bio?: string | null }),
       });
     } catch (error: unknown) {
       console.error('Auth register error:', error);
@@ -111,11 +130,10 @@ export class AuthController {
           message: 'Email ou mot de passe incorrect',
         });
       }
-      const token = signToken(user);
       const { passwordHash: _, ...rest } = user;
       return res.json({
         success: true,
-        data: { token, user: toUserResponse(rest as { id: number; email: string; name: string; avatarUrl: string | null; bio?: string | null }) },
+        data: AuthController.buildAuthPayload(rest as { id: number; email: string; name: string; avatarUrl: string | null; bio?: string | null }),
       });
     } catch (error) {
       console.error('Auth login error:', error);
@@ -178,7 +196,8 @@ export class AuthController {
       }
 
       const u = user as { id: number; email: string; name: string; avatarUrl?: string | null; bio?: string | null };
-      const token = signToken(u);
+      const token = signAccessToken(u);
+      const refreshToken = signRefreshToken(u);
       const userPayload = {
         id: u.id,
         email: u.email,
@@ -187,9 +206,56 @@ export class AuthController {
         bio: u.bio ?? null,
       };
       res.redirect(
-        `${frontendUrl}/auth/callback?token=${encodeURIComponent(token)}&user=${encodeURIComponent(JSON.stringify(userPayload))}`
+        `${frontendUrl}/auth/callback?token=${encodeURIComponent(token)}&refreshToken=${encodeURIComponent(refreshToken)}&user=${encodeURIComponent(JSON.stringify(userPayload))}`
       );
     })(req, res);
+  }
+
+  /**
+   * Renouvelle un access token via refresh token
+   */
+  static async refreshToken(req: Request, res: Response) {
+    try {
+      const refreshToken = req.body?.refreshToken as string | undefined;
+      if (!refreshToken) {
+        return res.status(401).json({
+          success: false,
+          message: 'Refresh token manquant',
+        });
+      }
+
+      const decoded = jwt.verify(
+        refreshToken,
+        process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET || 'your-secret-key'
+      ) as { userId?: number; id?: number; email?: string; type?: string };
+
+      const userId = decoded.userId ?? decoded.id;
+      if (!userId || (decoded.type && decoded.type !== 'refresh')) {
+        return res.status(401).json({
+          success: false,
+          message: 'Refresh token invalide',
+        });
+      }
+
+      const user = await UserService.getUserById(userId);
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: 'Utilisateur non trouvé',
+        });
+      }
+
+      const { passwordHash, ...rest } = user;
+      return res.json({
+        success: true,
+        data: AuthController.buildAuthPayload(rest as { id: number; email: string; name: string; avatarUrl: string | null; bio?: string | null }),
+      });
+    } catch {
+      return res.status(401).json({
+        success: false,
+        message: 'Refresh token invalide',
+      });
+    }
   }
 
   /**
