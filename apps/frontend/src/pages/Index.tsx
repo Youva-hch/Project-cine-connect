@@ -37,6 +37,20 @@ const HERO_FILMS = [
   "tt0111161",  // The Shawshank Redemption (1994)
 ];
 
+function getHighResPosterUrl(posterUrl?: string) {
+  if (!posterUrl || posterUrl === "N/A") return "";
+
+  // OMDb retourne souvent une miniature IMDb (ex: _V1_SX300.jpg).
+  // On force une variante plus large pour la hero afin d'eviter le flou en plein ecran.
+  if (/_V1_.*\.(jpg|jpeg|png)$/i.test(posterUrl)) {
+    return posterUrl.replace(/_V1_.*\.(jpg|jpeg|png)$/i, "_V1_QL75_UX1400_.jpg");
+  }
+
+  return posterUrl
+    .replace(/SX\d+/i, "SX1400")
+    .replace(/SY\d+/i, "SY1400");
+}
+
 export default function Index() {
   // Choix aléatoire au montage du composant (change à chaque rechargement)
   const [heroId] = useState(
@@ -56,22 +70,27 @@ export default function Index() {
     })
   );
 
+  const heroPoster = getHighResPosterUrl(heroFilm?.Poster);
+
   return (
     <div className="min-h-screen -mt-16 bg-cinema-gradient">
       {/* ── Hero Billboard ── */}
       <section className="relative h-[88vh] min-h-[540px] flex items-end">
         {/* Background poster */}
-        {heroFilm?.Poster && (
+        {heroPoster && (
           <>
             <img
-              src={heroFilm.Poster}
+              src={heroPoster}
               alt=""
-              className="absolute inset-0 w-full h-full object-cover scale-105"
-              style={{ filter: "saturate(0.8) brightness(0.55)" }}
+              className="absolute inset-0 w-full h-full object-cover"
+              loading="eager"
+              fetchPriority="high"
+              decoding="async"
+              style={{ filter: "saturate(0.88) brightness(0.58)", objectPosition: "center 22%" }}
             />
             {/* Grain overlay for cinematic feel */}
             <div
-              className="absolute inset-0 opacity-30"
+              className="absolute inset-0 opacity-15"
               style={{
                 backgroundImage:
                   "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.4'/%3E%3C/svg%3E\")",
@@ -162,32 +181,6 @@ export default function Index() {
           </div>
         </div>
       </section>
-
-      {/* ── Stats bar ── */}
-      <div className="relative z-10 -mt-2 px-4 md:px-14 pb-6">
-        <div
-          className="inline-flex items-center gap-8 px-6 py-3 rounded-lg text-sm"
-          style={{
-            background: "rgba(139,92,246,0.08)",
-            border: "1px solid rgba(139,92,246,0.2)",
-          }}
-        >
-          <span className="text-white/50">
-            <span className="text-accent font-bold text-base">10 000+</span>{" "}
-            films notés
-          </span>
-          <span className="w-px h-4 bg-white/10" />
-          <span className="text-white/50">
-            <span className="text-accent font-bold text-base">5 000+</span>{" "}
-            discussions actives
-          </span>
-          <span className="w-px h-4 bg-white/10" />
-          <span className="text-white/50">
-            <span className="text-accent font-bold text-base">2 500+</span>{" "}
-            membres
-          </span>
-        </div>
-      </div>
 
       {/* ── Film rows ── */}
       <div className="relative z-10 space-y-1 pb-16">

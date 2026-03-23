@@ -34,19 +34,21 @@ const App = () => {
           <BrowserRouter>
             <div className="dark min-h-screen bg-background text-foreground">
               <Navbar />
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/films" element={<Films />} />
-                <Route path="/films/:categorie" element={<FilmsByCategory />} />
-                <Route path="/film/:id" element={<FilmDetail />} />
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/auth/callback" element={<AuthCallback />} />
-                <Route path="/profil" element={<Profile />} />
-                <Route path="/discussion" element={<Discussion />} />
-                <Route path="/amis" element={<Friends />} />
-                <Route path="/chat/:friendId" element={<Chat />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
+              <main className="pt-16">
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/films" element={<Films />} />
+                  <Route path="/films/:categorie" element={<FilmsByCategory />} />
+                  <Route path="/film/:id" element={<FilmDetail />} />
+                  <Route path="/auth" element={<Auth />} />
+                  <Route path="/auth/callback" element={<AuthCallback />} />
+                  <Route path="/profil" element={<Profile />} />
+                  <Route path="/discussion" element={<Discussion />} />
+                  <Route path="/amis" element={<Friends />} />
+                  <Route path="/chat/:friendId" element={<Chat />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </main>
             </div>
           </BrowserRouter>
         </AuthProvider>
