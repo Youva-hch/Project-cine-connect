@@ -1,167 +1,379 @@
-# CinéConnect
+# CineConnect
 
-Application web full-stack dédiée aux passionnés de cinéma. Découvrez des films, laissez des avis, ajoutez des amis et discutez en temps réel.
+Application web full-stack pour les passionnes de cinema: decouverte de films, avis, notation, systeme d'amis, notifications et messagerie temps reel.
 
----
+## Fonctionnalites
 
-## Fonctionnalités
-
-- **Authentification** — Inscription, connexion, Google OAuth, JWT
-- **Films** — Liste avec filtres (catégorie, année, note), détail, avis et notation
-- **Amis** — Demandes d'amis, acceptation, refus, suppression
-- **Messagerie** — Chat en temps réel entre amis (Socket.io)
-- **Notifications** — Alertes pour les demandes d'amis et messages reçus
-- **Profil** — Modification du nom et de l'avatar
-- **API documentée** — Interface Swagger accessible sur `/api-docs`
-
----
+- Authentification complete: inscription, connexion, JWT, OAuth Google (Passport)
+- Catalogue films via OMDb: recherche, detail film, filtres par genre, affiches et metadonnees
+- Systeme d'avis et notation:
+	- Creation, edition, suppression d'avis
+	- 1 avis max par utilisateur et par film
+	- Recalcul automatique de la note moyenne et du nombre de notes
+- Synchronisation OMDb vers la base locale (`imdb_id` unique)
+- Reseau social:
+	- Envoi/acceptation/refus de demandes d'amis
+	- Suppression d'ami
+	- Recherche d'utilisateurs
+- Notifications en base de donnees:
+	- Demandes d'amis
+	- Demandes acceptees
+	- Messages recus
+	- Marquage unitaire ou global en lu
+- Messagerie temps reel Socket.io entre amis:
+	- Historique de conversation
+	- Reception en direct
+	- Controle d'autorisation (seulement entre amis)
+- Profil utilisateur:
+	- Edition nom/bio
+	- Avatar (Google ou fallback initiales)
+- Frontend redesign dark cinema (theme sombre permanent, hero, cards, animations)
+- Documentation API Swagger (`/api-docs`)
 
 ## Stack technique
 
 ### Backend
-- **Node.js** + **TypeScript**
-- **Express.js** — serveur HTTP
-- **PostgreSQL** — base de données relationnelle
-- **Drizzle ORM** — requêtes et migrations
-- **JWT** — authentification
-- **Socket.io** — messagerie temps réel
-- **Swagger** (swagger-jsdoc + swagger-ui-express) — documentation API
-- **Vitest** + **Supertest** — tests
+- Node.js + TypeScript
+- Express.js
+- PostgreSQL
+- Drizzle ORM
+- JWT + Passport Google OAuth2
+- Socket.io
+- Swagger (`swagger-jsdoc`, `swagger-ui-express`)
+- Vitest + Supertest
 
 ### Frontend
-- **React 18** + **TypeScript**
-- **Vite** — bundler
-- **React Router DOM** — navigation
-- **TanStack Query** — gestion des requêtes et du cache
-- **Tailwind CSS** + **Radix UI** — interface
-- **React Hook Form** + **Zod** — formulaires et validation
-- **Socket.io-client** — messagerie temps réel
-- **Vitest** — tests unitaires
+- React 18 + TypeScript
+- Vite
+- React Router DOM
+- TanStack Query
+- Tailwind CSS + Radix UI
+- React Hook Form + Zod
+- Socket.io-client
+- Vitest + Testing Library
 
-### Outils
-- **pnpm workspaces** — monorepo
-- **Docker** + **docker-compose** — base de données PostgreSQL
-- **OMDb API** — données des films
+### Infra et outils
+- Monorepo pnpm workspaces
+- Docker / Docker Compose (mode dev et mode full stack)
+- OMDb API
 
----
+## Architecture
 
-## Architecture du projet
-
-```
+```text
 Project-cine-connect/
-├── apps/
-│   ├── backend/          # API Express
-│   │   └── src/
-│   │       ├── controllers/
-│   │       ├── routes/
-│   │       ├── services/
-│   │       ├── middlewares/
-│   │       └── __tests__/
-│   └── frontend/         # React + Vite
-│       └── src/
-│           ├── components/
-│           ├── pages/
-│           ├── context/
-│           └── __tests__/
-├── packages/
-│   └── database/         # Schéma Drizzle + migrations
-├── docker-compose.yml
-├── .env.example
-└── README.md
+|- apps/
+|  |- backend/        # API Express + Socket.io
+|  \- frontend/       # Application React + Vite
+|- packages/
+|  \- database/       # Schema Drizzle, migrations, seed
+|- docs/
+|  \- database-schema.md
+|- docker-compose.dev.yml
+|- docker-compose.yml
+\- README.md
 ```
 
----
+## Variables d'environnement
 
-## Installation et lancement
+Creer un fichier `.env` a la racine du projet.
 
-### Prérequis
-
-- Node.js >= 18
-- pnpm (`npm install -g pnpm`)
-- Docker + Docker Compose
-
-### 1. Cloner le projet
-
-```bash
-git clone https://github.com/Youva-hch/Project-cine-connect.git
-cd Project-cine-connect
-```
-
-### 2. Configurer les variables d'environnement
-
-Créer un fichier `.env` à la racine (voir `.env.example`) :
+### Exemple complet (local)
 
 ```env
-JWT_SECRET=votre_secret_jwt
-OMDB_API_KEY=votre_clé_omdb
-GOOGLE_CLIENT_ID=votre_client_id_google
-GOOGLE_CLIENT_SECRET=votre_secret_google
-GOOGLE_CALLBACK_URL=http://localhost:3000/api/auth/google/callback
+# Database (local host)
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=postgres
+DB_PASSWORD=postgres
+DB_NAME=cineconnect_dev
+# Option alternative
+# DATABASE_URL=postgresql://postgres:postgres@localhost:5432/cineconnect_dev
+
+# Backend
+PORT=3000
+NODE_ENV=development
 FRONTEND_URL=http://localhost:5173
+JWT_SECRET=change_me
+SESSION_SECRET=change_me_too
+
+# OMDb
+OMDB_API_KEY=your_omdb_api_key
+
+# Google OAuth
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+GOOGLE_CALLBACK_URL=http://localhost:3000/api/auth/google/callback
 ```
 
-### 3. Lancer la base de données
+### Frontend (`apps/frontend/.env`)
 
-```bash
-docker-compose up -d
+```env
+VITE_API_URL=http://localhost:3000
 ```
 
-### 4. Installer les dépendances et migrer
+Important: ne pas mettre de slash final (`/`) dans `VITE_API_URL` pour eviter les URLs du type `//omdb/search`.
+
+## Installation et lancement (mode local recommande)
+
+### 1. Prerequis
+
+- Node.js >= 18
+- pnpm >= 8
+- Docker Desktop
+
+### 2. Installer les dependances
 
 ```bash
 pnpm install
+```
+
+### 3. Demarrer PostgreSQL (dev)
+
+```bash
+pnpm docker:dev
+```
+
+Equivalent manuel:
+
+```bash
+docker-compose -f docker-compose.dev.yml up -d
+```
+
+### 4. Appliquer les migrations
+
+```bash
 pnpm db:migrate
 ```
 
-### 5. Lancer le projet
+### 5. Seed de base (optionnel)
 
 ```bash
-# Backend (port 3000)
+pnpm db:seed
+```
+
+### 6. Seed OMDb (optionnel)
+
+```bash
+cd apps/backend
+pnpm seed:omdb
+```
+
+### 7. Lancer backend + frontend
+
+Depuis la racine:
+
+```bash
+pnpm dev
+```
+
+Ou en 2 terminaux:
+
+```bash
+# Terminal 1
 cd apps/backend
 pnpm dev
 
-# Frontend (port 5173) — dans un autre terminal
+# Terminal 2
 cd apps/frontend
 pnpm dev
 ```
 
-L'application est disponible sur `http://localhost:5173`
+Acces:
+- Frontend: `http://localhost:5173`
+- Backend API: `http://localhost:3000`
+- Health check: `http://localhost:3000/health`
+- Swagger: `http://localhost:3000/api-docs`
 
----
+## Docker
+
+### Mode dev (DB seule)
+
+```bash
+pnpm docker:dev
+```
+
+### Mode full stack (production-like)
+
+```bash
+pnpm docker:build
+pnpm docker:up
+```
+
+### Commandes utiles
+
+```bash
+pnpm docker:up
+pnpm docker:down
+pnpm docker:build
+pnpm docker:logs
+```
+
+Services en mode full stack:
+- Frontend: `http://localhost` (port 80)
+- Backend: `http://localhost:3000`
+- Postgres: `localhost:5432`
+
+## Base de donnees (Drizzle)
+
+Scripts disponibles (depuis la racine):
+
+```bash
+pnpm db:generate   # genere une migration depuis le schema
+pnpm db:migrate    # applique les migrations
+pnpm db:seed       # injecte des donnees de base
+pnpm db:studio     # interface graphique Drizzle Studio
+```
+
+Reset complet (attention: supprime les donnees):
+
+```bash
+docker-compose down -v
+docker-compose up -d
+pnpm db:migrate
+pnpm db:seed
+```
+
+## Endpoints API principaux
+
+### Auth
+- `POST /api/auth/register`
+- `POST /api/auth/login`
+- `GET /api/auth/me`
+- `GET /api/auth/google`
+
+### Films / OMDb / Reviews
+- `GET /api/films`
+- `GET /api/films/:id`
+- `GET /api/films/category/:slug`
+- `POST /api/films/omdb-sync`
+- `GET /api/films/:id/reviews`
+- `GET /api/films/by-imdb/:imdbId/reviews`
+- `POST /api/films/:id/reviews`
+- `PATCH /api/reviews/:id`
+- `DELETE /api/reviews/:id`
+- `GET /omdb/search`
+- `GET /omdb/movie/:imdbId`
+- `POST /omdb/sync`
+
+### Utilisateurs / Amis / Notifications / Messages
+- `GET /users`
+- `GET /users/:id`
+- `PATCH /users/me`
+- `POST /api/friends/request/:targetId`
+- `GET /api/friends/requests`
+- `GET /api/friends/sent`
+- `PATCH /api/friends/requests/:id/accept`
+- `PATCH /api/friends/requests/:id/reject`
+- `GET /api/friends`
+- `DELETE /api/friends/:friendId`
+- `GET /api/friends/status/:targetId`
+- `GET /api/friends/search?q=`
+- `GET /api/notifications`
+- `GET /api/notifications/count`
+- `PATCH /api/notifications/read-all`
+- `PATCH /api/notifications/:id/read`
+- `GET /api/messages/:friendId`
+
+## Scripts utiles
+
+### Racine
+
+```bash
+pnpm dev
+pnpm build
+pnpm lint
+pnpm type-check
+pnpm format
+pnpm format:check
+```
+
+### Backend (`apps/backend`)
+
+```bash
+pnpm dev
+pnpm build
+pnpm start
+pnpm test
+pnpm test:watch
+pnpm type-check
+pnpm lint
+pnpm seed:omdb
+pnpm clean:films
+pnpm update:posters
+```
+
+### Frontend (`apps/frontend`)
+
+```bash
+pnpm dev
+pnpm build
+pnpm preview
+pnpm test
+pnpm test:watch
+pnpm type-check
+pnpm lint
+```
 
 ## Tests
 
+Depuis chaque app:
+
 ```bash
-# Tests backend (depuis apps/backend)
+# Backend
+cd apps/backend
 pnpm test
 
-# Tests frontend (depuis apps/frontend)
+# Frontend
+cd apps/frontend
 pnpm test
 ```
 
-Les tests couvrent :
-- Génération et vérification des tokens JWT
-- Routes de l'API (health check, routes protégées)
-- Logique de filtrage des films (côté frontend)
+## Depannage
 
----
+### Erreur 404 sur `//omdb/search`
 
-## Documentation API
+Cause: `VITE_API_URL` avec un slash final.
 
-La documentation Swagger est disponible une fois le backend lancé :
+Correction:
 
-```
-http://localhost:3000/api-docs
+```env
+VITE_API_URL=http://localhost:3000
 ```
 
----
+### Echec migration Postgres (authentification)
+
+Causes frequentes:
+- mauvais identifiants en `.env`
+- conflit de port 5432 avec un Postgres local Windows
+
+Verifications:
+
+```bash
+docker ps
+pnpm db:migrate
+```
+
+### Probleme CORS
+
+Verifier `FRONTEND_URL` cote backend. Valeur locale attendue:
+
+```env
+FRONTEND_URL=http://localhost:5173
+```
+
+## Documentation complementaire
+
+- Schema base de donnees: `docs/database-schema.md`
+- Setup Docker detaille: `DOCKER_SETUP.md`
+- Setup DB detaille: `DATABASE_SETUP.md`
+- Etat d'avancement: `AVANCE.md`
 
 ## Auteurs
 
-- **Youva HCH**
-
----
+- Youva HCH
+- Laurent DUBOIS
+- Narimen BOUMAOUT
 
 ## Licence
 
-Projet réalisé dans un cadre scolaire — libre d'utilisation pour l'apprentissage.
+Projet realise dans un cadre scolaire, libre d'utilisation pour l'apprentissage.
