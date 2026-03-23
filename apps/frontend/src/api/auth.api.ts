@@ -62,7 +62,7 @@ export const authApi = {
         },
       })
       return response.data
-    } catch (error) {
+    } catch {
       // Si l'API n'est pas disponible ou le token invalide, utiliser localStorage
       const userStr = localStorage.getItem('user')
       return userStr ? JSON.parse(userStr) : null

@@ -23,36 +23,6 @@ async function apiFetch(path: string, options?: RequestInit) {
   return json.data;
 }
 
-interface FriendUser {
-  friendshipId: number;
-  otherUserId: number;
-  otherUserName: string;
-  otherUserAvatar: string | null;
-  otherUserEmail: string;
-}
-
-interface RequestUser {
-  friendshipId: number;
-  senderId: number;
-  senderName: string;
-  senderAvatar: string | null;
-  senderEmail: string;
-}
-
-interface SentUser {
-  friendshipId: number;
-  targetId: number;
-  targetName: string;
-  targetAvatar: string | null;
-}
-
-interface SearchUser {
-  id: number;
-  name: string;
-  avatarUrl: string | null;
-  email: string;
-}
-
 function Avatar({ name, src, size = 40 }: { name: string; src?: string | null; size?: number }) {
   if (src) {
     return (

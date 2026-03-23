@@ -245,7 +245,7 @@ export class AuthController {
         });
       }
 
-      const { passwordHash, ...rest } = user;
+      const { passwordHash: _passwordHash, ...rest } = user;
       return res.json({
         success: true,
         data: AuthController.buildAuthPayload(rest as { id: number; email: string; name: string; avatarUrl: string | null; bio?: string | null }),
@@ -289,7 +289,7 @@ export class AuthController {
       }
 
       // Ne pas retourner le mot de passe
-      const { passwordHash, ...userWithoutPassword } = user;
+      const { passwordHash: _passwordHash, ...userWithoutPassword } = user;
 
       return res.json({
         success: true,
