@@ -67,5 +67,57 @@ export class UserService {
       .returning();
     return result[0] || null;
   }
+
+  /**
+   * Stocke un token de réinitialisation de mot de passe pour un utilisateur.
+   */
+  static async setPasswordResetToken(id: number, tokenHash: string, expiresAt: Date) {
+    const result = await db
+      .update(users)
+      .set({
+        passwordResetTokenHash: tokenHash,
+        passwordResetTokenExpiresAt: expiresAt,
+        updatedAt: new Date(),
+      })
+      .where(eq(users.id, id))
+      .returning();
+
+    return result[0] || null;
+  }
+
+  /**
+   * Supprime les informations de reset password d'un utilisateur.
+   */
+  static async clearPasswordResetToken(id: number) {
+    const result = await db
+      .update(users)
+      .set({
+        passwordResetTokenHash: null,
+        passwordResetTokenExpiresAt: null,
+        updatedAt: new Date(),
+      })
+      .where(eq(users.id, id))
+      .returning();
+
+    return result[0] || null;
+  }
+
+  /**
+   * Met à jour le mot de passe et invalide tous les tokens de reset.
+   */
+  static async updatePassword(id: number, passwordHash: string) {
+    const result = await db
+      .update(users)
+      .set({
+        passwordHash,
+        passwordResetTokenHash: null,
+        passwordResetTokenExpiresAt: null,
+        updatedAt: new Date(),
+      })
+      .where(eq(users.id, id))
+      .returning();
+
+    return result[0] || null;
+  }
 }
 

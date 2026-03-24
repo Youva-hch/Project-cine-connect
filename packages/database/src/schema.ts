@@ -19,6 +19,8 @@ export const users = pgTable('users', {
   email: text('email').notNull().unique(),
   name: text('name').notNull(),
   passwordHash: text('password_hash').notNull(),
+  passwordResetTokenHash: text('password_reset_token_hash'),
+  passwordResetTokenExpiresAt: timestamp('password_reset_token_expires_at'),
   avatarUrl: text('avatar_url'),
   bio: text('bio'),
   isOnline: boolean('is_online').default(false).notNull(),

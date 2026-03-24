@@ -63,5 +63,10 @@ NODE_ENV=development
 OMDB_API_KEY=your_omdb_api_key
 OMDB_CACHE_TTL_MS=3600000
 OMDB_CACHE_MAX_ENTRIES=500
+RESEND_SMTP_HOST=smtp.resend.com
+RESEND_SMTP_PORT=465
+RESEND_SMTP_USER=resend
+RESEND_SMTP_PASS=your_resend_smtp_password
+EMAIL_FROM=CineConnect <noreply@your-domain.com>
 ```
 

@@ -15,6 +15,8 @@ interface AuthContextType {
   loading: boolean;
   signUp: (email: string, password: string, username: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
+  requestPasswordReset: (email: string) => Promise<void>;
+  resetPassword: (email: string, token: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
 }
 
@@ -80,6 +82,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(appUser);
   };
 
+  const requestPasswordReset = async (email: string) => {
+    const res = await fetch(`${API_BASE}/api/auth/forgot-password`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    });
+    const data = await res.json();
+    if (!res.ok || !data.success) {
+      throw new Error(data.message || 'Impossible d\'envoyer l\'email de réinitialisation');
+    }
+  };
+
+  const resetPassword = async (email: string, token: string, password: string) => {
+    const res = await fetch(`${API_BASE}/api/auth/reset-password`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, token, password }),
+    });
+    const data = await res.json();
+    if (!res.ok || !data.success) {
+      throw new Error(data.message || 'Impossible de réinitialiser le mot de passe');
+    }
+  };
+
   const signOut = async () => {
     clearAuthTokens();
     localStorage.removeItem("user");
@@ -89,7 +115,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const session = user ? { user } : null;
 
   return (
-    <AuthContext.Provider value={{ user, session, loading, signUp, signIn, signOut }}>
+    <AuthContext.Provider value={{ user, session, loading, signUp, signIn, requestPasswordReset, resetPassword, signOut }}>
       {children}
     </AuthContext.Provider>
   );

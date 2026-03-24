@@ -106,6 +106,13 @@ OMDB_API_KEY=your_omdb_api_key
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
 GOOGLE_CALLBACK_URL=http://localhost:3000/api/auth/google/callback
+
+# Reset password via Resend SMTP
+RESEND_SMTP_HOST=smtp.resend.com
+RESEND_SMTP_PORT=465
+RESEND_SMTP_USER=resend
+RESEND_SMTP_PASS=your_resend_smtp_password
+EMAIL_FROM=CineConnect <noreply@your-domain.com>
 ```
 
 ### Frontend (`apps/frontend/.env`)
@@ -241,6 +248,8 @@ pnpm db:seed
 ### Auth
 - `POST /api/auth/register`
 - `POST /api/auth/login`
+- `POST /api/auth/forgot-password`
+- `POST /api/auth/reset-password`
 - `GET /api/auth/me`
 - `GET /api/auth/google`
 

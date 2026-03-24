@@ -71,6 +71,57 @@ router.post('/login', AuthController.login);
 
 /**
  * @swagger
+ * /api/auth/forgot-password:
+ *   post:
+ *     summary: Envoyer un email de réinitialisation de mot de passe
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [email]
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: houche@email.com
+ *     responses:
+ *       200:
+ *         description: Email envoyé (ou réponse neutre si compte introuvable)
+ */
+router.post('/forgot-password', AuthController.forgotPassword);
+
+/**
+ * @swagger
+ * /api/auth/reset-password:
+ *   post:
+ *     summary: Réinitialiser le mot de passe via token
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [email, token, password]
+ *             properties:
+ *               email:
+ *                 type: string
+ *               token:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Mot de passe réinitialisé
+ *       400:
+ *         description: Token invalide ou expiré
+ */
+router.post('/reset-password', AuthController.resetPassword);
+
+/**
+ * @swagger
  * /api/auth/refresh:
  *   post:
  *     summary: Renouveler la session via refresh token

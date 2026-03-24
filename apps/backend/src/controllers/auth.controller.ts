@@ -1,8 +1,10 @@
 import { Request, Response } from 'express';
+import crypto from 'crypto';
 import passport from 'passport';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import { UserService } from '../services/user.service.js';
+import { EmailService } from '../services/email.service.js';
 
 function signAccessToken(user: { id: number; email: string }) {
   const secret = process.env.JWT_SECRET || 'your-secret-key';
@@ -32,6 +34,14 @@ function toUserResponse(user: { id: number; email: string; name: string; avatarU
     avatarUrl: user.avatarUrl,
     bio: user.bio ?? null,
   };
+}
+
+function getFrontendBaseUrl() {
+  return (process.env.FRONTEND_URL || 'http://localhost:5173').replace(/\/$/, '');
+}
+
+function hashResetToken(token: string) {
+  return crypto.createHash('sha256').update(token).digest('hex');
 }
 
 /**
@@ -145,6 +155,130 @@ export class AuthController {
   }
 
   /**
+   * POST /auth/forgot-password - Envoie un email de reset password
+   */
+  static async forgotPassword(req: Request, res: Response) {
+    try {
+      const { email } = req.body as { email?: string };
+      const normalizedEmail = email?.trim();
+
+      if (!normalizedEmail) {
+        return res.status(400).json({
+          success: false,
+          message: 'Email requis',
+        });
+      }
+
+      const user = await UserService.getUserByEmail(normalizedEmail);
+      if (!user) {
+        return res.json({
+          success: true,
+          message: 'Si un compte existe avec cet email, un lien de réinitialisation a été envoyé.',
+        });
+      }
+
+      const resetToken = crypto.randomBytes(32).toString('hex');
+      const resetTokenHash = hashResetToken(resetToken);
+      const expiresAt = new Date(Date.now() + 60 * 60 * 1000);
+
+      await UserService.setPasswordResetToken(user.id, resetTokenHash, expiresAt);
+
+      const frontendUrl = getFrontendBaseUrl();
+      const params = new URLSearchParams({
+        mode: 'reset',
+        token: resetToken,
+        email: user.email,
+      });
+      const resetLink = `${frontendUrl}/auth?${params.toString()}`;
+
+      await EmailService.sendPasswordResetEmail({
+        to: user.email,
+        recipientName: user.name,
+        resetLink,
+      });
+
+      return res.json({
+        success: true,
+        message: 'Si un compte existe avec cet email, un lien de réinitialisation a été envoyé.',
+      });
+    } catch (error) {
+      console.error('Forgot password error:', error);
+      return res.status(500).json({
+        success: false,
+        message: 'Impossible d\'envoyer l\'email de réinitialisation',
+      });
+    }
+  }
+
+  /**
+   * POST /auth/reset-password - Met à jour le mot de passe via token
+   */
+  static async resetPassword(req: Request, res: Response) {
+    try {
+      const { email, token, password } = req.body as {
+        email?: string;
+        token?: string;
+        password?: string;
+      };
+
+      const normalizedEmail = email?.trim();
+      const normalizedToken = token?.trim();
+
+      if (!normalizedEmail || !normalizedToken || !password) {
+        return res.status(400).json({
+          success: false,
+          message: 'Email, token et nouveau mot de passe requis',
+        });
+      }
+
+      if (password.length < 6) {
+        return res.status(400).json({
+          success: false,
+          message: 'Le mot de passe doit contenir au moins 6 caractères',
+        });
+      }
+
+      const user = await UserService.getUserByEmail(normalizedEmail);
+      if (!user || !user.passwordResetTokenHash || !user.passwordResetTokenExpiresAt) {
+        return res.status(400).json({
+          success: false,
+          message: 'Lien de réinitialisation invalide ou expiré',
+        });
+      }
+
+      if (user.passwordResetTokenExpiresAt.getTime() < Date.now()) {
+        await UserService.clearPasswordResetToken(user.id);
+        return res.status(400).json({
+          success: false,
+          message: 'Lien de réinitialisation invalide ou expiré',
+        });
+      }
+
+      const providedTokenHash = hashResetToken(normalizedToken);
+      if (providedTokenHash !== user.passwordResetTokenHash) {
+        return res.status(400).json({
+          success: false,
+          message: 'Lien de réinitialisation invalide ou expiré',
+        });
+      }
+
+      const passwordHash = await bcrypt.hash(password, 10);
+      await UserService.updatePassword(user.id, passwordHash);
+
+      return res.json({
+        success: true,
+        message: 'Mot de passe réinitialisé avec succès',
+      });
+    } catch (error) {
+      console.error('Reset password error:', error);
+      return res.status(500).json({
+        success: false,
+        message: 'Impossible de réinitialiser le mot de passe',
+      });
+    }
+  }
+
+  /**
    * Initie l'authentification Google
    */
   static googleAuth(req: Request, res: Response) {
@@ -157,7 +291,7 @@ export class AuthController {
    * Redirige vers la page login avec un message d'erreur (message tronqué pour l'URL)
    */
   static redirectLoginError(res: Response, message: string) {
-    const frontendUrl = (process.env.FRONTEND_URL || 'http://localhost:5173').replace(/\/$/, '');
+    const frontendUrl = getFrontendBaseUrl();
     const params = new URLSearchParams({ error: 'auth_failed' });
     const safeMsg = message.slice(0, 200);
     params.set('message', safeMsg);
@@ -168,7 +302,7 @@ export class AuthController {
    * Callback après authentification Google
    */
   static googleCallback(req: Request, res: Response) {
-    const frontendUrl = (process.env.FRONTEND_URL || 'http://localhost:5173').replace(/\/$/, '');
+    const frontendUrl = getFrontendBaseUrl();
 
     // Erreur renvoyée par Google dans l'URL (ex: access_denied, redirect_uri_mismatch)
     const googleError = req.query.error as string | undefined;
