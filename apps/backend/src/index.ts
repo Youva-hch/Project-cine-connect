@@ -167,21 +167,25 @@ io.on('connection', (socket) => {
 // Export de l'app pour les tests
 export { app };
 
-// Démarrage
-server.listen(Number(PORT), '0.0.0.0', () => {
-  console.log(`🚀 Serveur démarré sur le port ${PORT}`);
-  console.log(`📍 Health check: http://localhost:${PORT}/health`);
-  console.log(`⚡ Socket.io actif`);
-});
+const isTestRuntime = process.env.NODE_ENV === 'test' || process.env.VITEST === 'true';
 
-server.on('error', (err: NodeJS.ErrnoException) => {
-  if (err.code === 'EADDRINUSE') {
-    console.error(`❌ Le port ${PORT} est déjà utilisé.`);
-    process.exit(1);
-  } else {
-    console.error('❌ Erreur serveur:', err);
-    process.exit(1);
-  }
-});
+// Démarrage (désactivé pendant les tests)
+if (!isTestRuntime) {
+  server.listen(Number(PORT), '0.0.0.0', () => {
+    console.log(`🚀 Serveur démarré sur le port ${PORT}`);
+    console.log(`📍 Health check: http://localhost:${PORT}/health`);
+    console.log(`⚡ Socket.io actif`);
+  });
+
+  server.on('error', (err: NodeJS.ErrnoException) => {
+    if (err.code === 'EADDRINUSE') {
+      console.error(`❌ Le port ${PORT} est déjà utilisé.`);
+      process.exit(1);
+    } else {
+      console.error('❌ Erreur serveur:', err);
+      process.exit(1);
+    }
+  });
+}
 
 export default app;

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Star, MessageCircle, TrendingUp } from 'lucide-react';
+import { Star, MessageCircle } from 'lucide-react';
 import { searchMovies, getMovieById } from '../../lib/omdb';
 import { FilmRow } from '../../components/FilmRow/';
 import { Button } from '@/components/ui/button';
