@@ -170,6 +170,7 @@ export const usersRelations = relations(users, ({ many }) => ({
   friendships: many(friends, { relationName: 'user' }),
   friendOf: many(friends, { relationName: 'friend' }),
   notifications: many(notifications, { relationName: 'notifTarget' }),
+  relatedNotifications: many(notifications, { relationName: 'notifActor' }),
 }));
 
 export const filmsRelations = relations(films, ({ many }) => ({
@@ -215,6 +216,19 @@ export const friendsRelations = relations(friends, ({ one }) => ({
     fields: [friends.friendId],
     references: [users.id],
     relationName: 'friend',
+  }),
+}));
+
+export const notificationsRelations = relations(notifications, ({ one }) => ({
+  user: one(users, {
+    fields: [notifications.userId],
+    references: [users.id],
+    relationName: 'notifTarget',
+  }),
+  relatedUser: one(users, {
+    fields: [notifications.relatedUserId],
+    references: [users.id],
+    relationName: 'notifActor',
   }),
 }));
 

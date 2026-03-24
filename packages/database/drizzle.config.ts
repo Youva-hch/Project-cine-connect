@@ -1,5 +1,9 @@
 import { defineConfig } from 'drizzle-kit';
-import 'dotenv/config';
+import dotenv from 'dotenv';
+
+dotenv.config();
+dotenv.config({ path: '../../.env' });
+dotenv.config({ path: '../../apps/backend/.env' });
 
 // Environment variables are loaded from .env file in the root
 // Make sure to set them before running drizzle-kit commands

@@ -10,25 +10,22 @@ WORKDIR /app
 
 # Copier les fichiers de configuration du monorepo
 COPY pnpm-workspace.yaml package.json pnpm-lock.yaml ./
-COPY packages/database/package.json ./packages/database/
 COPY apps/frontend/package.json ./apps/frontend/
 
-# Installer les dépendances
-RUN pnpm install --frozen-lockfile
+# Installer uniquement les dépendances nécessaires au frontend (inclut vite en devDependency)
+RUN pnpm install --frozen-lockfile --filter frontend... --prod=false
 
 # Étape de build
 FROM base AS builder
 WORKDIR /app
 
-# Copier les dépendances
-COPY --from=deps /app/node_modules ./node_modules
-COPY --from=deps /app/packages ./packages
-COPY --from=deps /app/apps/frontend/node_modules ./apps/frontend/node_modules
-
 # Copier le code source
-COPY packages/database ./packages/database
 COPY apps/frontend ./apps/frontend
 COPY tsconfig.json ./
+
+# Restaurer les node_modules des workspaces après copie du code
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/apps/frontend/node_modules ./apps/frontend/node_modules
 
 # Build
 WORKDIR /app/apps/frontend

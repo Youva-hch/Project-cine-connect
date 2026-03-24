@@ -113,11 +113,6 @@ export default function Index() {
 
         {/* Hero content */}
         <div className="relative z-10 px-4 md:px-14 pb-20 md:pb-28 max-w-2xl space-y-5 animate-fade-in">
-          {/* Badge */}
-          <span className={`pill-violet inline-flex items-center gap-1.5 ${styles.heroBadge}`}>
-            <TrendingUp className="h-3 w-3" />
-            Film mis en avant
-          </span>
 
           {/* Title */}
           <h1 className="font-display text-5xl md:text-7xl lg:text-8xl leading-none text-white drop-shadow-2xl">
