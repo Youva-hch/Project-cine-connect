@@ -1,2 +1,55 @@
-.root {}
+.cardContainer {
+	transform: scale(1);
+	transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cardContainer:hover {
+	transform: scale(1.07);
+	z-index: 30;
+}
+
+.fallbackPoster {
+	background: linear-gradient(160deg, #1a0533 0%, #3b0764 55%, rgba(124, 58, 237, 0.2) 100%);
+}
+
+.fallbackAccent {
+	color: #a78bfa;
+}
+
+.fallbackInitials {
+	font-size: clamp(2.5rem, 6vw, 4rem);
+	color: #a78bfa;
+	opacity: 0.25;
+	letter-spacing: 0.05em;
+}
+
+.fallbackAccentBar {
+	background: #a78bfa;
+	opacity: 0.5;
+}
+
+.fallbackTitle {
+	text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+}
+
+.topBadge {
+	background: rgba(139, 92, 246, 0.85);
+	backdrop-filter: blur(4px);
+	color: #fff;
+}
+
+.hoverOverlay {
+	background: linear-gradient(to top, rgba(7, 7, 16, 0.97) 0%, rgba(7, 7, 16, 0.5) 50%, transparent 100%);
+}
+
+.ratingChip {
+	background: linear-gradient(135deg, hsl(265, 78%, 58%) 0%, hsl(265, 60%, 44%) 100%);
+}
+
+.reviewsCta {
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	color: rgba(255, 255, 255, 0.85);
+	background: rgba(255, 255, 255, 0.08);
+	backdrop-filter: blur(4px);
+}
 
