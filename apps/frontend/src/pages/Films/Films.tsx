@@ -68,6 +68,21 @@ const POPULAR_QUERIES = [
   "rocky", "karate kid", "casino royale", "ocean eleven", "heat 1995",
 ];
 
+const FALLBACK_FILMS: OmdbMovie[] = [
+  { Title: "Inception", Year: "2010", imdbID: "tt1375666", Type: "movie", Poster: "N/A" },
+  { Title: "Interstellar", Year: "2014", imdbID: "tt0816692", Type: "movie", Poster: "N/A" },
+  { Title: "The Dark Knight", Year: "2008", imdbID: "tt0468569", Type: "movie", Poster: "N/A" },
+  { Title: "Dune", Year: "2021", imdbID: "tt1160419", Type: "movie", Poster: "N/A" },
+  { Title: "Oppenheimer", Year: "2023", imdbID: "tt15398776", Type: "movie", Poster: "N/A" },
+  { Title: "Parasite", Year: "2019", imdbID: "tt6751668", Type: "movie", Poster: "N/A" },
+  { Title: "Whiplash", Year: "2014", imdbID: "tt2582802", Type: "movie", Poster: "N/A" },
+  { Title: "The Godfather", Year: "1972", imdbID: "tt0068646", Type: "movie", Poster: "N/A" },
+  { Title: "Mad Max: Fury Road", Year: "2015", imdbID: "tt1392190", Type: "movie", Poster: "N/A" },
+  { Title: "Top Gun: Maverick", Year: "2022", imdbID: "tt1745960", Type: "movie", Poster: "N/A" },
+  { Title: "Joker", Year: "2019", imdbID: "tt7286456", Type: "movie", Poster: "N/A" },
+  { Title: "The Prestige", Year: "2006", imdbID: "tt0482571", Type: "movie", Poster: "N/A" },
+];
+
 async function fetchFilmsForQueries(queries: string[]): Promise<OmdbMovie[]> {
   const allFilms: OmdbMovie[] = [];
   const seenIds: string[] = [];
@@ -109,7 +124,8 @@ export default function Films() {
     enabled: !!activeGenre && !!activeGenreData,
   });
 
-  const baseFilms = activeGenre ? (genreFilms ?? []) : (popularFilms ?? []);
+  const sourceFilms = activeGenre ? (genreFilms ?? []) : (popularFilms ?? []);
+  const baseFilms = sourceFilms.length > 0 ? sourceFilms : FALLBACK_FILMS;
   const isLoading = activeGenre ? genreLoading : popularLoading;
 
   // Filtrage local par texte en temps réel

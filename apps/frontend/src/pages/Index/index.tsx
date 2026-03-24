@@ -6,6 +6,8 @@ import { searchMovies, getMovieById } from '../../lib/omdb';
 import { FilmRow } from '../../components/FilmRow/';
 import { Button } from '@/components/ui/button';
 import styles from './Index.module.css';
+import type { OmdbMovie } from '@/lib/omdb';
+import { getBestPosterUrl } from '@/lib/poster';
 
 const SECTIONS = [
   { title: 'Tendances actuelles', query: '2024' },
@@ -38,16 +40,26 @@ const HERO_FILMS = [
   'tt0111161', // The Shawshank Redemption (1994)
 ];
 
+const FALLBACK_FILMS: OmdbMovie[] = [
+  { Title: 'Inception', Year: '2010', imdbID: 'tt1375666', Type: 'movie', Poster: 'N/A' },
+  { Title: 'Interstellar', Year: '2014', imdbID: 'tt0816692', Type: 'movie', Poster: 'N/A' },
+  { Title: 'The Dark Knight', Year: '2008', imdbID: 'tt0468569', Type: 'movie', Poster: 'N/A' },
+  { Title: 'Dune', Year: '2021', imdbID: 'tt1160419', Type: 'movie', Poster: 'N/A' },
+  { Title: 'Oppenheimer', Year: '2023', imdbID: 'tt15398776', Type: 'movie', Poster: 'N/A' },
+  { Title: 'Parasite', Year: '2019', imdbID: 'tt6751668', Type: 'movie', Poster: 'N/A' },
+  { Title: 'Whiplash', Year: '2014', imdbID: 'tt2582802', Type: 'movie', Poster: 'N/A' },
+  { Title: 'The Godfather', Year: '1972', imdbID: 'tt0068646', Type: 'movie', Poster: 'N/A' },
+  { Title: 'Mad Max: Fury Road', Year: '2015', imdbID: 'tt1392190', Type: 'movie', Poster: 'N/A' },
+  { Title: 'Top Gun: Maverick', Year: '2022', imdbID: 'tt1745960', Type: 'movie', Poster: 'N/A' },
+  { Title: 'Joker', Year: '2019', imdbID: 'tt7286456', Type: 'movie', Poster: 'N/A' },
+  { Title: 'The Prestige', Year: '2006', imdbID: 'tt0482571', Type: 'movie', Poster: 'N/A' },
+  { Title: 'Se7en', Year: '1995', imdbID: 'tt0114369', Type: 'movie', Poster: 'N/A' },
+  { Title: 'Avengers: Endgame', Year: '2019', imdbID: 'tt4154796', Type: 'movie', Poster: 'N/A' },
+  { Title: 'Blade Runner 2049', Year: '2017', imdbID: 'tt1856101', Type: 'movie', Poster: 'N/A' },
+];
+
 function getHighResPosterUrl(posterUrl?: string) {
-  if (!posterUrl || posterUrl === 'N/A') return '';
-
-  // OMDb retourne souvent une miniature IMDb (ex: _V1_SX300.jpg).
-  // On force une variante plus large pour la hero afin d'eviter le flou en plein ecran.
-  if (/_V1_.*\.(jpg|jpeg|png)$/i.test(posterUrl)) {
-    return posterUrl.replace(/_V1_.*\.(jpg|jpeg|png)$/i, '_V1_QL75_UX1400_.jpg');
-  }
-
-  return posterUrl.replace(/SX\d+/i, 'SX1400').replace(/SY\d+/i, 'SY1400');
+  return getBestPosterUrl(posterUrl, { omdbSize: 1400, tmdbWidth: 1280 });
 }
 
 export default function Index() {
@@ -161,11 +173,15 @@ export default function Index() {
       <div className="relative z-10 space-y-1 pb-16">
         {SECTIONS.map((section, idx) => {
           const films = sectionQueries[idx]?.data?.Search ?? [];
+          const displayFilms =
+            films.length > 0
+              ? films
+              : FALLBACK_FILMS.slice((idx * 3) % FALLBACK_FILMS.length).concat(FALLBACK_FILMS).slice(0, 12);
           return (
             <FilmRow
               key={section.query}
               title={section.title}
-              films={films}
+              films={displayFilms}
               size={idx === 0 ? 'large' : 'normal'}
             />
           );

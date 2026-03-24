@@ -1,4 +1,4 @@
-import apiRequest from './config'
+import { apiRequest } from './config'
 import type { Film, Category, Review } from './types'
 
 export interface FilmsQueryParams {

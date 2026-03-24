@@ -1,4 +1,4 @@
-import apiRequest from './config'
+import { apiRequest } from './config'
 import type { User } from './types'
 
 export const usersApi = {

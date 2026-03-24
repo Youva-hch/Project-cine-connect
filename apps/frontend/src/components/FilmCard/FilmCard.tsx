@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Star, MessageCircle, Film } from "lucide-react";
 import { useState } from "react";
 import type { OmdbMovie } from "@/lib/omdb";
+import { getBestPosterUrl } from "@/lib/poster";
 import { ReviewModal } from "@/components/ReviewModal";
 
 // Génère un dégradé unique basé sur le titre du film
@@ -39,7 +40,8 @@ export function FilmCard({ film, size = "normal" }: FilmCardProps) {
   const [imgError, setImgError] = useState(false);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const navigate = useNavigate();
-  const hasPoster = !imgError && film.Poster && film.Poster !== "N/A";
+  const posterUrl = getBestPosterUrl(film.Poster, { omdbSize: 1200, tmdbWidth: 780 });
+  const hasPoster = !imgError && !!posterUrl;
   const isLarge = size === "large";
 
   return (
@@ -72,7 +74,7 @@ export function FilmCard({ film, size = "normal" }: FilmCardProps) {
         {/* Poster */}
         {hasPoster ? (
           <img
-            src={film.Poster}
+            src={posterUrl}
             alt={film.Title}
             className="w-full h-full object-cover"
             loading="lazy"

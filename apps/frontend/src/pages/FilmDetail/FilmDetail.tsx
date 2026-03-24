@@ -4,6 +4,7 @@ import { getMovieById } from "@/lib/omdb";
 import { Clock, Globe, Award, User, Star, MessageCircle, Pencil, Trash2, Loader2, X } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { getBestPosterUrl } from "@/lib/poster";
 import { ReviewModal } from "@/components/ReviewModal";
 
 const API_BASE = import.meta.env.VITE_API_URL || "";
@@ -171,7 +172,8 @@ export default function FilmDetail() {
 
   if (!movie) return null;
 
-  const hasPoster = movie.Poster && movie.Poster !== "N/A";
+  const detailPosterUrl = getBestPosterUrl(movie.Poster, { omdbSize: 1400, tmdbWidth: 1280 });
+  const hasPoster = !!detailPosterUrl;
 
   return (
     <div className="container mx-auto px-4 py-8 space-y-10">
@@ -179,7 +181,7 @@ export default function FilmDetail() {
         <div className="flex flex-col md:flex-row gap-8">
         <div className="w-full md:w-[500px] shrink-0">
           {hasPoster ? (
-            <img src={movie.Poster} alt={movie.Title} className="w-full rounded-xl shadow-2xl" />
+            <img src={detailPosterUrl} alt={movie.Title} className="w-full rounded-xl shadow-2xl" />
           ) : (
             <div className="w-full aspect-[2/3] rounded-xl flex items-center justify-center"
               style={{ background: "rgba(139,92,246,0.12)", border: "1px solid rgba(139,92,246,0.2)" }}>
