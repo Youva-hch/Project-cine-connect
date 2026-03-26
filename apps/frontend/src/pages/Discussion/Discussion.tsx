@@ -44,7 +44,6 @@ function Avatar({ name, src, size = 40 }: { name: string; src?: string | null; s
   const initials = name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
   return (
     <div
-      className="rounded-full flex items-center justify-center flex-shrink-0 font-bold text-white"
       style={{
         width: size,
         height: size,
@@ -148,13 +147,12 @@ export default function Discussion() {
     <div className={`flex h-screen pt-16 ${styles.page}`}>
       {/* ── Sidebar gauche : liste des conversations ────────────────────── */}
       <div
-        className={`flex flex-col flex-shrink-0 ${selectedId ? "hidden md:flex" : "flex"}`}
         style={{ width: 300 }}
         className={`flex flex-col flex-shrink-0 ${selectedId ? "hidden md:flex" : "flex"} ${styles.sidebar}`}
       >
         {/* Header sidebar */}
         <div className={`px-4 py-4 flex-shrink-0 ${styles.sidebarHeader}`}>
-          <h2 className="font-semibold text-white text-sm">Discussions</h2>
+          <h2 className={`font-semibold text-sm ${styles.chatTitle}`}>Discussions</h2>
           <p className={`text-xs mt-0.5 ${styles.muted35}`}>
             {friends.length} conversation{friends.length !== 1 ? "s" : ""}
           </p>
@@ -182,7 +180,6 @@ export default function Discussion() {
                   <Avatar name={f.otherUserName} src={f.otherUserAvatar} size={38} />
                   <div className="flex-1 min-w-0">
                     <p
-                      className="text-sm font-medium truncate"
                       className={`text-sm font-medium truncate ${isActive ? styles.friendNameActive : styles.friendName}`}
                     >
                       {f.otherUserName}
@@ -204,13 +201,11 @@ export default function Discussion() {
           <>
             {/* Header chat */}
             <div
-              className="flex items-center gap-3 px-4 py-3 flex-shrink-0"
               className={`flex items-center gap-3 px-4 py-3 flex-shrink-0 border-b ${styles.chatHeader}`}
             >
               {/* Bouton retour mobile */}
               <button
                 onClick={() => setSearchParams({})}
-                className="md:hidden p-2 rounded-lg"
                 className={`md:hidden p-2 rounded-lg ${styles.muted50}`}
                 type="button"
               >
@@ -246,7 +241,6 @@ export default function Discussion() {
                       <Avatar name={msg.senderName ?? "?"} src={msg.senderAvatar} size={28} />
                     )}
                     <div
-                      className="max-w-sm px-4 py-2 rounded-2xl text-sm"
                       style={{
                         borderBottomRightRadius: isMine ? 4 : undefined,
                         borderBottomLeftRadius: isMine ? undefined : 4,
@@ -257,7 +251,6 @@ export default function Discussion() {
                     >
                       <p className={styles.messageText}>{msg.content}</p>
                       <p
-                        className="text-xs mt-1"
                         style={{
                           textAlign: isMine ? "right" : "left",
                         }}
@@ -274,7 +267,6 @@ export default function Discussion() {
 
             {/* Input */}
             <div
-              className="flex items-center gap-3 px-4 py-3 flex-shrink-0"
               className={`flex items-center gap-3 px-4 py-3 flex-shrink-0 border-t ${styles.chatFooter}`}
             >
               <input
@@ -299,7 +291,6 @@ export default function Discussion() {
         ) : (
           /* Empty state */
           <div
-            className="flex-1 flex flex-col items-center justify-center"
             className={`flex-1 flex flex-col items-center justify-center ${styles.emptySelection}`}
           >
             <MessageCircle className="h-16 w-16 mb-4 opacity-20" />

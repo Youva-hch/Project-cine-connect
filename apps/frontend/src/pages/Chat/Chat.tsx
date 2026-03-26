@@ -152,7 +152,6 @@ export default function Chat() {
       <div className={`flex items-center gap-3 px-4 py-3 flex-shrink-0 border-b ${styles.header}`}>
         <button
           onClick={() => navigate("/amis")}
-          className="p-2 rounded-lg transition-colors"
           className={`p-2 rounded-lg transition-colors ${styles.headerMuted}`}
           type="button"
         >
@@ -194,7 +193,6 @@ export default function Chat() {
                 <Avatar name={msg.senderName ?? "?"} src={msg.senderAvatar} size={28} />
               )}
               <div
-                className="max-w-xs px-4 py-2 rounded-2xl text-sm"
                 style={{
                   borderBottomRightRadius: isMine ? 4 : undefined,
                   borderBottomLeftRadius: isMine ? undefined : 4,
@@ -205,7 +203,6 @@ export default function Chat() {
               >
                 <p className={styles.messageText}>{msg.content}</p>
                 <p
-                  className="text-xs mt-1"
                   style={{ textAlign: isMine ? "right" : "left" }}
                   className={`text-xs mt-1 ${isMine ? styles.timeMine : styles.timeOther}`}
                 >

@@ -1,34 +1,34 @@
 .page {
-	background: rgba(7, 7, 16, 1);
+	background: hsl(var(--background));
 }
 
 .sidebar {
-	border-right: 1px solid rgba(255, 255, 255, 0.07);
-	background: rgba(14, 14, 28, 0.98);
+	border-right: 1px solid hsl(var(--border) / 0.9);
+	background: hsl(var(--card) / 0.97);
 }
 
 .sidebarHeader {
-	border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+	border-bottom: 1px solid hsl(var(--border) / 0.9);
 }
 
 .muted35 {
-	color: rgba(255, 255, 255, 0.35);
+	color: hsl(var(--muted-foreground));
 }
 
 .muted30 {
-	color: rgba(255, 255, 255, 0.3);
+	color: hsl(var(--muted-foreground));
 }
 
 .muted50 {
-	color: rgba(255, 255, 255, 0.5);
+	color: hsl(var(--muted-foreground));
 }
 
 .emptyState {
-	color: rgba(255, 255, 255, 0.25);
+	color: hsl(var(--muted-foreground));
 }
 
 .emptySelection {
-	color: rgba(255, 255, 255, 0.2);
+	color: hsl(var(--muted-foreground));
 }
 
 .avatarFallback {
@@ -46,21 +46,21 @@
 }
 
 .friendName {
-	color: rgba(255, 255, 255, 0.8);
+	color: hsl(var(--foreground));
 }
 
 .friendNameActive {
-	color: white;
+	color: hsl(var(--foreground));
 }
 
 .chatHeader,
 .chatFooter {
-	border-color: rgba(255, 255, 255, 0.07);
-	background: rgba(14, 14, 28, 0.98);
+	border-color: hsl(var(--border) / 0.9);
+	background: hsl(var(--card) / 0.97);
 }
 
 .chatTitle {
-	color: white;
+	color: hsl(var(--foreground));
 }
 
 .bubbleMine {
@@ -69,16 +69,16 @@
 }
 
 .bubbleOther {
-	background: rgba(255, 255, 255, 0.07);
-	color: white;
+	background: hsl(var(--secondary));
+	color: hsl(var(--foreground));
 }
 
 .timeMine {
-	color: rgba(255, 255, 255, 0.55);
+	color: hsl(0 0% 100% / 0.72);
 }
 
 .timeOther {
-	color: rgba(255, 255, 255, 0.35);
+	color: hsl(var(--muted-foreground));
 }
 
 .messageText {
@@ -86,9 +86,9 @@
 }
 
 .chatInput {
-	background: rgba(255, 255, 255, 0.06);
-	border: 1px solid rgba(255, 255, 255, 0.1);
-	color: white;
+	background: hsl(var(--background) / 0.55);
+	border: 1px solid hsl(var(--border) / 0.9);
+	color: hsl(var(--foreground));
 }
 
 .sendActive {
@@ -97,7 +97,7 @@
 }
 
 .sendDisabled {
-	background: rgba(255, 255, 255, 0.06);
-	color: rgba(255, 255, 255, 0.25);
+	background: hsl(var(--secondary));
+	color: hsl(var(--muted-foreground));
 }
 

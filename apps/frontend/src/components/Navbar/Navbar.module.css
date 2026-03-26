@@ -17,11 +17,11 @@
 }
 
 .logoIcon {
-	color: hsl(265, 78%, 68%);
+	color: rgba(47, 255, 0, 0.35);
 }
 
 .brandText {
-	background: linear-gradient(135deg, hsl(265, 78%, 72%) 0%, hsl(38, 92%, 65%) 100%);
+	background: rgba(47, 255, 0, 0.35);
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
 	background-clip: text;

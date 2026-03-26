@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { Users, UserPlus, Clock, Check, X, Search, UserX, MessageSquare } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import styles from "./Friends.module.css";
 
 const API = import.meta.env.VITE_API_URL || "";
 
@@ -42,11 +43,10 @@ function Avatar({ name, src, size = 40 }: { name: string; src?: string | null; s
     .toUpperCase();
   return (
     <div
-      className="rounded-full flex items-center justify-center flex-shrink-0 font-bold text-white text-sm"
+      className={`rounded-full flex items-center justify-center flex-shrink-0 font-bold text-white text-sm ${styles.avatarFallback}`}
       style={{
         width: size,
         height: size,
-        background: "linear-gradient(135deg, hsl(265,78%,55%), hsl(280,70%,45%))",
       }}
     >
       {initials}
@@ -131,38 +131,31 @@ export default function Friends() {
       {/* Header */}
       <div className="text-center space-y-2">
         <h1 className="font-display text-4xl text-gradient-cinema">Amis</h1>
-        <p style={{ color: "rgba(255,255,255,0.45)" }} className="text-sm">
+        <p className={`text-sm ${styles.subtitle}`}>
           Gérez vos amis et demandes en attente
         </p>
       </div>
 
       {/* Tabs */}
       <div
-        className="flex rounded-xl overflow-hidden"
-        style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}
+        className={`flex rounded-xl overflow-hidden ${styles.tabsWrap}`}
       >
         {tabs.map((t) => (
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
-            className="flex-1 py-3 text-sm font-medium transition-all relative"
-            style={{
-              color: tab === t.id ? "white" : "rgba(255,255,255,0.45)",
-              background:
-                tab === t.id
-                  ? "linear-gradient(135deg, hsl(265,78%,48%), hsl(280,70%,38%))"
-                  : "transparent",
-            }}
+            className={`flex-1 py-3 text-sm font-medium transition-all relative ${styles.tab} ${
+              tab === t.id ? styles.tabActive : ""
+            }`}
+            type="button"
           >
             {t.label}
             {t.count !== undefined && t.count > 0 && (
               <span
-                className="ml-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-bold px-1.5 py-0.5"
-                style={{
-                  background: tab === t.id ? "rgba(255,255,255,0.2)" : "rgba(139,92,246,0.3)",
-                  color: "white",
-                  minWidth: 18,
-                }}
+                className={`ml-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-bold px-1.5 py-0.5 ${styles.tabBadge} ${
+                  tab === t.id ? styles.tabBadgeActive : ""
+                }`}
+                style={{ minWidth: 18 }}
               >
                 {t.count}
               </span>
@@ -176,16 +169,16 @@ export default function Friends() {
         <div className="space-y-2">
           {friendsLoading ? (
             Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="h-16 rounded-xl animate-pulse" style={{ background: "rgba(255,255,255,0.04)" }} />
+              <div key={i} className={`h-16 rounded-xl animate-pulse ${styles.skeleton}`} />
             ))
           ) : friends.length === 0 ? (
-            <div className="text-center py-12" style={{ color: "rgba(255,255,255,0.3)" }}>
+            <div className={`text-center py-12 ${styles.emptyText}`}>
               <Users className="h-12 w-12 mx-auto mb-3 opacity-30" />
               <p>Vous n'avez pas encore d'amis</p>
               <button
                 onClick={() => setTab("add")}
-                className="mt-2 text-sm underline"
-                style={{ color: "hsl(265,78%,72%)" }}
+                className={`mt-2 text-sm underline ${styles.linkAccent}`}
+                type="button"
               >
                 Ajouter des amis
               </button>
@@ -194,27 +187,26 @@ export default function Friends() {
             friends.map((f) => (
               <div
                 key={f.friendshipId}
-                className="flex items-center gap-3 px-4 py-3 rounded-xl"
-                style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl ${styles.card}`}
               >
                 <Avatar name={f.otherUserName} src={f.otherUserAvatar} />
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium" style={{ color: "white" }}>{f.otherUserName}</p>
-                  <p className="text-xs" style={{ color: "rgba(255,255,255,0.35)" }}>{f.otherUserEmail}</p>
+                  <p className={`text-sm font-medium ${styles.name}`}>{f.otherUserName}</p>
+                  <p className={`text-xs ${styles.email}`}>{f.otherUserEmail}</p>
                 </div>
                 <button
                   onClick={() => navigate(`/discussion?with=${f.otherUserId}`)}
-                  className="p-2 rounded-lg transition-colors"
-                  style={{ color: "hsl(265,78%,72%)", background: "rgba(139,92,246,0.1)" }}
+                  className={`p-2 rounded-lg transition-colors ${styles.messageBtn}`}
                   title="Envoyer un message"
+                  type="button"
                 >
                   <MessageSquare className="h-4 w-4" />
                 </button>
                 <button
                   onClick={() => remove.mutate(f.otherUserId)}
-                  className="p-2 rounded-lg transition-colors"
-                  style={{ color: "rgba(255,255,255,0.35)" }}
+                  className={`p-2 rounded-lg transition-colors ${styles.removeBtn}`}
                   title="Supprimer"
+                  type="button"
                 >
                   <UserX className="h-4 w-4" />
                 </button>
@@ -229,10 +221,10 @@ export default function Friends() {
         <div className="space-y-2">
           {requestsLoading ? (
             Array.from({ length: 2 }).map((_, i) => (
-              <div key={i} className="h-16 rounded-xl animate-pulse" style={{ background: "rgba(255,255,255,0.04)" }} />
+              <div key={i} className={`h-16 rounded-xl animate-pulse ${styles.skeleton}`} />
             ))
           ) : requests.length === 0 ? (
-            <div className="text-center py-12" style={{ color: "rgba(255,255,255,0.3)" }}>
+            <div className={`text-center py-12 ${styles.emptyText}`}>
               <Clock className="h-12 w-12 mx-auto mb-3 opacity-30" />
               <p>Aucune demande en attente</p>
             </div>
@@ -240,28 +232,27 @@ export default function Friends() {
             requests.map((r) => (
               <div
                 key={r.friendshipId}
-                className="flex items-center gap-3 px-4 py-3 rounded-xl"
-                style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl ${styles.card}`}
               >
                 <Avatar name={r.senderName} src={r.senderAvatar} />
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium" style={{ color: "white" }}>{r.senderName}</p>
-                  <p className="text-xs" style={{ color: "rgba(255,255,255,0.35)" }}>{r.senderEmail}</p>
+                  <p className={`text-sm font-medium ${styles.name}`}>{r.senderName}</p>
+                  <p className={`text-xs ${styles.email}`}>{r.senderEmail}</p>
                 </div>
                 <div className="flex gap-2">
                   <button
                     onClick={() => accept.mutate(r.friendshipId)}
-                    className="p-2 rounded-lg transition-colors"
-                    style={{ background: "rgba(74,222,128,0.15)", color: "rgb(74,222,128)" }}
+                    className={`p-2 rounded-lg transition-colors ${styles.acceptBtn}`}
                     title="Accepter"
+                    type="button"
                   >
                     <Check className="h-4 w-4" />
                   </button>
                   <button
                     onClick={() => reject.mutate(r.friendshipId)}
-                    className="p-2 rounded-lg transition-colors"
-                    style={{ background: "rgba(239,68,68,0.15)", color: "rgb(252,165,165)" }}
+                    className={`p-2 rounded-lg transition-colors ${styles.rejectBtn}`}
                     title="Refuser"
+                    type="button"
                   >
                     <X className="h-4 w-4" />
                   </button>
@@ -277,33 +268,27 @@ export default function Friends() {
         <div className="space-y-4">
           <div className="relative">
             <Search
-              className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4"
-              style={{ color: "rgba(255,255,255,0.35)" }}
+              className={`absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 ${styles.searchIcon}`}
             />
             <Input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Rechercher par nom ou email..."
-              className="pl-11 h-11"
-              style={{
-                background: "rgba(255,255,255,0.05)",
-                border: "1px solid rgba(255,255,255,0.12)",
-                color: "white",
-              }}
+              className={`pl-11 h-11 ${styles.searchInput}`}
             />
           </div>
 
           {searchQuery.trim().length < 2 ? (
-            <div className="text-center py-8" style={{ color: "rgba(255,255,255,0.25)" }}>
+            <div className={`text-center py-8 ${styles.emptyText}`}>
               <UserPlus className="h-10 w-10 mx-auto mb-2 opacity-30" />
               <p className="text-sm">Tapez au moins 2 caractères pour rechercher</p>
             </div>
           ) : searching ? (
             Array.from({ length: 2 }).map((_, i) => (
-              <div key={i} className="h-14 rounded-xl animate-pulse" style={{ background: "rgba(255,255,255,0.04)" }} />
+              <div key={i} className={`h-14 rounded-xl animate-pulse ${styles.skeleton}`} />
             ))
           ) : searchResults.length === 0 ? (
-            <div className="text-center py-8" style={{ color: "rgba(255,255,255,0.3)" }}>
+            <div className={`text-center py-8 ${styles.emptyText}`}>
               <p className="text-sm">Aucun utilisateur trouvé</p>
             </div>
           ) : (
@@ -314,32 +299,28 @@ export default function Friends() {
                 return (
                   <div
                     key={u.id}
-                    className="flex items-center gap-3 px-4 py-3 rounded-xl"
-                    style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}
+                    className={`flex items-center gap-3 px-4 py-3 rounded-xl ${styles.card}`}
                   >
                     <Avatar name={u.name} src={u.avatarUrl} />
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium" style={{ color: "white" }}>{u.name}</p>
-                      <p className="text-xs" style={{ color: "rgba(255,255,255,0.35)" }}>{u.email}</p>
+                      <p className={`text-sm font-medium ${styles.name}`}>{u.name}</p>
+                      <p className={`text-xs ${styles.email}`}>{u.email}</p>
                     </div>
                     {alreadyFriend ? (
-                      <span className="text-xs px-3 py-1.5 rounded-lg" style={{ background: "rgba(74,222,128,0.1)", color: "rgb(74,222,128)" }}>
+                      <span className={`text-xs px-3 py-1.5 rounded-lg ${styles.statusFriend}`}>
                         Amis
                       </span>
                     ) : alreadySent ? (
-                      <span className="text-xs px-3 py-1.5 rounded-lg" style={{ background: "rgba(255,255,255,0.07)", color: "rgba(255,255,255,0.45)" }}>
+                      <span className={`text-xs px-3 py-1.5 rounded-lg ${styles.statusSent}`}>
                         Demande envoyée
                       </span>
                     ) : (
                       <button
                         onClick={() => sendRequest.mutate(u.id)}
                         disabled={sendRequest.isPending}
-                        className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg font-medium transition-all"
-                        style={{
-                          background: "linear-gradient(135deg, hsl(265,78%,55%), hsl(280,70%,45%))",
-                          color: "white",
-                          opacity: sendRequest.isPending ? 0.6 : 1,
-                        }}
+                        className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg font-medium transition-all ${styles.addBtn}`}
+                        style={{ opacity: sendRequest.isPending ? 0.6 : 1 }}
+                        type="button"
                       >
                         <UserPlus className="h-3.5 w-3.5" />
                         Ajouter

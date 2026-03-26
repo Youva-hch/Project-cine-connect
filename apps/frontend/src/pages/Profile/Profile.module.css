@@ -1,2 +1,66 @@
-.root {}
+.page {
+	background: hsl(var(--background));
+}
+
+.pageGlow {
+	background: radial-gradient(ellipse at 30% 20%, hsl(var(--primary) / 0.12) 0%, transparent 60%);
+}
+
+.card {
+	background: hsl(var(--card) / 0.92);
+	border: 1px solid hsl(var(--border));
+}
+
+.overlayViolet {
+	background: linear-gradient(135deg, hsl(var(--primary) / 0.12) 0%, transparent 60%);
+}
+
+.name {
+	color: hsl(var(--foreground));
+}
+
+.muted {
+	color: hsl(var(--muted-foreground));
+}
+
+.avatarRing {
+	box-shadow: 0 0 0 3px hsl(var(--primary) / 0.35);
+}
+
+.avatarFallback {
+	background: linear-gradient(135deg, hsl(265, 78%, 50%), hsl(265, 60%, 35%));
+	box-shadow: 0 0 0 3px hsl(var(--primary) / 0.35), 0 0 20px hsl(var(--primary) / 0.25);
+}
+
+.actionSoft {
+	background: hsl(var(--primary) / 0.15);
+	border: 1px solid hsl(var(--primary) / 0.35);
+	color: hsl(var(--primary));
+}
+
+.actionPrimary {
+	background: linear-gradient(135deg, hsl(265, 78%, 58%), hsl(265, 60%, 44%));
+}
+
+.input {
+	background: hsl(var(--background) / 0.55);
+	border: 1px solid hsl(var(--border));
+	color: hsl(var(--foreground));
+}
+
+.statCard,
+.sectionCard,
+.logoutCard {
+	background: hsl(var(--card) / 0.9);
+	border: 1px solid hsl(var(--border));
+}
+
+.emptyIconWrap {
+	background: hsl(var(--primary) / 0.1);
+}
+
+.danger {
+	color: rgba(239, 68, 68, 0.75);
+	border: 1px solid rgba(239, 68, 68, 0.18);
+}
 

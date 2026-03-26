@@ -161,7 +161,6 @@ export default function Auth() {
                 type="button"
                 onClick={handleGoogleLogin}
                 disabled={loading}
-                className="w-full flex items-center justify-center gap-3 py-3 rounded-lg text-sm font-semibold transition-all duration-200 hover:brightness-110 disabled:opacity-50"
                 className={`w-full flex items-center justify-center gap-3 py-3 rounded-lg text-sm font-semibold transition-all duration-200 hover:brightness-110 disabled:opacity-50 ${styles.googleButton}`}
               >
                 <svg className="h-5 w-5" viewBox="0 0 24 24">

@@ -38,7 +38,7 @@ export function Navbar() {
           <div className={`relative ${styles.logoGlow}`}>
             <Film className={`h-6 w-6 transition-transform duration-300 group-hover:rotate-12 ${styles.logoIcon}`} />
           </div>
-          <span className={`font-display text-2xl tracking-wider ${styles.brandText}`}>
+          <span className={`font-['Pacifico'] text-2xl tracking-wider ${styles.brandText}`}>
             CinéConnect
           </span>
         </Link>

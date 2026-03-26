@@ -48,7 +48,6 @@ const FALLBACK_FILMS: OmdbMovie[] = [
   { Title: 'Oppenheimer', Year: '2023', imdbID: 'tt15398776', Type: 'movie', Poster: 'N/A' },
   { Title: 'Parasite', Year: '2019', imdbID: 'tt6751668', Type: 'movie', Poster: 'N/A' },
   { Title: 'Whiplash', Year: '2014', imdbID: 'tt2582802', Type: 'movie', Poster: 'N/A' },
-  { Title: 'The Godfather', Year: '1972', imdbID: 'tt0068646', Type: 'movie', Poster: 'N/A' },
   { Title: 'Mad Max: Fury Road', Year: '2015', imdbID: 'tt1392190', Type: 'movie', Poster: 'N/A' },
   { Title: 'Top Gun: Maverick', Year: '2022', imdbID: 'tt1745960', Type: 'movie', Poster: 'N/A' },
   { Title: 'Joker', Year: '2019', imdbID: 'tt7286456', Type: 'movie', Poster: 'N/A' },
