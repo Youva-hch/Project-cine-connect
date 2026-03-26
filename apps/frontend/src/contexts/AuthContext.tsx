@@ -54,7 +54,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (email: string, password: string) => {
     const response = await authApi.login({ email, password })
     localStorage.setItem('token', response.token)
-    localStorage.setItem('refreshToken', response.refreshToken)
+    if (response.refreshToken) {
+      localStorage.setItem('refreshToken', response.refreshToken)
+    } else {
+      localStorage.removeItem('refreshToken')
+    }
     localStorage.setItem('user', JSON.stringify(response.user))
     setUser(response.user)
   }
@@ -71,7 +75,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const register = async (name: string, email: string, password: string) => {
     const response = await authApi.register({ name, email, password })
     localStorage.setItem('token', response.token)
-    localStorage.setItem('refreshToken', response.refreshToken)
+    if (response.refreshToken) {
+      localStorage.setItem('refreshToken', response.refreshToken)
+    } else {
+      localStorage.removeItem('refreshToken')
+    }
     localStorage.setItem('user', JSON.stringify(response.user))
     setUser(response.user)
   }

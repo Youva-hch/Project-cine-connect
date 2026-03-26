@@ -75,6 +75,7 @@ export async function register(data: {
   const res = await fetch(`${API_BASE}/api/auth/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
     body: JSON.stringify(data),
   })
   const json: ApiResponse<AuthResponse> = await res.json()
@@ -95,6 +96,7 @@ export async function login(data: {
   const res = await fetch(`${API_BASE}/api/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
     body: JSON.stringify(data),
   })
   const json: ApiResponse<AuthResponse> = await res.json()

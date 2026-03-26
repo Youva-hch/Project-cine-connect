@@ -1,4 +1,5 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+import type { ReactNode } from "react";
 import { setAuthTokens, clearAuthTokens } from "@/api/config";
 
 export interface AppUser {
@@ -56,6 +57,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const res = await fetch(`${API_BASE}/api/auth/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      credentials: 'include',
       body: JSON.stringify({ email, password, name: username }),
     });
     const data = await res.json();
@@ -64,6 +66,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const appUser = toAppUser(u);
     setAuthTokens(token, refreshToken);
     localStorage.setItem("user", JSON.stringify(appUser));
+    if (!refreshToken) {
+      localStorage.removeItem('refreshToken');
+    }
     setUser(appUser);
   };
 
@@ -71,6 +76,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const res = await fetch(`${API_BASE}/api/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      credentials: 'include',
       body: JSON.stringify({ email, password }),
     });
     const data = await res.json();
@@ -79,6 +85,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const appUser = toAppUser(u);
     setAuthTokens(token, refreshToken);
     localStorage.setItem("user", JSON.stringify(appUser));
+    if (!refreshToken) {
+      localStorage.removeItem('refreshToken');
+    }
     setUser(appUser);
   };
 

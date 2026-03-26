@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request, Response, CookieOptions } from 'express';
 import crypto from 'crypto';
 import passport from 'passport';
 import jwt from 'jsonwebtoken';
@@ -26,6 +26,57 @@ function signRefreshToken(user: { id: number; email: string }) {
   );
 }
 
+const REFRESH_TOKEN_COOKIE_NAME = 'refreshToken';
+
+function refreshTokenCookieMaxAge() {
+  const fallbackMs = 7 * 24 * 60 * 60 * 1000;
+  const raw = (process.env.JWT_REFRESH_COOKIE_MAX_AGE || '').trim();
+  if (!raw) return fallbackMs;
+
+  if (/^\d+$/.test(raw)) {
+    return Number(raw);
+  }
+
+  const match = raw.match(/^(\d+)([smhd])$/i);
+  if (!match) return fallbackMs;
+
+  const value = Number(match[1]);
+  const unit = match[2].toLowerCase();
+  const multiplierByUnit: Record<string, number> = {
+    s: 1000,
+    m: 60 * 1000,
+    h: 60 * 60 * 1000,
+    d: 24 * 60 * 60 * 1000,
+  };
+
+  return value * multiplierByUnit[unit];
+}
+
+function getRefreshTokenCookieOptions(): CookieOptions {
+  const isProd = process.env.NODE_ENV === 'production';
+  const domain = process.env.COOKIE_DOMAIN?.trim() || undefined;
+  return {
+    httpOnly: true,
+    secure: isProd,
+    sameSite: isProd ? 'none' : 'lax',
+    path: '/api/auth',
+    maxAge: refreshTokenCookieMaxAge(),
+    ...(domain ? { domain } : {}),
+  };
+}
+
+function setRefreshTokenCookie(res: Response, refreshToken: string) {
+  res.cookie(REFRESH_TOKEN_COOKIE_NAME, refreshToken, getRefreshTokenCookieOptions());
+}
+
+function clearRefreshTokenCookie(res: Response) {
+  res.clearCookie(REFRESH_TOKEN_COOKIE_NAME, {
+    ...getRefreshTokenCookieOptions(),
+    maxAge: undefined,
+    expires: new Date(0),
+  });
+}
+
 function toUserResponse(user: { id: number; email: string; name: string; avatarUrl: string | null; bio?: string | null }) {
   return {
     id: user.id,
@@ -48,12 +99,17 @@ function hashResetToken(token: string) {
  * Contrôleur pour gérer l'authentification
  */
 export class AuthController {
+  static issueTokens(user: { id: number; email: string }) {
+    return {
+      token: signAccessToken(user),
+      refreshToken: signRefreshToken(user),
+    };
+  }
+
   static buildAuthPayload(user: { id: number; email: string; name: string; avatarUrl: string | null; bio?: string | null }) {
-    const token = signAccessToken(user);
-    const refreshToken = signRefreshToken(user);
+    const { token } = AuthController.issueTokens(user);
     return {
       token,
-      refreshToken,
       user: toUserResponse(user),
     };
   }
@@ -93,6 +149,8 @@ export class AuthController {
         return res.status(500).json({ success: false, message: 'Erreur lors de la création du compte' });
       }
       const { passwordHash: _, ...rest } = user;
+      const { refreshToken } = AuthController.issueTokens(rest as { id: number; email: string });
+      setRefreshTokenCookie(res, refreshToken);
       return res.status(201).json({
         success: true,
         data: AuthController.buildAuthPayload(rest as { id: number; email: string; name: string; avatarUrl: string | null; bio?: string | null }),
@@ -141,6 +199,8 @@ export class AuthController {
         });
       }
       const { passwordHash: _, ...rest } = user;
+      const { refreshToken } = AuthController.issueTokens(rest as { id: number; email: string });
+      setRefreshTokenCookie(res, refreshToken);
       return res.json({
         success: true,
         data: AuthController.buildAuthPayload(rest as { id: number; email: string; name: string; avatarUrl: string | null; bio?: string | null }),
@@ -330,8 +390,8 @@ export class AuthController {
       }
 
       const u = user as { id: number; email: string; name: string; avatarUrl?: string | null; bio?: string | null };
-      const token = signAccessToken(u);
-      const refreshToken = signRefreshToken(u);
+      const { token, refreshToken } = AuthController.issueTokens(u);
+      setRefreshTokenCookie(res, refreshToken);
       const userPayload = {
         id: u.id,
         email: u.email,
@@ -340,7 +400,7 @@ export class AuthController {
         bio: u.bio ?? null,
       };
       res.redirect(
-        `${frontendUrl}/auth/callback?token=${encodeURIComponent(token)}&refreshToken=${encodeURIComponent(refreshToken)}&user=${encodeURIComponent(JSON.stringify(userPayload))}`
+        `${frontendUrl}/auth/callback?token=${encodeURIComponent(token)}&user=${encodeURIComponent(JSON.stringify(userPayload))}`
       );
     })(req, res);
   }
@@ -350,7 +410,7 @@ export class AuthController {
    */
   static async refreshToken(req: Request, res: Response) {
     try {
-      const refreshToken = req.body?.refreshToken as string | undefined;
+      const refreshToken = req.cookies?.[REFRESH_TOKEN_COOKIE_NAME] as string | undefined;
       if (!refreshToken) {
         return res.status(401).json({
           success: false,
@@ -380,6 +440,8 @@ export class AuthController {
       }
 
       const { passwordHash: _passwordHash, ...rest } = user;
+      const { refreshToken: newRefreshToken } = AuthController.issueTokens(rest as { id: number; email: string });
+      setRefreshTokenCookie(res, newRefreshToken);
       return res.json({
         success: true,
         data: AuthController.buildAuthPayload(rest as { id: number; email: string; name: string; avatarUrl: string | null; bio?: string | null }),
@@ -390,6 +452,17 @@ export class AuthController {
         message: 'Refresh token invalide',
       });
     }
+  }
+
+  /**
+   * POST /auth/logout - Invalide la session en supprimant le cookie refresh token
+   */
+  static async logout(_req: Request, res: Response) {
+    clearRefreshTokenCookie(res);
+    return res.json({
+      success: true,
+      message: 'Déconnexion réussie',
+    });
   }
 
   /**

@@ -14,7 +14,7 @@ export interface RegisterData {
 
 export interface AuthResponse {
   token: string
-  refreshToken: string
+  refreshToken?: string
   user: User
 }
 
@@ -46,6 +46,9 @@ export const authApi = {
   },
 
   logout: () => {
+    void apiRequest<{ success: boolean; message?: string }>('/api/auth/logout', {
+      method: 'POST',
+    }).catch(() => undefined)
     localStorage.removeItem('token')
     localStorage.removeItem('refreshToken')
     localStorage.removeItem('user')

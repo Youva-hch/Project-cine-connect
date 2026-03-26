@@ -1,6 +1,5 @@
 const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 const ACCESS_TOKEN_KEY = 'token';
-const REFRESH_TOKEN_KEY = 'refreshToken';
 
 let refreshPromise: Promise<string | null> | null = null;
 
@@ -12,27 +11,16 @@ export function getAccessToken() {
   return localStorage.getItem(ACCESS_TOKEN_KEY);
 }
 
-export function getRefreshToken() {
-  return localStorage.getItem(REFRESH_TOKEN_KEY);
-}
-
-export function setAuthTokens(accessToken: string, refreshToken: string) {
+export function setAuthTokens(accessToken: string, _refreshToken?: string) {
   localStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
-  localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
 }
 
 export function clearAuthTokens() {
   localStorage.removeItem(ACCESS_TOKEN_KEY);
-  localStorage.removeItem(REFRESH_TOKEN_KEY);
+  localStorage.removeItem('refreshToken');
 }
 
 async function performTokenRefresh(): Promise<string | null> {
-  const currentRefreshToken = getRefreshToken();
-  if (!currentRefreshToken) {
-    clearAuthTokens();
-    return null;
-  }
-
   try {
     const refreshUrl = apiConfig.baseURL
       ? `${apiConfig.baseURL}/api/auth/refresh`
@@ -41,24 +29,23 @@ async function performTokenRefresh(): Promise<string | null> {
     const response = await fetch(refreshUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ refreshToken: currentRefreshToken }),
+      credentials: 'include',
     });
 
     const data = await response.json().catch(() => null) as {
       success?: boolean;
-      data?: { token?: string; refreshToken?: string };
+      data?: { token?: string };
     } | null;
 
     const nextToken = data?.data?.token;
-    const nextRefreshToken = data?.data?.refreshToken;
 
-    if (!response.ok || !data?.success || !nextToken || !nextRefreshToken) {
+    if (!response.ok || !data?.success || !nextToken) {
       clearAuthTokens();
       localStorage.removeItem('user');
       return null;
     }
 
-    setAuthTokens(nextToken, nextRefreshToken);
+    setAuthTokens(nextToken);
     return nextToken;
   } catch {
     clearAuthTokens();
@@ -92,7 +79,11 @@ export async function apiRequest<T>(
     ...requestHeaders,
   });
 
-  let response = await fetch(url, { ...options, headers: createHeaders(getAccessToken()) });
+  let response = await fetch(url, {
+    ...options,
+    credentials: 'include',
+    headers: createHeaders(getAccessToken()),
+  });
 
   const shouldTryRefresh =
     response.status === 401 &&
@@ -103,7 +94,11 @@ export async function apiRequest<T>(
   if (shouldTryRefresh) {
     const newAccessToken = await refreshAccessToken();
     if (newAccessToken) {
-      response = await fetch(url, { ...options, headers: createHeaders(newAccessToken) });
+      response = await fetch(url, {
+        ...options,
+        credentials: 'include',
+        headers: createHeaders(newAccessToken),
+      });
     }
   }
 

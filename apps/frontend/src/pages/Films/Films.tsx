@@ -77,7 +77,6 @@ const FALLBACK_FILMS: OmdbMovie[] = [
   { Title: "Oppenheimer", Year: "2023", imdbID: "tt15398776", Type: "movie", Poster: "N/A" },
   { Title: "Parasite", Year: "2019", imdbID: "tt6751668", Type: "movie", Poster: "N/A" },
   { Title: "Whiplash", Year: "2014", imdbID: "tt2582802", Type: "movie", Poster: "N/A" },
-  { Title: "The Godfather", Year: "1972", imdbID: "tt0068646", Type: "movie", Poster: "N/A" },
   { Title: "Mad Max: Fury Road", Year: "2015", imdbID: "tt1392190", Type: "movie", Poster: "N/A" },
   { Title: "Top Gun: Maverick", Year: "2022", imdbID: "tt1745960", Type: "movie", Poster: "N/A" },
   { Title: "Joker", Year: "2019", imdbID: "tt7286456", Type: "movie", Poster: "N/A" },
@@ -86,7 +85,7 @@ const FALLBACK_FILMS: OmdbMovie[] = [
 
 async function fetchFilmsForQueries(queries: string[]): Promise<OmdbMovie[]> {
   const allFilms: OmdbMovie[] = [];
-  const seenIds: string[] = [];
+  const seenIds = new Set<string>();
 
   const promises = queries.map((q) => searchMovies(q, 1).catch(() => null));
   const results = await Promise.all(promises);
@@ -94,8 +93,9 @@ async function fetchFilmsForQueries(queries: string[]): Promise<OmdbMovie[]> {
   for (const result of results) {
     if (!result || !result.Search) continue;
     for (const film of result.Search) {
-      if (!seenIds.includes(film.imdbID)) {
-        seenIds.push(film.imdbID);
+      const normalizedId = film.imdbID.trim().toLowerCase();
+      if (!seenIds.has(normalizedId)) {
+        seenIds.add(normalizedId);
         allFilms.push(film);
       }
     }
@@ -131,9 +131,20 @@ export default function Films() {
 
   // Filtrage local par texte en temps réel
   const films = useMemo(() => {
+    const uniqueBaseFilms: OmdbMovie[] = [];
+    const seenIds = new Set<string>();
+
+    for (const film of baseFilms) {
+      const normalizedId = film.imdbID.trim().toLowerCase();
+      if (!seenIds.has(normalizedId)) {
+        seenIds.add(normalizedId);
+        uniqueBaseFilms.push(film);
+      }
+    }
+
     const q = search.trim().toLowerCase();
-    if (!q) return baseFilms;
-    return baseFilms.filter((f) =>
+    if (!q) return uniqueBaseFilms;
+    return uniqueBaseFilms.filter((f) =>
       f.Title.toLowerCase().includes(q) || f.Year.includes(q)
     );
   }, [baseFilms, search]);
@@ -231,8 +242,8 @@ export default function Films() {
         </div>
       ) : films.length > 0 ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
-          {films.map((film) => (
-            <FilmCard key={film.imdbID} film={film} />
+          {films.map((film, index) => (
+            <FilmCard key={`${film.imdbID}-${film.Year}-${index}`} film={film} />
           ))}
         </div>
       ) : (

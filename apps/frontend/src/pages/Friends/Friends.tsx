@@ -1,26 +1,26 @@
-import { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
-import { Users, UserPlus, Clock, Check, X, Search, UserX, MessageSquare } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import styles from "./Friends.module.css";
+import { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
+import { Users, UserPlus, Clock, Check, X, Search, UserX, MessageSquare } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import styles from './Friends.module.css';
 
-const API = import.meta.env.VITE_API_URL || "";
+const API = import.meta.env.VITE_API_URL || '';
 
 function getToken() {
-  return localStorage.getItem("token") ?? "";
+  return localStorage.getItem('token') ?? '';
 }
 
 async function apiFetch(path: string, options?: RequestInit) {
   const res = await fetch(`${API}${path}`, {
     ...options,
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
       Authorization: `Bearer ${getToken()}`,
     },
   });
   const json = await res.json();
-  if (!json.success) throw new Error(json.message || "Erreur");
+  if (!json.success) throw new Error(json.message || 'Erreur');
   return json.data;
 }
 
@@ -36,9 +36,9 @@ function Avatar({ name, src, size = 40 }: { name: string; src?: string | null; s
     );
   }
   const initials = name
-    .split(" ")
-    .map((w) => w[0])
-    .join("")
+    .split(' ')
+    .map(w => w[0])
+    .join('')
     .slice(0, 2)
     .toUpperCase();
   return (
@@ -54,32 +54,32 @@ function Avatar({ name, src, size = 40 }: { name: string; src?: string | null; s
   );
 }
 
-type Tab = "friends" | "requests" | "add";
+type Tab = 'friends' | 'requests' | 'add';
 
 export default function Friends() {
-  const [tab, setTab] = useState<Tab>("friends");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [tab, setTab] = useState<Tab>('friends');
+  const [searchQuery, setSearchQuery] = useState('');
   const qc = useQueryClient();
   const navigate = useNavigate();
 
   // ── Queries ──────────────────────────────────────────────────────────────
   const { data: friends = [], isLoading: friendsLoading } = useQuery({
-    queryKey: ["friends"],
-    queryFn: () => apiFetch("/api/friends"),
+    queryKey: ['friends'],
+    queryFn: () => apiFetch('/api/friends'),
   });
 
   const { data: requests = [], isLoading: requestsLoading } = useQuery({
-    queryKey: ["friend-requests"],
-    queryFn: () => apiFetch("/api/friends/requests"),
+    queryKey: ['friend-requests'],
+    queryFn: () => apiFetch('/api/friends/requests'),
   });
 
   const { data: sent = [] } = useQuery({
-    queryKey: ["friend-sent"],
-    queryFn: () => apiFetch("/api/friends/sent"),
+    queryKey: ['friend-sent'],
+    queryFn: () => apiFetch('/api/friends/sent'),
   });
 
   const { data: searchResults = [], isFetching: searching } = useQuery({
-    queryKey: ["user-search", searchQuery],
+    queryKey: ['user-search', searchQuery],
     queryFn: () => apiFetch(`/api/friends/search?q=${encodeURIComponent(searchQuery)}`),
     enabled: searchQuery.trim().length >= 2,
   });
@@ -87,43 +87,40 @@ export default function Friends() {
   // ── Mutations ─────────────────────────────────────────────────────────────
   const sendRequest = useMutation({
     mutationFn: (targetId: number) =>
-      apiFetch(`/api/friends/request/${targetId}`, { method: "POST" }),
+      apiFetch(`/api/friends/request/${targetId}`, { method: 'POST' }),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["friend-sent"] });
-      qc.invalidateQueries({ queryKey: ["user-search"] });
+      qc.invalidateQueries({ queryKey: ['friend-sent'] });
+      qc.invalidateQueries({ queryKey: ['user-search'] });
     },
   });
 
   const accept = useMutation({
-    mutationFn: (id: number) =>
-      apiFetch(`/api/friends/requests/${id}/accept`, { method: "PATCH" }),
+    mutationFn: (id: number) => apiFetch(`/api/friends/requests/${id}/accept`, { method: 'PATCH' }),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["friend-requests"] });
-      qc.invalidateQueries({ queryKey: ["friends"] });
-      qc.invalidateQueries({ queryKey: ["notif-count"] });
+      qc.invalidateQueries({ queryKey: ['friend-requests'] });
+      qc.invalidateQueries({ queryKey: ['friends'] });
+      qc.invalidateQueries({ queryKey: ['notif-count'] });
     },
   });
 
   const reject = useMutation({
-    mutationFn: (id: number) =>
-      apiFetch(`/api/friends/requests/${id}/reject`, { method: "PATCH" }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["friend-requests"] }),
+    mutationFn: (id: number) => apiFetch(`/api/friends/requests/${id}/reject`, { method: 'PATCH' }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['friend-requests'] }),
   });
 
   const remove = useMutation({
-    mutationFn: (friendId: number) =>
-      apiFetch(`/api/friends/${friendId}`, { method: "DELETE" }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["friends"] }),
+    mutationFn: (friendId: number) => apiFetch(`/api/friends/${friendId}`, { method: 'DELETE' }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['friends'] }),
   });
 
   // IDs déjà en relation (pour désactiver le bouton dans search)
-  const sentIds = new Set(sent.map((s) => s.targetId));
-  const friendIds = new Set(friends.map((f) => f.otherUserId));
+  const sentIds = new Set(sent.map(s => s.targetId));
+  const friendIds = new Set(friends.map(f => f.otherUserId));
 
   const tabs: { id: Tab; label: string; count?: number }[] = [
-    { id: "friends", label: "Mes amis", count: friends.length },
-    { id: "requests", label: "Demandes", count: requests.length },
-    { id: "add", label: "Ajouter" },
+    { id: 'friends', label: 'Mes amis', count: friends.length },
+    { id: 'requests', label: 'Demandes', count: requests.length },
+    { id: 'add', label: 'Ajouter' },
   ];
 
   return (
@@ -131,21 +128,17 @@ export default function Friends() {
       {/* Header */}
       <div className="text-center space-y-2">
         <h1 className="font-display text-4xl text-gradient-cinema">Amis</h1>
-        <p className={`text-sm ${styles.subtitle}`}>
-          Gérez vos amis et demandes en attente
-        </p>
+        <p className={`text-sm ${styles.subtitle}`}>Gérez vos amis et demandes en attente</p>
       </div>
 
       {/* Tabs */}
-      <div
-        className={`flex rounded-xl overflow-hidden ${styles.tabsWrap}`}
-      >
-        {tabs.map((t) => (
+      <div className={`flex rounded-xl overflow-hidden ${styles.tabsWrap}`}>
+        {tabs.map(t => (
           <button
             key={t.id}
             onClick={() => setTab(t.id)}
             className={`flex-1 py-3 text-sm font-medium transition-all relative ${styles.tab} ${
-              tab === t.id ? styles.tabActive : ""
+              tab === t.id ? styles.tabActive : ''
             }`}
             type="button"
           >
@@ -153,7 +146,7 @@ export default function Friends() {
             {t.count !== undefined && t.count > 0 && (
               <span
                 className={`ml-1.5 inline-flex items-center justify-center rounded-full text-[10px] font-bold px-1.5 py-0.5 ${styles.tabBadge} ${
-                  tab === t.id ? styles.tabBadgeActive : ""
+                  tab === t.id ? styles.tabBadgeActive : ''
                 }`}
                 style={{ minWidth: 18 }}
               >
@@ -165,7 +158,7 @@ export default function Friends() {
       </div>
 
       {/* ── Tab : Mes amis ────────────────────────────────────────────────── */}
-      {tab === "friends" && (
+      {tab === 'friends' && (
         <div className="space-y-2">
           {friendsLoading ? (
             Array.from({ length: 3 }).map((_, i) => (
@@ -176,7 +169,7 @@ export default function Friends() {
               <Users className="h-12 w-12 mx-auto mb-3 opacity-30" />
               <p>Vous n'avez pas encore d'amis</p>
               <button
-                onClick={() => setTab("add")}
+                onClick={() => setTab('add')}
                 className={`mt-2 text-sm underline ${styles.linkAccent}`}
                 type="button"
               >
@@ -184,7 +177,7 @@ export default function Friends() {
               </button>
             </div>
           ) : (
-            friends.map((f) => (
+            friends.map(f => (
               <div
                 key={f.friendshipId}
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl ${styles.card}`}
@@ -217,7 +210,7 @@ export default function Friends() {
       )}
 
       {/* ── Tab : Demandes ────────────────────────────────────────────────── */}
-      {tab === "requests" && (
+      {tab === 'requests' && (
         <div className="space-y-2">
           {requestsLoading ? (
             Array.from({ length: 2 }).map((_, i) => (
@@ -229,7 +222,7 @@ export default function Friends() {
               <p>Aucune demande en attente</p>
             </div>
           ) : (
-            requests.map((r) => (
+            requests.map(r => (
               <div
                 key={r.friendshipId}
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl ${styles.card}`}
@@ -264,7 +257,7 @@ export default function Friends() {
       )}
 
       {/* ── Tab : Ajouter ─────────────────────────────────────────────────── */}
-      {tab === "add" && (
+      {tab === 'add' && (
         <div className="space-y-4">
           <div className="relative">
             <Search
@@ -272,7 +265,7 @@ export default function Friends() {
             />
             <Input
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={e => setSearchQuery(e.target.value)}
               placeholder="Rechercher par nom ou email..."
               className={`pl-11 h-11 ${styles.searchInput}`}
             />
@@ -293,7 +286,7 @@ export default function Friends() {
             </div>
           ) : (
             <div className="space-y-2">
-              {searchResults.map((u) => {
+              {searchResults.map(u => {
                 const alreadyFriend = friendIds.has(u.id);
                 const alreadySent = sentIds.has(u.id);
                 return (

@@ -92,7 +92,6 @@ export default function Index() {
               alt=""
               className={`absolute inset-0 w-full h-full object-cover ${styles.heroPoster}`}
               loading="eager"
-              fetchPriority="high"
               decoding="async"
             />
             {/* Grain overlay for cinematic feel */}

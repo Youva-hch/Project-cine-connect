@@ -3,6 +3,7 @@ import http from 'http';
 import express, { type Express } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import passport from 'passport';
 import jwt from 'jsonwebtoken';
@@ -62,6 +63,7 @@ app.use(cors({
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 app.use(
   session({

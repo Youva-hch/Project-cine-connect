@@ -126,23 +126,25 @@ router.post('/reset-password', AuthController.resetPassword);
  *   post:
  *     summary: Renouveler la session via refresh token
  *     tags: [Auth]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required: [refreshToken]
- *             properties:
- *               refreshToken:
- *                 type: string
  *     responses:
  *       200:
- *         description: Nouveau access token et refresh token
+ *         description: Nouveau access token (refresh token rotaté en cookie HttpOnly)
  *       401:
  *         description: Refresh token invalide
  */
 router.post('/refresh', AuthController.refreshToken);
+
+/**
+ * @swagger
+ * /api/auth/logout:
+ *   post:
+ *     summary: Déconnecter l'utilisateur
+ *     tags: [Auth]
+ *     responses:
+ *       200:
+ *         description: Cookie refresh token supprimé
+ */
+router.post('/logout', AuthController.logout);
 
 /**
  * @swagger
