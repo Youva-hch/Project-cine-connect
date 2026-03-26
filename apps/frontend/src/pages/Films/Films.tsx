@@ -1,6 +1,7 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Search, Film as FilmIcon, X } from "lucide-react";
+import { useSearchParams } from "react-router-dom";
 import { searchMovies } from "@/lib/omdb";
 import { FilmCard } from "@/components/FilmCard";
 import { Input } from "@/components/ui/input";
@@ -105,8 +106,17 @@ async function fetchFilmsForQueries(queries: string[]): Promise<OmdbMovie[]> {
 }
 
 export default function Films() {
+  const [searchParams] = useSearchParams();
+  const searchFromUrl = searchParams.get("search") ?? "";
   const [search, setSearch] = useState("");
   const [activeGenre, setActiveGenre] = useState<string | null>(null);
+
+  useEffect(() => {
+    setSearch(searchFromUrl);
+    if (searchFromUrl) {
+      setActiveGenre(null);
+    }
+  }, [searchFromUrl]);
 
   // Films populaires (défaut)
   const { data: popularFilms, isLoading: popularLoading } = useQuery({

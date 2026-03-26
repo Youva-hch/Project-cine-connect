@@ -1,15 +1,21 @@
-import { Link, useLocation } from "react-router-dom";
-import { Film, Home, MessageCircle, User, LogIn, LogOut, Menu, X, Search, Users } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Film, MessageCircle, User, LogIn, LogOut, Menu, X, Search, Users } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { NotificationBell } from "@/components/NotificationBell";
 import { ThemeToggle } from "@/components";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { apiRequest } from "@/api/config";
 import styles from "./Navbar.module.css";
 
+type CategoryItem = {
+  id: number;
+  name: string;
+  slug: string;
+};
+
 const navItems = [
-  { to: "/", label: "Accueil", icon: Home },
-  { to: "/films", label: "Films", icon: Film },
   { to: "/amis", label: "Amis", icon: Users },
   { to: "/discussion", label: "Discussion", icon: MessageCircle },
 ];
@@ -17,13 +23,51 @@ const navItems = [
 export function Navbar() {
   const { user, signOut } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [filmSearch, setFilmSearch] = useState("");
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const searchWrapRef = useRef<HTMLDivElement | null>(null);
+
+  const { data: categories = [] } = useQuery<CategoryItem[]>({
+    queryKey: ["navbar-categories"],
+    queryFn: async () => {
+      const res = await apiRequest<{ success?: boolean; data?: CategoryItem[] }>("/categories");
+      return res?.data ?? [];
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const filteredCategories = useMemo(() => {
+    const q = filmSearch.trim().toLowerCase();
+    if (!q) return categories;
+    return categories.filter((category) =>
+      category.name.toLowerCase().includes(q)
+    );
+  }, [categories, filmSearch]);
+
+  const goToFilmsSearch = () => {
+    const q = filmSearch.trim();
+    navigate(q ? `/films?search=${encodeURIComponent(q)}` : "/films");
+    setIsSearchOpen(false);
+  };
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 30);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    const onPointerDown = (event: MouseEvent) => {
+      if (!searchWrapRef.current) return;
+      if (!searchWrapRef.current.contains(event.target as Node)) {
+        setIsSearchOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", onPointerDown);
+    return () => document.removeEventListener("mousedown", onPointerDown);
   }, []);
 
   return (
@@ -44,7 +88,56 @@ export function Navbar() {
         </Link>
 
         {/* Desktop nav */}
-        <div className="hidden md:flex items-center gap-1">
+        <div className="hidden md:flex items-center gap-3">
+          <div ref={searchWrapRef} className="relative">
+            <div className={styles.searchInputWrap}>
+              <Search className={`h-4 w-4 ${styles.searchInputIcon}`} />
+              <input
+                type="text"
+                value={filmSearch}
+                onChange={(e) => {
+                  setFilmSearch(e.target.value);
+                  setIsSearchOpen(true);
+                }}
+                onFocus={() => setIsSearchOpen(true)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    goToFilmsSearch();
+                  }
+                  if (e.key === "Escape") {
+                    setIsSearchOpen(false);
+                  }
+                }}
+                placeholder="Rechercher un film..."
+                className={styles.searchInput}
+                aria-label="Rechercher un film"
+              />
+            </div>
+
+            <div
+              className={`${styles.categoryDropdown} ${isSearchOpen ? styles.categoryDropdownOpen : ""}`}
+            >
+              <p className={styles.categoryTitle}>Categories</p>
+              <div className={styles.categoryList}>
+                {filteredCategories.length > 0 ? (
+                  filteredCategories.map((category) => (
+                    <Link
+                      key={category.id}
+                      to={`/films/${category.slug}`}
+                      onClick={() => setIsSearchOpen(false)}
+                      className={styles.categoryChip}
+                    >
+                      {category.name}
+                    </Link>
+                  ))
+                ) : (
+                  <p className={styles.categoryEmpty}>Aucune categorie</p>
+                )}
+              </div>
+            </div>
+          </div>
+
           {navItems.map((item) => {
             const isActive =
               location.pathname === item.to ||
@@ -74,12 +167,6 @@ export function Navbar() {
         {/* Right side */}
         <div className="hidden md:flex items-center gap-2">
           <ThemeToggle className={styles.themeToggleDesktop} />
-          <Link
-            to="/films"
-            className={`p-2 rounded-sm transition-colors ${styles.searchLink}`}
-          >
-            <Search className="h-5 w-5" />
-          </Link>
 
           {user ? (
             <>
