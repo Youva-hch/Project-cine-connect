@@ -6,6 +6,20 @@ import bcrypt from 'bcryptjs';
  * Service pour gérer les utilisateurs
  */
 export class UserService {
+  static async getPublicUserStats(userId: number) {
+    const [reviewsResult] = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(reviews)
+      .where(eq(reviews.userId, userId));
+
+    const friendsList = await FriendService.listFriends(userId);
+
+    return {
+      reviewsCount: Number(reviewsResult?.count ?? 0),
+      friendsCount: friendsList.length,
+    };
+  }
+
   static async changePassword(userId: number, currentPassword: string, newPassword: string) {
     const user = await this.getUserById(userId);
     if (!user) return { ok: false as const, reason: 'not_found' as const };

@@ -7,6 +7,58 @@ import type { AuthRequest } from '../middlewares/auth.middleware.js';
  */
 export class UserController {
   /**
+   * GET /users/:id/stats - Statistiques publiques d'un utilisateur
+   */
+  static async getUserStatsById(req: Request, res: Response) {
+    try {
+      const id = parseInt(req.params.id, 10);
+      if (isNaN(id)) {
+        return res.status(400).json({ success: false, message: 'ID invalide' });
+      }
+
+      const user = await UserService.getUserById(id);
+      if (!user) {
+        return res.status(404).json({ success: false, message: 'Utilisateur non trouvé' });
+      }
+
+      const stats = await UserService.getPublicUserStats(id);
+      return res.json({ success: true, data: stats });
+    } catch (error) {
+      console.error('Error fetching public user stats:', error);
+      return res.status(500).json({
+        success: false,
+        message: 'Erreur lors de la récupération des statistiques',
+      });
+    }
+  }
+
+  /**
+   * GET /users/:id/reviews - Avis publics d'un utilisateur
+   */
+  static async getUserReviewsById(req: Request, res: Response) {
+    try {
+      const id = parseInt(req.params.id, 10);
+      if (isNaN(id)) {
+        return res.status(400).json({ success: false, message: 'ID invalide' });
+      }
+
+      const user = await UserService.getUserById(id);
+      if (!user) {
+        return res.status(404).json({ success: false, message: 'Utilisateur non trouvé' });
+      }
+
+      const reviews = await UserService.getUserReviews(id);
+      return res.json({ success: true, data: reviews });
+    } catch (error) {
+      console.error('Error fetching user reviews by id:', error);
+      return res.status(500).json({
+        success: false,
+        message: 'Erreur lors de la récupération des avis',
+      });
+    }
+  }
+
+  /**
    * PATCH /users/me/password - Change le mot de passe de l'utilisateur connecté
    */
   static async changeMyPassword(req: AuthRequest, res: Response) {
@@ -140,9 +192,10 @@ export class UserController {
   static async getAllUsers(_req: Request, res: Response) {
     try {
       const allUsers = await UserService.getAllUsers();
+      const sanitizedUsers = allUsers.map(({ passwordHash: _passwordHash, ...rest }) => rest);
       return res.json({
         success: true,
-        data: allUsers,
+        data: sanitizedUsers,
       });
     } catch (error) {
       console.error('Error fetching users:', error);
@@ -174,9 +227,11 @@ export class UserController {
         });
       }
 
+      const { passwordHash: _passwordHash, ...userWithoutPassword } = user;
+
       return res.json({
         success: true,
-        data: user,
+        data: userWithoutPassword,
       });
     } catch (error) {
       console.error('Error fetching user:', error);

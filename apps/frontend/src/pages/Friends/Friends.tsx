@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Users, UserPlus, Clock, Check, X, Search, UserX, MessageSquare } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import styles from './Friends.module.css';
@@ -184,7 +184,9 @@ export default function Friends() {
               >
                 <Avatar name={f.otherUserName} src={f.otherUserAvatar} />
                 <div className="flex-1 min-w-0">
-                  <p className={`text-sm font-medium ${styles.name}`}>{f.otherUserName}</p>
+                  <Link to={`/profil/${f.otherUserId}`} className={`text-sm font-medium hover:underline ${styles.name}`}>
+                    {f.otherUserName}
+                  </Link>
                   <p className={`text-xs ${styles.email}`}>{f.otherUserEmail}</p>
                 </div>
                 <button
@@ -229,7 +231,9 @@ export default function Friends() {
               >
                 <Avatar name={r.senderName} src={r.senderAvatar} />
                 <div className="flex-1 min-w-0">
-                  <p className={`text-sm font-medium ${styles.name}`}>{r.senderName}</p>
+                  <Link to={`/profil/${r.senderId}`} className={`text-sm font-medium hover:underline ${styles.name}`}>
+                    {r.senderName}
+                  </Link>
                   <p className={`text-xs ${styles.email}`}>{r.senderEmail}</p>
                 </div>
                 <div className="flex gap-2">
@@ -296,7 +300,9 @@ export default function Friends() {
                   >
                     <Avatar name={u.name} src={u.avatarUrl} />
                     <div className="flex-1 min-w-0">
-                      <p className={`text-sm font-medium ${styles.name}`}>{u.name}</p>
+                      <Link to={`/profil/${u.id}`} className={`text-sm font-medium hover:underline ${styles.name}`}>
+                        {u.name}
+                      </Link>
                       <p className={`text-xs ${styles.email}`}>{u.email}</p>
                     </div>
                     {alreadyFriend ? (

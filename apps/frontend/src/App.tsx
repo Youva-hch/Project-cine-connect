@@ -16,6 +16,7 @@ import FilmDetail from "./pages/FilmDetail";
 import Auth from "./pages/Auth";
 import AuthCallback from "./pages/AuthCallback";
 import Profile from "./pages/Profile";
+import PublicProfile from "./pages/Profile/PublicProfile";
 import Discussion from "./pages/Discussion";
 import Friends from "./pages/Friends";
 import Chat from "./pages/Chat";
@@ -35,6 +36,7 @@ function AnimatedRoutes() {
         <Route path="/auth" element={<Auth />} />
         <Route path="/auth/callback" element={<AuthCallback />} />
         <Route path="/profil" element={<Profile />} />
+        <Route path="/profil/:id" element={<PublicProfile />} />
         <Route path="/discussion" element={<Discussion />} />
         <Route path="/amis" element={<Friends />} />
         <Route path="/chat/:friendId" element={<Chat />} />

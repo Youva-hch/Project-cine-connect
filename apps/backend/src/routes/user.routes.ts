@@ -22,6 +22,12 @@ router.get('/me/reviews', requireAuth, UserController.getMyReviews);
 // GET /users/me/stats - Statistiques du profil (authentification requise)
 router.get('/me/stats', requireAuth, UserController.getMyStats);
 
+// GET /users/:id/reviews - Avis publics d'un utilisateur
+router.get('/:id/reviews', UserController.getUserReviewsById);
+
+// GET /users/:id/stats - Statistiques publiques d'un utilisateur
+router.get('/:id/stats', UserController.getUserStatsById);
+
 // GET /users/:id - Récupère un utilisateur par son ID
 router.get('/:id', UserController.getUserById);
 

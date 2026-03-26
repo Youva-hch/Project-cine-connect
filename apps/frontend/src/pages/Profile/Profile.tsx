@@ -300,6 +300,11 @@ export default function Profile() {
                 </div>
               </div>
             )}
+            {!isEditing && (user.bio ? (
+              <p className={`text-sm leading-relaxed ${styles.muted}`}>{user.bio}</p>
+            ) : (
+              <p className={`text-sm leading-relaxed ${styles.muted}`}>Aucune bio renseignée</p>
+            ))}
           </div>
         </div>
 

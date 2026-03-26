@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getMovieById } from "@/lib/omdb";
 import { Clock, Globe, Award, User, Star, MessageCircle, Pencil, Trash2, Loader2, X } from "lucide-react";
@@ -331,7 +331,12 @@ export default function FilmDetail() {
                         </div>
                       )}
                       <div>
-                        <p className="text-foreground text-sm font-medium">{review.user.name}</p>
+                        <Link
+                          to={`/profil/${review.user.id}`}
+                          className="text-foreground text-sm font-medium hover:underline"
+                        >
+                          {review.user.name}
+                        </Link>
                         <p className="text-muted-foreground text-xs">
                           {new Date(review.createdAt).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
                         </p>
