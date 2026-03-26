@@ -171,7 +171,7 @@ export default function FilmDetail() {
 
   if (!movie) return null;
 
-  const detailPosterUrl = getBestPosterUrl(movie.Poster, { omdbSize: 1400, tmdbWidth: 1280 });
+  const detailPosterUrl = getBestPosterUrl(movie.Poster, { omdbSize: 1400 });
   const hasPoster = !!detailPosterUrl;
 
   return (

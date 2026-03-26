@@ -58,7 +58,7 @@ const FALLBACK_FILMS: OmdbMovie[] = [
 ];
 
 function getHighResPosterUrl(posterUrl?: string) {
-  return getBestPosterUrl(posterUrl, { omdbSize: 1400, tmdbWidth: 1280 });
+  return getBestPosterUrl(posterUrl, { omdbSize: 1400 });
 }
 
 export default function Index() {

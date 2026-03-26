@@ -26,7 +26,7 @@ export function FilmCard({ film, size = "normal", eagerDetails = false }: FilmCa
   const [imgError, setImgError] = useState(false);
   const [shouldLoadDetails, setShouldLoadDetails] = useState(eagerDetails);
   const navigate = useNavigate();
-  const posterUrl = getBestPosterUrl(film.Poster, { omdbSize: 1200, tmdbWidth: 780 });
+  const posterUrl = getBestPosterUrl(film.Poster, { omdbSize: 1200 });
   const hasPoster = !imgError && !!posterUrl;
   const isLarge = size === "large";
 
