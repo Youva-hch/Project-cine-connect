@@ -64,3 +64,28 @@
 	border: 1px solid rgba(239, 68, 68, 0.18);
 }
 
+.dangerTitle {
+	color: hsl(0 75% 56%);
+}
+
+.dangerBlock {
+	border: 1px solid rgba(239, 68, 68, 0.2);
+	background: rgba(239, 68, 68, 0.04);
+	padding: 0.85rem;
+	border-radius: 0.75rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.6rem;
+}
+
+.dangerCta {
+	background: linear-gradient(135deg, rgba(220, 38, 38, 0.95), rgba(153, 27, 27, 0.95));
+	color: white;
+	width: fit-content;
+}
+
+.dangerCta:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+

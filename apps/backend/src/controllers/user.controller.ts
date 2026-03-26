@@ -7,6 +7,80 @@ import type { AuthRequest } from '../middlewares/auth.middleware.js';
  */
 export class UserController {
   /**
+   * PATCH /users/me/password - Change le mot de passe de l'utilisateur connecté
+   */
+  static async changeMyPassword(req: AuthRequest, res: Response) {
+    try {
+      const userId = req.userId;
+      if (!userId) {
+        return res.status(401).json({ success: false, message: 'Non authentifié' });
+      }
+
+      const { currentPassword, newPassword } = req.body as {
+        currentPassword?: string;
+        newPassword?: string;
+      };
+
+      if (!currentPassword || !newPassword) {
+        return res.status(400).json({
+          success: false,
+          message: 'Mot de passe actuel et nouveau mot de passe requis',
+        });
+      }
+
+      if (newPassword.length < 6) {
+        return res.status(400).json({
+          success: false,
+          message: 'Le nouveau mot de passe doit contenir au moins 6 caractères',
+        });
+      }
+
+      const result = await UserService.changePassword(userId, currentPassword, newPassword);
+      if (!result.ok) {
+        if (result.reason === 'not_found') {
+          return res.status(404).json({ success: false, message: 'Utilisateur non trouvé' });
+        }
+        if (result.reason === 'invalid_current_password') {
+          return res.status(400).json({ success: false, message: 'Mot de passe actuel incorrect' });
+        }
+      }
+
+      return res.json({ success: true, message: 'Mot de passe mis à jour avec succès' });
+    } catch (error) {
+      console.error('Error changing password:', error);
+      return res.status(500).json({
+        success: false,
+        message: 'Erreur lors du changement de mot de passe',
+      });
+    }
+  }
+
+  /**
+   * DELETE /users/me - Supprime le compte de l'utilisateur connecté
+   */
+  static async deleteMe(req: AuthRequest, res: Response) {
+    try {
+      const userId = req.userId;
+      if (!userId) {
+        return res.status(401).json({ success: false, message: 'Non authentifié' });
+      }
+
+      const deleted = await UserService.deleteUserAccount(userId);
+      if (!deleted) {
+        return res.status(404).json({ success: false, message: 'Utilisateur non trouvé' });
+      }
+
+      return res.json({ success: true, message: 'Compte supprimé' });
+    } catch (error) {
+      console.error('Error deleting account:', error);
+      return res.status(500).json({
+        success: false,
+        message: 'Erreur lors de la suppression du compte',
+      });
+    }
+  }
+
+  /**
    * GET /users/me/reviews - Récupère les avis de l'utilisateur connecté
    */
   static async getMyReviews(req: AuthRequest, res: Response) {

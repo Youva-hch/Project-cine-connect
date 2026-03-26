@@ -1,10 +1,32 @@
 import { db, users, reviews, messages, films, eq, and, or, desc, sql } from '@cineconnect/database';
 import { FriendService } from './friend.service.js';
+import bcrypt from 'bcryptjs';
 
 /**
  * Service pour gérer les utilisateurs
  */
 export class UserService {
+  static async changePassword(userId: number, currentPassword: string, newPassword: string) {
+    const user = await this.getUserById(userId);
+    if (!user) return { ok: false as const, reason: 'not_found' as const };
+
+    const currentValid = await bcrypt.compare(currentPassword, user.passwordHash || '');
+    if (!currentValid) return { ok: false as const, reason: 'invalid_current_password' as const };
+
+    const newHash = await bcrypt.hash(newPassword, 10);
+    await this.updatePassword(userId, newHash);
+    return { ok: true as const };
+  }
+
+  static async deleteUserAccount(userId: number) {
+    const [deleted] = await db
+      .delete(users)
+      .where(eq(users.id, userId))
+      .returning({ id: users.id });
+
+    return deleted ?? null;
+  }
+
   static async getUserReviews(userId: number) {
     return db
       .select({
