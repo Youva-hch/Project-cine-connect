@@ -1,2 +1,85 @@
-.root {}
+.ambientGlow {
+	background: radial-gradient(ellipse at 50% 40%, rgba(139, 92, 246, 0.12) 0%, transparent 70%);
+}
+
+.brandIcon {
+	color: hsl(265, 78%, 62%);
+}
+
+.brandText {
+	background: linear-gradient(135deg, hsl(265, 78%, 72%) 0%, hsl(38, 92%, 65%) 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+}
+
+.title {
+	color: rgba(255, 255, 255, 0.95);
+}
+
+.subtitle {
+	color: rgba(255, 255, 255, 0.4);
+	font-size: 0.875rem;
+}
+
+.errorBanner {
+	background: rgba(239, 68, 68, 0.1);
+	border: 1px solid rgba(239, 68, 68, 0.25);
+	color: rgba(239, 68, 68, 0.9);
+}
+
+.panel {
+	background: rgba(255, 255, 255, 0.04);
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	backdrop-filter: blur(12px);
+}
+
+.googleButton {
+	background: rgba(255, 255, 255, 0.07);
+	border: 1px solid rgba(255, 255, 255, 0.12);
+	color: rgba(255, 255, 255, 0.85);
+}
+
+.dividerLine {
+	background: rgba(255, 255, 255, 0.08);
+}
+
+.dividerText {
+	color: rgba(255, 255, 255, 0.25);
+	font-size: 0.75rem;
+}
+
+.label {
+	color: rgba(255, 255, 255, 0.5);
+}
+
+.input {
+	background: rgba(255, 255, 255, 0.05);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	color: white;
+}
+
+.passwordInput {
+	padding-right: 2.5rem;
+}
+
+.eyeButton {
+	color: rgba(255, 255, 255, 0.3);
+}
+
+.submitButton {
+	background: linear-gradient(135deg, hsl(265, 78%, 58%) 0%, hsl(265, 60%, 44%) 100%);
+}
+
+.submitButtonShadow {
+	box-shadow: 0 4px 20px rgba(139, 92, 246, 0.35);
+}
+
+.violetLink {
+	color: hsl(265, 78%, 72%);
+}
+
+.toggleText {
+	color: rgba(255, 255, 255, 0.35);
+}
 

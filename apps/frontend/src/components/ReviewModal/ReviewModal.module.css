@@ -1,2 +1,28 @@
-.root {}
+.panel {
+	background: rgba(15, 10, 30, 0.97);
+	border: 1px solid rgba(139, 92, 246, 0.25);
+	box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(139, 92, 246, 0.12);
+}
+
+.textarea {
+	background: rgba(255, 255, 255, 0.05);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.textarea:focus {
+	border-color: rgba(139, 92, 246, 0.5);
+}
+
+.error {
+	background: rgba(239, 68, 68, 0.1);
+}
+
+.secondaryAction {
+	border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.primaryAction {
+	background: linear-gradient(135deg, hsl(265, 78%, 58%) 0%, hsl(265, 60%, 44%) 100%);
+	box-shadow: 0 4px 16px rgba(139, 92, 246, 0.35);
+}
 

@@ -1,2 +1,115 @@
-.root {}
+.nav {
+	background: linear-gradient(to bottom, hsl(var(--background) / 0.92) 0%, transparent 100%);
+	backdrop-filter: none;
+	border-bottom: none;
+	box-shadow: none;
+}
+
+.navScrolled {
+	background: hsl(var(--background) / 0.96);
+	backdrop-filter: blur(16px);
+	border-bottom: 1px solid hsl(var(--border) / 0.85);
+	box-shadow: 0 1px 20px hsl(0 0% 0% / 0.18);
+}
+
+.logoGlow {
+	filter: drop-shadow(0 0 8px rgba(139, 92, 246, 0.5));
+}
+
+.logoIcon {
+	color: hsl(265, 78%, 68%);
+}
+
+.brandText {
+	background: linear-gradient(135deg, hsl(265, 78%, 72%) 0%, hsl(38, 92%, 65%) 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+}
+
+.desktopLink {
+	color: hsl(var(--muted-foreground));
+}
+
+.desktopLinkActive {
+	color: hsl(var(--foreground));
+}
+
+.activeIndicator {
+	background: linear-gradient(90deg, hsl(265, 78%, 62%), hsl(38, 92%, 55%));
+}
+
+.searchLink {
+	color: hsl(var(--muted-foreground));
+}
+
+.searchLink:hover {
+	color: hsl(var(--foreground));
+}
+
+.profileButton {
+	background: linear-gradient(135deg, hsl(265, 78%, 58%), hsl(265, 60%, 44%));
+	box-shadow: 0 0 12px rgba(139, 92, 246, 0.4);
+}
+
+.logoutButton {
+	color: hsl(var(--muted-foreground));
+}
+
+.authButton {
+	background: linear-gradient(135deg, hsl(265, 78%, 58%) 0%, hsl(265, 60%, 44%) 100%);
+	box-shadow: 0 2px 16px rgba(139, 92, 246, 0.35);
+}
+
+.mobileToggle {
+	color: hsl(var(--foreground));
+}
+
+.mobileMenu {
+	background: hsl(var(--card) / 0.97);
+	backdrop-filter: blur(16px);
+	border-top: 1px solid hsl(var(--border) / 0.85);
+}
+
+.mobileItem {
+	color: hsl(var(--muted-foreground));
+	background: transparent;
+	border-left: 2px solid transparent;
+}
+
+.mobileItemActive {
+	color: hsl(var(--foreground));
+	background: hsl(var(--primary) / 0.14);
+	border-left: 2px solid hsl(265, 78%, 62%);
+}
+
+.mobileSecondary {
+	color: hsl(var(--muted-foreground));
+}
+
+.mobileDanger {
+	color: hsl(var(--muted-foreground));
+}
+
+.mobileAuth {
+	background: linear-gradient(135deg, hsl(265, 78%, 58%), hsl(265, 60%, 44%));
+}
+
+.themeToggleDesktop {
+	margin-right: 0.25rem;
+}
+
+.themeToggleMobileWrap {
+	display: flex;
+	justify-content: center;
+	padding: 0.25rem 0 0.5rem;
+	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+	margin-bottom: 0.5rem;
+}
+
+.themeToggleMobile {
+	width: 100%;
+	max-width: 260px;
+	justify-content: center;
+}
 

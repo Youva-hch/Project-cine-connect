@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Film } from "lucide-react";
+import styles from "./AuthCallback.module.css";
 
 export default function AuthCallback() {
   const [searchParams] = useSearchParams();
@@ -29,10 +30,9 @@ export default function AuthCallback() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center gap-4">
       <Film
-        className="h-10 w-10 animate-pulse"
-        style={{ color: "hsl(265,78%,62%)" }}
+        className={`h-10 w-10 animate-pulse ${styles.icon}`}
       />
-      <p style={{ color: "rgba(255,255,255,0.5)" }}>Connexion en cours...</p>
+      <p className={styles.text}>Connexion en cours...</p>
     </div>
   );
 }

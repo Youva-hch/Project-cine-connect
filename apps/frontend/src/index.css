@@ -50,6 +50,45 @@
     --sidebar-border: 252 18% 15%;
     --sidebar-ring: 265 78% 62%;
   }
+
+  .light {
+    --background: 220 23% 97%;
+    --foreground: 240 16% 10%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 240 16% 10%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 16% 10%;
+
+    --primary: 258 70% 52%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 22% 92%;
+    --secondary-foreground: 240 10% 20%;
+
+    --muted: 220 22% 94%;
+    --muted-foreground: 240 8% 42%;
+
+    --accent: 38 92% 45%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 46%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 18% 86%;
+    --input: 220 18% 86%;
+    --ring: 258 70% 52%;
+
+    --sidebar-background: 220 23% 95%;
+    --sidebar-foreground: 240 10% 20%;
+    --sidebar-primary: 258 70% 52%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 22% 90%;
+    --sidebar-accent-foreground: 240 10% 20%;
+    --sidebar-border: 220 18% 82%;
+    --sidebar-ring: 258 70% 52%;
+  }
 }
 
 @layer base {
@@ -57,11 +96,11 @@
     @apply border-border;
   }
   html {
-    background: #070710;
+    background: hsl(var(--background));
   }
   body {
     @apply bg-background text-foreground font-sans antialiased;
-    background: hsl(240, 18%, 4%);
+    background: hsl(var(--background));
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Bebas Neue', sans-serif;

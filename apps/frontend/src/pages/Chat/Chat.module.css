@@ -1,2 +1,68 @@
-.root {}
+.page {
+	background: rgba(7, 7, 16, 1);
+}
+
+.header,
+.footer {
+	border-color: rgba(255, 255, 255, 0.07);
+	background: rgba(14, 14, 28, 0.98);
+}
+
+.mutedText {
+	color: rgba(255, 255, 255, 0.35);
+}
+
+.headerMuted {
+	color: rgba(255, 255, 255, 0.5);
+}
+
+.title {
+	color: white;
+}
+
+.emptyState {
+	color: rgba(255, 255, 255, 0.25);
+}
+
+.avatarFallback {
+	background: linear-gradient(135deg, hsl(265, 78%, 55%), hsl(280, 70%, 45%));
+}
+
+.bubbleMine {
+	background: linear-gradient(135deg, hsl(265, 78%, 52%), hsl(280, 70%, 42%));
+	color: white;
+}
+
+.bubbleOther {
+	background: rgba(255, 255, 255, 0.07);
+	color: white;
+}
+
+.timeMine {
+	color: rgba(255, 255, 255, 0.55);
+}
+
+.timeOther {
+	color: rgba(255, 255, 255, 0.35);
+}
+
+.messageText {
+	word-break: break-word;
+}
+
+.input {
+	background: rgba(255, 255, 255, 0.06);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	color: white;
+}
+
+.sendActive {
+	background: linear-gradient(135deg, hsl(265, 78%, 55%), hsl(280, 70%, 45%));
+	color: white;
+}
+
+.sendDisabled {
+	background: rgba(255, 255, 255, 0.06);
+	color: rgba(255, 255, 255, 0.25);
+}
 

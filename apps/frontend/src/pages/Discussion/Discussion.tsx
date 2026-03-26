@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { io, Socket } from "socket.io-client";
 import { MessageCircle, Send, ArrowLeft } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import styles from "./Discussion.module.css";
 
 const API = import.meta.env.VITE_API_URL || "";
 
@@ -48,8 +49,8 @@ function Avatar({ name, src, size = 40 }: { name: string; src?: string | null; s
         width: size,
         height: size,
         fontSize: size < 32 ? 10 : 14,
-        background: "linear-gradient(135deg, hsl(265,78%,55%), hsl(280,70%,45%))",
       }}
+      className={`rounded-full flex items-center justify-center flex-shrink-0 font-bold text-white ${styles.avatarFallback}`}
     >
       {initials}
     </div>
@@ -144,26 +145,17 @@ export default function Discussion() {
   if (!user) return <Navigate to="/auth" />;
 
   return (
-    <div
-      className="flex h-screen pt-16"
-      style={{ background: "rgba(7,7,16,1)" }}
-    >
+    <div className={`flex h-screen pt-16 ${styles.page}`}>
       {/* ── Sidebar gauche : liste des conversations ────────────────────── */}
       <div
         className={`flex flex-col flex-shrink-0 ${selectedId ? "hidden md:flex" : "flex"}`}
-        style={{
-          width: 300,
-          borderRight: "1px solid rgba(255,255,255,0.07)",
-          background: "rgba(14,14,28,0.98)",
-        }}
+        style={{ width: 300 }}
+        className={`flex flex-col flex-shrink-0 ${selectedId ? "hidden md:flex" : "flex"} ${styles.sidebar}`}
       >
         {/* Header sidebar */}
-        <div
-          className="px-4 py-4 flex-shrink-0"
-          style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}
-        >
+        <div className={`px-4 py-4 flex-shrink-0 ${styles.sidebarHeader}`}>
           <h2 className="font-semibold text-white text-sm">Discussions</h2>
-          <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.35)" }}>
+          <p className={`text-xs mt-0.5 ${styles.muted35}`}>
             {friends.length} conversation{friends.length !== 1 ? "s" : ""}
           </p>
         </div>
@@ -171,7 +163,7 @@ export default function Discussion() {
         {/* Liste des amis */}
         <div className="flex-1 overflow-y-auto">
           {friends.length === 0 ? (
-            <div className="text-center py-12 px-4" style={{ color: "rgba(255,255,255,0.3)" }}>
+            <div className={`text-center py-12 px-4 ${styles.muted30}`}>
               <MessageCircle className="h-10 w-10 mx-auto mb-2 opacity-30" />
               <p className="text-xs">Ajoutez des amis pour discuter</p>
             </div>
@@ -182,23 +174,20 @@ export default function Discussion() {
                 <button
                   key={f.friendshipId}
                   onClick={() => setSearchParams({ with: String(f.otherUserId) })}
-                  className="w-full flex items-center gap-3 px-4 py-3 transition-all text-left"
-                  style={{
-                    background: isActive ? "rgba(139,92,246,0.12)" : "transparent",
-                    borderLeft: isActive
-                      ? "2px solid hsl(265,78%,62%)"
-                      : "2px solid transparent",
-                  }}
+                  className={`w-full flex items-center gap-3 px-4 py-3 transition-all text-left ${styles.friendItem} ${
+                    isActive ? styles.friendItemActive : ""
+                  }`}
+                  type="button"
                 >
                   <Avatar name={f.otherUserName} src={f.otherUserAvatar} size={38} />
                   <div className="flex-1 min-w-0">
                     <p
                       className="text-sm font-medium truncate"
-                      style={{ color: isActive ? "white" : "rgba(255,255,255,0.8)" }}
+                      className={`text-sm font-medium truncate ${isActive ? styles.friendNameActive : styles.friendName}`}
                     >
                       {f.otherUserName}
                     </p>
-                    <p className="text-xs truncate" style={{ color: "rgba(255,255,255,0.3)" }}>
+                    <p className={`text-xs truncate ${styles.muted30}`}>
                       {f.otherUserEmail}
                     </p>
                   </div>
@@ -216,25 +205,23 @@ export default function Discussion() {
             {/* Header chat */}
             <div
               className="flex items-center gap-3 px-4 py-3 flex-shrink-0"
-              style={{
-                borderBottom: "1px solid rgba(255,255,255,0.07)",
-                background: "rgba(14,14,28,0.98)",
-              }}
+              className={`flex items-center gap-3 px-4 py-3 flex-shrink-0 border-b ${styles.chatHeader}`}
             >
               {/* Bouton retour mobile */}
               <button
                 onClick={() => setSearchParams({})}
                 className="md:hidden p-2 rounded-lg"
-                style={{ color: "rgba(255,255,255,0.5)" }}
+                className={`md:hidden p-2 rounded-lg ${styles.muted50}`}
+                type="button"
               >
                 <ArrowLeft className="h-5 w-5" />
               </button>
               <Avatar name={activeFriend.otherUserName} src={activeFriend.otherUserAvatar} />
               <div>
-                <p className="text-sm font-semibold" style={{ color: "white" }}>
+                <p className={`text-sm font-semibold ${styles.chatTitle}`}>
                   {activeFriend.otherUserName}
                 </p>
-                <p className="text-xs" style={{ color: "rgba(255,255,255,0.35)" }}>
+                <p className={`text-xs ${styles.muted35}`}>
                   Conversation privée
                 </p>
               </div>
@@ -243,7 +230,7 @@ export default function Discussion() {
             {/* Messages */}
             <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
               {messages.length === 0 && (
-                <div className="text-center py-16" style={{ color: "rgba(255,255,255,0.25)" }}>
+                <div className={`text-center py-16 ${styles.emptyState}`}>
                   <p className="text-sm">Aucun message pour l'instant</p>
                   <p className="text-xs mt-1">Commencez la conversation !</p>
                 </div>
@@ -261,21 +248,20 @@ export default function Discussion() {
                     <div
                       className="max-w-sm px-4 py-2 rounded-2xl text-sm"
                       style={{
-                        background: isMine
-                          ? "linear-gradient(135deg, hsl(265,78%,52%), hsl(280,70%,42%))"
-                          : "rgba(255,255,255,0.07)",
-                        color: "white",
                         borderBottomRightRadius: isMine ? 4 : undefined,
                         borderBottomLeftRadius: isMine ? undefined : 4,
                       }}
+                      className={`max-w-sm px-4 py-2 rounded-2xl text-sm ${
+                        isMine ? styles.bubbleMine : styles.bubbleOther
+                      }`}
                     >
-                      <p style={{ wordBreak: "break-word" }}>{msg.content}</p>
+                      <p className={styles.messageText}>{msg.content}</p>
                       <p
                         className="text-xs mt-1"
                         style={{
-                          color: isMine ? "rgba(255,255,255,0.55)" : "rgba(255,255,255,0.35)",
                           textAlign: isMine ? "right" : "left",
                         }}
+                        className={`text-xs mt-1 ${isMine ? styles.timeMine : styles.timeOther}`}
                       >
                         {formatTime(msg.createdAt)}
                       </p>
@@ -289,33 +275,22 @@ export default function Discussion() {
             {/* Input */}
             <div
               className="flex items-center gap-3 px-4 py-3 flex-shrink-0"
-              style={{
-                borderTop: "1px solid rgba(255,255,255,0.07)",
-                background: "rgba(14,14,28,0.98)",
-              }}
+              className={`flex items-center gap-3 px-4 py-3 flex-shrink-0 border-t ${styles.chatFooter}`}
             >
               <input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="Écrire un message..."
-                className="flex-1 px-4 py-2 rounded-xl text-sm outline-none"
-                style={{
-                  background: "rgba(255,255,255,0.06)",
-                  border: "1px solid rgba(255,255,255,0.1)",
-                  color: "white",
-                }}
+                className={`flex-1 px-4 py-2 rounded-xl text-sm outline-none ${styles.chatInput}`}
               />
               <button
                 onClick={sendMessage}
                 disabled={!input.trim()}
-                className="w-9 h-9 rounded-xl flex items-center justify-center transition-all"
-                style={{
-                  background: input.trim()
-                    ? "linear-gradient(135deg, hsl(265,78%,55%), hsl(280,70%,45%))"
-                    : "rgba(255,255,255,0.06)",
-                  color: input.trim() ? "white" : "rgba(255,255,255,0.25)",
-                }}
+                className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all ${
+                  input.trim() ? styles.sendActive : styles.sendDisabled
+                }`}
+                type="button"
               >
                 <Send className="h-4 w-4" />
               </button>
@@ -325,7 +300,7 @@ export default function Discussion() {
           /* Empty state */
           <div
             className="flex-1 flex flex-col items-center justify-center"
-            style={{ color: "rgba(255,255,255,0.2)" }}
+            className={`flex-1 flex flex-col items-center justify-center ${styles.emptySelection}`}
           >
             <MessageCircle className="h-16 w-16 mb-4 opacity-20" />
             <p className="text-sm">Sélectionnez une conversation</p>

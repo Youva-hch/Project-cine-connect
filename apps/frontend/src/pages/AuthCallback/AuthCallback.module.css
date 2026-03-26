@@ -1,2 +1,8 @@
-.root {}
+.icon {
+	color: hsl(265, 78%, 62%);
+}
+
+.text {
+	color: rgba(255, 255, 255, 0.5);
+}
 

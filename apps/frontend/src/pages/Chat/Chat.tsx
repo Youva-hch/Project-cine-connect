@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { io, Socket } from "socket.io-client";
 import { Send, ArrowLeft } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import styles from "./Chat.module.css";
 
 const API = import.meta.env.VITE_API_URL || "";
 
@@ -43,8 +44,8 @@ function Avatar({ name, src, size = 36 }: { name: string; src?: string | null; s
   const initials = name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
   return (
     <div
-      className="rounded-full flex items-center justify-center font-bold text-white text-xs flex-shrink-0"
-      style={{ width: size, height: size, background: "linear-gradient(135deg, hsl(265,78%,55%), hsl(280,70%,45%))" }}
+      className={`rounded-full flex items-center justify-center font-bold text-white text-xs flex-shrink-0 ${styles.avatarFallback}`}
+      style={{ width: size, height: size }}
     >
       {initials}
     </div>
@@ -146,19 +147,14 @@ export default function Chat() {
   if (!user) return null;
 
   return (
-    <div
-      className="flex flex-col h-screen pt-16"
-      style={{ background: "rgba(7,7,16,1)" }}
-    >
+    <div className={`flex flex-col h-screen pt-16 ${styles.page}`}>
       {/* Header */}
-      <div
-        className="flex items-center gap-3 px-4 py-3 flex-shrink-0"
-        style={{ borderBottom: "1px solid rgba(255,255,255,0.07)", background: "rgba(14,14,28,0.98)" }}
-      >
+      <div className={`flex items-center gap-3 px-4 py-3 flex-shrink-0 border-b ${styles.header}`}>
         <button
           onClick={() => navigate("/amis")}
           className="p-2 rounded-lg transition-colors"
-          style={{ color: "rgba(255,255,255,0.5)" }}
+          className={`p-2 rounded-lg transition-colors ${styles.headerMuted}`}
+          type="button"
         >
           <ArrowLeft className="h-5 w-5" />
         </button>
@@ -167,10 +163,10 @@ export default function Chat() {
           <>
             <Avatar name={friend.otherUserName} src={friend.otherUserAvatar} />
             <div>
-              <p className="text-sm font-semibold" style={{ color: "white" }}>
+              <p className={`text-sm font-semibold ${styles.title}`}>
                 {friend.otherUserName}
               </p>
-              <p className="text-xs" style={{ color: "rgba(255,255,255,0.35)" }}>
+              <p className={`text-xs ${styles.mutedText}`}>
                 Conversation privée
               </p>
             </div>
@@ -181,7 +177,7 @@ export default function Chat() {
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
         {messages.length === 0 && (
-          <div className="text-center py-16" style={{ color: "rgba(255,255,255,0.25)" }}>
+          <div className={`text-center py-16 ${styles.emptyState}`}>
             <p className="text-sm">Aucun message pour l'instant</p>
             <p className="text-xs mt-1">Commencez la conversation !</p>
           </div>
@@ -200,18 +196,18 @@ export default function Chat() {
               <div
                 className="max-w-xs px-4 py-2 rounded-2xl text-sm"
                 style={{
-                  background: isMine
-                    ? "linear-gradient(135deg, hsl(265,78%,52%), hsl(280,70%,42%))"
-                    : "rgba(255,255,255,0.07)",
-                  color: "white",
                   borderBottomRightRadius: isMine ? 4 : undefined,
                   borderBottomLeftRadius: isMine ? undefined : 4,
                 }}
+                className={`max-w-xs px-4 py-2 rounded-2xl text-sm ${
+                  isMine ? styles.bubbleMine : styles.bubbleOther
+                }`}
               >
-                <p style={{ wordBreak: "break-word" }}>{msg.content}</p>
+                <p className={styles.messageText}>{msg.content}</p>
                 <p
                   className="text-xs mt-1"
-                  style={{ color: isMine ? "rgba(255,255,255,0.55)" : "rgba(255,255,255,0.35)", textAlign: isMine ? "right" : "left" }}
+                  style={{ textAlign: isMine ? "right" : "left" }}
+                  className={`text-xs mt-1 ${isMine ? styles.timeMine : styles.timeOther}`}
                 >
                   {formatTime(msg.createdAt)}
                 </p>
@@ -223,32 +219,21 @@ export default function Chat() {
       </div>
 
       {/* Input */}
-      <div
-        className="flex items-center gap-3 px-4 py-3 flex-shrink-0"
-        style={{ borderTop: "1px solid rgba(255,255,255,0.07)", background: "rgba(14,14,28,0.98)" }}
-      >
+      <div className={`flex items-center gap-3 px-4 py-3 flex-shrink-0 border-t ${styles.footer}`}>
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Écrire un message..."
-          className="flex-1 px-4 py-2 rounded-xl text-sm outline-none"
-          style={{
-            background: "rgba(255,255,255,0.06)",
-            border: "1px solid rgba(255,255,255,0.1)",
-            color: "white",
-          }}
+          className={`flex-1 px-4 py-2 rounded-xl text-sm outline-none ${styles.input}`}
         />
         <button
           onClick={sendMessage}
           disabled={!input.trim()}
-          className="w-9 h-9 rounded-xl flex items-center justify-center transition-all"
-          style={{
-            background: input.trim()
-              ? "linear-gradient(135deg, hsl(265,78%,55%), hsl(280,70%,45%))"
-              : "rgba(255,255,255,0.06)",
-            color: input.trim() ? "white" : "rgba(255,255,255,0.25)",
-          }}
+          className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all ${
+            input.trim() ? styles.sendActive : styles.sendDisabled
+          }`}
+          type="button"
         >
           <Send className="h-4 w-4" />
         </button>

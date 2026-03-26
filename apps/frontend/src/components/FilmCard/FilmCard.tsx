@@ -19,11 +19,12 @@ function getInitials(title: string) {
 interface FilmCardProps {
   film: OmdbMovie;
   size?: "normal" | "large";
+  eagerDetails?: boolean;
 }
 
-export function FilmCard({ film, size = "normal" }: FilmCardProps) {
+export function FilmCard({ film, size = "normal", eagerDetails = false }: FilmCardProps) {
   const [imgError, setImgError] = useState(false);
-  const [shouldLoadDetails, setShouldLoadDetails] = useState(false);
+  const [shouldLoadDetails, setShouldLoadDetails] = useState(eagerDetails);
   const navigate = useNavigate();
   const posterUrl = getBestPosterUrl(film.Poster, { omdbSize: 1200, tmdbWidth: 780 });
   const hasPoster = !imgError && !!posterUrl;
@@ -32,7 +33,7 @@ export function FilmCard({ film, size = "normal" }: FilmCardProps) {
   const { data: details } = useQuery({
     queryKey: ["film-card-detail", film.imdbID],
     queryFn: () => getMovieById(film.imdbID),
-    enabled: shouldLoadDetails,
+    enabled: eagerDetails || shouldLoadDetails,
     staleTime: 1000 * 60 * 60,
     retry: 1,
   });

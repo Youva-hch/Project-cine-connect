@@ -34,15 +34,18 @@ export function FilmRow({
       viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
     >
-      <h2 className="font-display text-2xl md:text-3xl text-foreground mb-3 px-4 md:px-12 tracking-wide text-white">
+      <h2
+        className={`font-display text-2xl md:text-3xl text-foreground mb-3 px-4 md:px-12 tracking-wide text-white ${styles.rowTitle}`}
+      >
         {title}
       </h2>
 
       <div className="relative">
         <button
+          type="button"
           onClick={() => scroll("left")}
           aria-label={`Faire défiler ${title} vers la gauche`}
-          className="absolute left-0 top-0 bottom-0 z-20 w-12 md:w-14 bg-gradient-to-r from-background/90 to-transparent flex items-center justify-center opacity-0 group-hover/row:opacity-100 transition-opacity focus-visible:opacity-100 focus-visible:outline-none"
+          className={`w-12 md:w-14 group-hover/row:opacity-100 focus-visible:opacity-100 focus-visible:outline-none ${styles.scrollButton} ${styles.scrollButtonLeft}`}
         >
           <ChevronLeft className="h-9 w-9 text-foreground" />
         </button>
@@ -63,15 +66,16 @@ export function FilmRow({
                 ease: [0.22, 1, 0.36, 1],
               }}
             >
-              <FilmCard film={film} size={size} />
+              <FilmCard film={film} size={size} eagerDetails />
             </motion.div>
           ))}
         </div>
 
         <button
+          type="button"
           onClick={() => scroll("right")}
           aria-label={`Faire défiler ${title} vers la droite`}
-          className="absolute right-0 top-0 bottom-0 z-20 w-12 md:w-14 bg-gradient-to-l from-background/90 to-transparent flex items-center justify-center opacity-0 group-hover/row:opacity-100 transition-opacity focus-visible:opacity-100 focus-visible:outline-none"
+          className={`w-12 md:w-14 group-hover/row:opacity-100 focus-visible:opacity-100 focus-visible:outline-none ${styles.scrollButton} ${styles.scrollButtonRight}`}
         >
           <ChevronRight className="h-9 w-9 text-foreground" />
         </button>

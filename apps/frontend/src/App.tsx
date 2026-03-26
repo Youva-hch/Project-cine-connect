@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import { AuthProvider } from "@/hooks/useAuth";
+import { ThemeProvider } from "@/contexts";
 import { Navbar } from "@/components/Navbar";
 import { CinemaIntro } from "@/components/CinemaIntro";
 import { useState, useCallback } from "react";
@@ -55,19 +56,21 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <AuthProvider>
-          <Toaster />
-          <Sonner />
-          {!introComplete && <CinemaIntro onComplete={handleIntroComplete} />}
-          <BrowserRouter>
-            <div className="dark min-h-screen bg-background text-foreground">
-              <Navbar />
-              <main className="pt-16">
-                <AnimatedRoutes />
-              </main>
-            </div>
-          </BrowserRouter>
-        </AuthProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <Toaster />
+            <Sonner />
+            {!introComplete && <CinemaIntro onComplete={handleIntroComplete} />}
+            <BrowserRouter>
+              <div className="min-h-screen bg-background text-foreground transition-colors duration-200">
+                <Navbar />
+                <main className="pt-16">
+                  <AnimatedRoutes />
+                </main>
+              </div>
+            </BrowserRouter>
+          </AuthProvider>
+        </ThemeProvider>
       </TooltipProvider>
     </QueryClientProvider>
   );

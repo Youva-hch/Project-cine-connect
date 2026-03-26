@@ -1,5 +1,44 @@
 .rowScroll {
 	scrollbar-width: none;
 	-ms-overflow-style: none;
+	scroll-behavior: smooth;
+}
+
+.rowScroll::-webkit-scrollbar {
+	display: none;
+}
+
+.rowTitle {
+	text-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
+}
+
+.scrollButton {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	z-index: 20;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	opacity: 0;
+	transition: opacity 0.2s ease;
+}
+
+.scrollButtonLeft {
+	left: 0;
+	background: linear-gradient(
+		to right,
+		hsl(var(--background) / 0.9) 0%,
+		transparent 100%
+	);
+}
+
+.scrollButtonRight {
+	right: 0;
+	background: linear-gradient(
+		to left,
+		hsl(var(--background) / 0.9) 0%,
+		transparent 100%
+	);
 }
 

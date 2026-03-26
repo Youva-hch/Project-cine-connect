@@ -3,7 +3,9 @@ import { Film, Home, MessageCircle, User, LogIn, LogOut, Menu, X, Search, Users 
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { NotificationBell } from "@/components/NotificationBell";
+import { ThemeToggle } from "@/components";
 import { useState, useEffect } from "react";
+import styles from "./Navbar.module.css";
 
 const navItems = [
   { to: "/", label: "Accueil", icon: Home },
@@ -26,38 +28,17 @@ export function Navbar() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-400`}
-      style={{
-        background: scrolled
-          ? "rgba(7, 7, 16, 0.96)"
-          : "linear-gradient(to bottom, rgba(7,7,16,0.85) 0%, transparent 100%)",
-        backdropFilter: scrolled ? "blur(16px)" : "none",
-        borderBottom: scrolled ? "1px solid rgba(139,92,246,0.12)" : "none",
-        boxShadow: scrolled ? "0 1px 24px rgba(0,0,0,0.4)" : "none",
-      }}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-400 ${styles.nav} ${
+        scrolled ? styles.navScrolled : ""
+      }`}
     >
       <div className="flex items-center justify-between h-16 px-4 md:px-14">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 group">
-          <div
-            className="relative"
-            style={{
-              filter: "drop-shadow(0 0 8px rgba(139,92,246,0.5))",
-            }}
-          >
-            <Film className="h-6 w-6 transition-transform duration-300 group-hover:rotate-12"
-              style={{ color: "hsl(265, 78%, 68%)" }}
-            />
+          <div className={`relative ${styles.logoGlow}`}>
+            <Film className={`h-6 w-6 transition-transform duration-300 group-hover:rotate-12 ${styles.logoIcon}`} />
           </div>
-          <span
-            className="font-display text-2xl tracking-wider"
-            style={{
-              background: "linear-gradient(135deg, hsl(265,78%,72%) 0%, hsl(38,92%,65%) 100%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              backgroundClip: "text",
-            }}
-          >
+          <span className={`font-display text-2xl tracking-wider ${styles.brandText}`}>
             CinéConnect
           </span>
         </Link>
@@ -72,10 +53,9 @@ export function Navbar() {
               <Link
                 key={item.to}
                 to={item.to}
-                className="relative px-4 py-2 text-sm font-medium transition-colors duration-200 rounded-sm group"
-                style={{
-                  color: isActive ? "white" : "rgba(255,255,255,0.55)",
-                }}
+                className={`relative px-4 py-2 text-sm font-medium transition-colors duration-200 rounded-sm group ${styles.desktopLink} ${
+                  isActive ? styles.desktopLinkActive : ""
+                }`}
               >
                 <span className="relative z-10 group-hover:text-white transition-colors">
                   {item.label}
@@ -83,10 +63,7 @@ export function Navbar() {
                 {/* Active indicator */}
                 {isActive && (
                   <span
-                    className="absolute bottom-0 left-1/2 -translate-x-1/2 w-5 h-0.5 rounded-full"
-                    style={{
-                      background: "linear-gradient(90deg, hsl(265,78%,62%), hsl(38,92%,55%))",
-                    }}
+                    className={`absolute bottom-0 left-1/2 -translate-x-1/2 w-5 h-0.5 rounded-full ${styles.activeIndicator}`}
                   />
                 )}
               </Link>
@@ -96,17 +73,10 @@ export function Navbar() {
 
         {/* Right side */}
         <div className="hidden md:flex items-center gap-2">
+          <ThemeToggle className={styles.themeToggleDesktop} />
           <Link
             to="/films"
-            className="p-2 rounded-sm transition-colors"
-            style={{ color: "rgba(255,255,255,0.55)" }}
-            onMouseEnter={(e) =>
-              ((e.currentTarget as HTMLElement).style.color = "white")
-            }
-            onMouseLeave={(e) =>
-              ((e.currentTarget as HTMLElement).style.color =
-                "rgba(255,255,255,0.55)")
-            }
+            className={`p-2 rounded-sm transition-colors ${styles.searchLink}`}
           >
             <Search className="h-5 w-5" />
           </Link>
@@ -116,11 +86,8 @@ export function Navbar() {
               <NotificationBell />
               <Link to="/profil">
                 <button
-                  className="w-8 h-8 rounded-full flex items-center justify-center transition-all"
-                  style={{
-                    background: "linear-gradient(135deg, hsl(265,78%,58%), hsl(265,60%,44%))",
-                    boxShadow: "0 0 12px rgba(139,92,246,0.4)",
-                  }}
+                  type="button"
+                  className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${styles.profileButton}`}
                 >
                   <User className="h-4 w-4 text-white" />
                 </button>
@@ -129,8 +96,7 @@ export function Navbar() {
                 variant="ghost"
                 size="sm"
                 onClick={() => signOut()}
-                className="text-sm"
-                style={{ color: "rgba(255,255,255,0.45)" }}
+                className={`text-sm ${styles.logoutButton}`}
               >
                 <LogOut className="h-4 w-4" />
               </Button>
@@ -138,12 +104,8 @@ export function Navbar() {
           ) : (
             <Link to="/auth">
               <button
-                className="px-5 py-2 rounded-sm text-sm font-semibold text-white transition-all hover:brightness-110"
-                style={{
-                  background:
-                    "linear-gradient(135deg, hsl(265,78%,58%) 0%, hsl(265,60%,44%) 100%)",
-                  boxShadow: "0 2px 16px rgba(139,92,246,0.35)",
-                }}
+                type="button"
+                className={`px-5 py-2 rounded-sm text-sm font-semibold text-white transition-all hover:brightness-110 ${styles.authButton}`}
               >
                 Connexion
               </button>
@@ -153,8 +115,8 @@ export function Navbar() {
 
         {/* Mobile toggle */}
         <button
-          className="md:hidden p-2"
-          style={{ color: "rgba(255,255,255,0.8)" }}
+          className={`md:hidden p-2 ${styles.mobileToggle}`}
+          type="button"
           onClick={() => setMobileOpen(!mobileOpen)}
         >
           {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -164,13 +126,11 @@ export function Navbar() {
       {/* Mobile menu */}
       {mobileOpen && (
         <div
-          className="md:hidden pb-4 px-4 space-y-1 animate-fade-in"
-          style={{
-            background: "rgba(7,7,16,0.97)",
-            backdropFilter: "blur(16px)",
-            borderTop: "1px solid rgba(139,92,246,0.15)",
-          }}
+          className={`md:hidden pb-4 px-4 space-y-1 animate-fade-in ${styles.mobileMenu}`}
         >
+          <div className={styles.themeToggleMobileWrap}>
+            <ThemeToggle className={styles.themeToggleMobile} />
+          </div>
           {navItems.map((item) => {
             const isActive = location.pathname === item.to;
             return (
@@ -178,16 +138,9 @@ export function Navbar() {
                 key={item.to}
                 to={item.to}
                 onClick={() => setMobileOpen(false)}
-                className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all"
-                style={{
-                  color: isActive ? "white" : "rgba(255,255,255,0.55)",
-                  background: isActive
-                    ? "rgba(139,92,246,0.12)"
-                    : "transparent",
-                  borderLeft: isActive
-                    ? "2px solid hsl(265,78%,62%)"
-                    : "2px solid transparent",
-                }}
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all ${styles.mobileItem} ${
+                  isActive ? styles.mobileItemActive : ""
+                }`}
               >
                 <item.icon className="h-5 w-5" />
                 {item.label}
@@ -197,8 +150,7 @@ export function Navbar() {
           <Link
             to="/profil"
             onClick={() => setMobileOpen(false)}
-            className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium"
-            style={{ color: "rgba(255,255,255,0.55)" }}
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium ${styles.mobileSecondary}`}
           >
             <User className="h-5 w-5" />
             Profil
@@ -209,8 +161,7 @@ export function Navbar() {
                 signOut();
                 setMobileOpen(false);
               }}
-              className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium w-full"
-              style={{ color: "rgba(255,255,255,0.45)" }}
+              className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium w-full ${styles.mobileDanger}`}
             >
               <LogOut className="h-5 w-5" />
               Déconnexion
@@ -219,11 +170,7 @@ export function Navbar() {
             <Link
               to="/auth"
               onClick={() => setMobileOpen(false)}
-              className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold text-white"
-              style={{
-                background:
-                  "linear-gradient(135deg, hsl(265,78%,58%), hsl(265,60%,44%))",
-              }}
+              className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-semibold text-white ${styles.mobileAuth}`}
             >
               <LogIn className="h-5 w-5" />
               Connexion

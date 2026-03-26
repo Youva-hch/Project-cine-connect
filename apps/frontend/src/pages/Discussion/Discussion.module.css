@@ -1,2 +1,103 @@
-.root {}
+.page {
+	background: rgba(7, 7, 16, 1);
+}
+
+.sidebar {
+	border-right: 1px solid rgba(255, 255, 255, 0.07);
+	background: rgba(14, 14, 28, 0.98);
+}
+
+.sidebarHeader {
+	border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.muted35 {
+	color: rgba(255, 255, 255, 0.35);
+}
+
+.muted30 {
+	color: rgba(255, 255, 255, 0.3);
+}
+
+.muted50 {
+	color: rgba(255, 255, 255, 0.5);
+}
+
+.emptyState {
+	color: rgba(255, 255, 255, 0.25);
+}
+
+.emptySelection {
+	color: rgba(255, 255, 255, 0.2);
+}
+
+.avatarFallback {
+	background: linear-gradient(135deg, hsl(265, 78%, 55%), hsl(280, 70%, 45%));
+}
+
+.friendItem {
+	background: transparent;
+	border-left: 2px solid transparent;
+}
+
+.friendItemActive {
+	background: rgba(139, 92, 246, 0.12);
+	border-left: 2px solid hsl(265, 78%, 62%);
+}
+
+.friendName {
+	color: rgba(255, 255, 255, 0.8);
+}
+
+.friendNameActive {
+	color: white;
+}
+
+.chatHeader,
+.chatFooter {
+	border-color: rgba(255, 255, 255, 0.07);
+	background: rgba(14, 14, 28, 0.98);
+}
+
+.chatTitle {
+	color: white;
+}
+
+.bubbleMine {
+	background: linear-gradient(135deg, hsl(265, 78%, 52%), hsl(280, 70%, 42%));
+	color: white;
+}
+
+.bubbleOther {
+	background: rgba(255, 255, 255, 0.07);
+	color: white;
+}
+
+.timeMine {
+	color: rgba(255, 255, 255, 0.55);
+}
+
+.timeOther {
+	color: rgba(255, 255, 255, 0.35);
+}
+
+.messageText {
+	word-break: break-word;
+}
+
+.chatInput {
+	background: rgba(255, 255, 255, 0.06);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	color: white;
+}
+
+.sendActive {
+	background: linear-gradient(135deg, hsl(265, 78%, 55%), hsl(280, 70%, 45%));
+	color: white;
+}
+
+.sendDisabled {
+	background: rgba(255, 255, 255, 0.06);
+	color: rgba(255, 255, 255, 0.25);
+}
 

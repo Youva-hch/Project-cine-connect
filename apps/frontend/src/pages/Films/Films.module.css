@@ -1,2 +1,45 @@
-.root {}
+.subtitle {
+	color: rgba(255, 255, 255, 0.55);
+}
+
+.searchIcon,
+.clearSearchButton {
+	color: rgba(255, 255, 255, 0.4);
+}
+
+.searchInput {
+	background: rgba(255, 255, 255, 0.05);
+	border: 1px solid rgba(255, 255, 255, 0.12);
+	color: white;
+}
+
+.genreButton {
+	background: rgba(255, 255, 255, 0.06);
+	border: 1px solid rgba(255, 255, 255, 0.12);
+	color: rgba(255, 255, 255, 0.7);
+	box-shadow: none;
+	transform: scale(1);
+}
+
+.genreButtonActive {
+	background: linear-gradient(135deg, hsl(265, 78%, 55%), hsl(280, 70%, 45%));
+	border: 1px solid hsl(265, 78%, 72%);
+	color: white;
+	box-shadow: 0 0 16px rgba(147, 51, 234, 0.4);
+	transform: scale(1.05);
+}
+
+.resetFilters {
+	background: rgba(239, 68, 68, 0.15);
+	border: 1px solid rgba(239, 68, 68, 0.35);
+	color: rgb(252, 165, 165);
+}
+
+.emptyState {
+	color: rgba(255, 255, 255, 0.4);
+}
+
+.clearFiltersLink {
+	color: hsl(265, 78%, 72%);
+}
 

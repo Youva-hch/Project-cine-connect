@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Bell, UserPlus, UserCheck, MessageSquare, CheckCheck } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { apiRequest } from "@/api/config";
+import styles from "./NotificationBell.module.css";
 
 interface NotifItem {
   id: number;
@@ -26,9 +27,9 @@ function timeAgo(dateStr: string) {
 }
 
 function notifIcon(type: string) {
-  if (type === "friend_request") return <UserPlus className="h-4 w-4" style={{ color: "hsl(265,78%,72%)" }} />;
-  if (type === "friend_accepted") return <UserCheck className="h-4 w-4" style={{ color: "rgb(74,222,128)" }} />;
-  return <MessageSquare className="h-4 w-4" style={{ color: "hsl(38,92%,65%)" }} />;
+  if (type === "friend_request") return <UserPlus className={`h-4 w-4 ${styles.iconFriendRequest}`} />;
+  if (type === "friend_accepted") return <UserCheck className={`h-4 w-4 ${styles.iconFriendAccepted}`} />;
+  return <MessageSquare className={`h-4 w-4 ${styles.iconMessage}`} />;
 }
 
 export function NotificationBell() {
@@ -106,14 +107,15 @@ export function NotificationBell() {
       {/* Bouton cloche */}
       <button
         onClick={() => setOpen((v) => !v)}
-        className="relative p-2 rounded-sm transition-colors"
-        style={{ color: open ? "white" : "rgba(255,255,255,0.55)" }}
+        className={`relative p-2 rounded-sm transition-colors ${styles.bellButton} ${
+          open ? styles.bellButtonOpen : ""
+        }`}
+        type="button"
       >
         <Bell className="h-5 w-5" />
         {count > 0 && (
           <span
-            className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] rounded-full flex items-center justify-center text-[10px] font-bold text-white"
-            style={{ background: "rgb(239,68,68)", padding: "0 4px" }}
+            className={`absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] rounded-full flex items-center justify-center text-[10px] font-bold text-white ${styles.badge}`}
           >
             {count > 99 ? "99+" : count}
           </span>
@@ -123,26 +125,18 @@ export function NotificationBell() {
       {/* Panel dropdown */}
       {open && (
         <div
-          className="absolute right-0 top-12 w-80 rounded-xl shadow-2xl z-50 overflow-hidden"
-          style={{
-            background: "rgba(14,14,28,0.98)",
-            border: "1px solid rgba(139,92,246,0.25)",
-            backdropFilter: "blur(20px)",
-          }}
+          className={`absolute right-0 top-12 w-80 rounded-xl shadow-2xl z-50 overflow-hidden ${styles.panel}`}
         >
           {/* Header */}
-          <div
-            className="flex items-center justify-between px-4 py-3"
-            style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}
-          >
-            <span className="text-sm font-semibold" style={{ color: "white" }}>
+          <div className={`flex items-center justify-between px-4 py-3 ${styles.header}`}>
+            <span className={`text-sm font-semibold ${styles.headerTitle}`}>
               Notifications
             </span>
             {(notifs?.some((n) => !n.isRead)) && (
               <button
                 onClick={() => markAll.mutate()}
-                className="flex items-center gap-1 text-xs transition-colors"
-                style={{ color: "hsl(265,78%,72%)" }}
+                className={`flex items-center gap-1 text-xs transition-colors ${styles.actionLink}`}
+                type="button"
               >
                 <CheckCheck className="h-3.5 w-3.5" />
                 Tout lire
@@ -153,7 +147,7 @@ export function NotificationBell() {
           {/* Liste */}
           <div className="max-h-80 overflow-y-auto">
             {!notifs || notifs.length === 0 ? (
-              <div className="py-8 text-center" style={{ color: "rgba(255,255,255,0.35)" }}>
+              <div className={`py-8 text-center ${styles.emptyState}`}>
                 <Bell className="h-8 w-8 mx-auto mb-2 opacity-30" />
                 <p className="text-sm">Aucune notification</p>
               </div>
@@ -161,11 +155,9 @@ export function NotificationBell() {
               notifs.map((n) => (
                 <div
                   key={n.id}
-                  className="flex items-start gap-3 px-4 py-3 cursor-pointer transition-all"
-                  style={{
-                    background: n.isRead ? "transparent" : "rgba(139,92,246,0.06)",
-                    borderBottom: "1px solid rgba(255,255,255,0.04)",
-                  }}
+                  className={`flex items-start gap-3 px-4 py-3 cursor-pointer transition-all ${styles.item} ${
+                    n.isRead ? styles.itemRead : styles.itemUnread
+                  }`}
                   onClick={() => {
                     markRead.mutate(n.id);
                     navigate("/amis");
@@ -173,29 +165,23 @@ export function NotificationBell() {
                   }}
                 >
                   {/* Icône type */}
-                  <div
-                    className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
-                    style={{ background: "rgba(255,255,255,0.06)" }}
-                  >
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 ${styles.itemIcon}`}>
                     {notifIcon(n.type)}
                   </div>
 
                   {/* Contenu */}
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm leading-snug" style={{ color: n.isRead ? "rgba(255,255,255,0.5)" : "rgba(255,255,255,0.9)" }}>
+                    <p className={`text-sm leading-snug ${n.isRead ? styles.messageRead : styles.messageUnread}`}>
                       {n.message}
                     </p>
-                    <p className="text-xs mt-0.5" style={{ color: "rgba(255,255,255,0.3)" }}>
+                    <p className={`text-xs mt-0.5 ${styles.time}`}>
                       {timeAgo(n.createdAt)}
                     </p>
                   </div>
 
                   {/* Point non lu */}
                   {!n.isRead && (
-                    <div
-                      className="w-2 h-2 rounded-full flex-shrink-0 mt-2"
-                      style={{ background: "hsl(265,78%,72%)" }}
-                    />
+                    <div className={`w-2 h-2 rounded-full flex-shrink-0 mt-2 ${styles.unreadDot}`} />
                   )}
                 </div>
               ))
@@ -203,14 +189,11 @@ export function NotificationBell() {
           </div>
 
           {/* Footer */}
-          <div
-            className="px-4 py-2"
-            style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}
-          >
+          <div className={`px-4 py-2 ${styles.footer}`}>
             <button
               onClick={() => { navigate("/amis"); setOpen(false); }}
-              className="text-xs w-full text-center transition-colors"
-              style={{ color: "hsl(265,78%,72%)" }}
+              className={`text-xs w-full text-center transition-colors ${styles.actionLink}`}
+              type="button"
             >
               Voir tous les amis
             </button>

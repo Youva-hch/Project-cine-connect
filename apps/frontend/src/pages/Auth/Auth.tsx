@@ -4,6 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Input } from "@/components/ui/input";
 import { Film, Star, Eye, EyeOff, AlertCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import styles from "./Auth.module.css";
 
 const API_BASE = import.meta.env.VITE_API_URL || '';
 
@@ -120,33 +121,22 @@ export default function Auth() {
     <div className="min-h-[90vh] flex items-center justify-center px-4 relative overflow-hidden">
       {/* Ambient glow */}
       <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background: "radial-gradient(ellipse at 50% 40%, rgba(139,92,246,0.12) 0%, transparent 70%)",
-        }}
+        className={`absolute inset-0 pointer-events-none ${styles.ambientGlow}`}
       />
 
       <div className="w-full max-w-md relative z-10 animate-fade-in">
         {/* Logo */}
         <div className="text-center mb-8 space-y-3">
           <div className="flex items-center justify-center gap-2">
-            <Film className="h-8 w-8" style={{ color: "hsl(265,78%,62%)" }} />
-            <span
-              className="font-display text-3xl tracking-wider"
-              style={{
-                background: "linear-gradient(135deg, hsl(265,78%,72%) 0%, hsl(38,92%,65%) 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-              }}
-            >
+            <Film className={`h-8 w-8 ${styles.brandIcon}`} />
+            <span className={`font-display text-3xl tracking-wider ${styles.brandText}`}>
               CinéConnect
             </span>
           </div>
-          <h1 className="font-display text-4xl" style={{ color: "rgba(255,255,255,0.95)" }}>
+          <h1 className={`font-display text-4xl ${styles.title}`}>
             {titleMap[mode]}
           </h1>
-          <p style={{ color: "rgba(255,255,255,0.4)", fontSize: "0.875rem" }}>
+          <p className={styles.subtitle}>
             {subtitleMap[mode]}
           </p>
         </div>
@@ -154,12 +144,7 @@ export default function Auth() {
         {/* Erreur Google OAuth */}
         {isAuthFailed && errorMessage && (
           <div
-            className="flex items-center gap-2 px-4 py-3 rounded-lg mb-4 text-sm"
-            style={{
-              background: "rgba(239,68,68,0.1)",
-              border: "1px solid rgba(239,68,68,0.25)",
-              color: "rgba(239,68,68,0.9)",
-            }}
+            className={`flex items-center gap-2 px-4 py-3 rounded-lg mb-4 text-sm ${styles.errorBanner}`}
           >
             <AlertCircle className="h-4 w-4 flex-shrink-0" />
             {errorMessage}
@@ -167,12 +152,7 @@ export default function Auth() {
         )}
 
         <div
-          className="rounded-xl p-6 space-y-4"
-          style={{
-            background: "rgba(255,255,255,0.04)",
-            border: "1px solid rgba(255,255,255,0.08)",
-            backdropFilter: "blur(12px)",
-          }}
+          className={`rounded-xl p-6 space-y-4 ${styles.panel}`}
         >
           {!isForgot && !isReset && (
             <>
@@ -182,11 +162,7 @@ export default function Auth() {
                 onClick={handleGoogleLogin}
                 disabled={loading}
                 className="w-full flex items-center justify-center gap-3 py-3 rounded-lg text-sm font-semibold transition-all duration-200 hover:brightness-110 disabled:opacity-50"
-                style={{
-                  background: "rgba(255,255,255,0.07)",
-                  border: "1px solid rgba(255,255,255,0.12)",
-                  color: "rgba(255,255,255,0.85)",
-                }}
+                className={`w-full flex items-center justify-center gap-3 py-3 rounded-lg text-sm font-semibold transition-all duration-200 hover:brightness-110 disabled:opacity-50 ${styles.googleButton}`}
               >
                 <svg className="h-5 w-5" viewBox="0 0 24 24">
                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -199,9 +175,9 @@ export default function Auth() {
 
               {/* Séparateur */}
               <div className="flex items-center gap-3">
-                <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.08)" }} />
-                <span style={{ color: "rgba(255,255,255,0.25)", fontSize: "0.75rem" }}>ou</span>
-                <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.08)" }} />
+                <div className={`flex-1 h-px ${styles.dividerLine}`} />
+                <span className={styles.dividerText}>ou</span>
+                <div className={`flex-1 h-px ${styles.dividerLine}`} />
               </div>
             </>
           )}
@@ -210,7 +186,7 @@ export default function Auth() {
           <form onSubmit={handleSubmit} className="space-y-3">
             {isRegister && (
               <div className="space-y-1.5">
-                <label htmlFor="username" className="text-xs font-medium" style={{ color: "rgba(255,255,255,0.5)" }}>
+                <label htmlFor="username" className={`text-xs font-medium ${styles.label}`}>
                   Nom d'utilisateur
                 </label>
                 <Input
@@ -219,14 +195,13 @@ export default function Auth() {
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="cinephile42"
                   required={!isLogin}
-                  style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", color: "white" }}
-                  className="placeholder:text-white/20"
+                  className={`placeholder:text-white/20 ${styles.input}`}
                 />
               </div>
             )}
 
             <div className="space-y-1.5">
-              <label htmlFor="email" className="text-xs font-medium" style={{ color: "rgba(255,255,255,0.5)" }}>
+              <label htmlFor="email" className={`text-xs font-medium ${styles.label}`}>
                 Email
               </label>
               <Input
@@ -236,14 +211,13 @@ export default function Auth() {
                 onChange={(e) => (isReset ? setResetEmail(e.target.value) : setEmail(e.target.value))}
                 placeholder="toi@exemple.com"
                 required
-                style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", color: "white" }}
-                className="placeholder:text-white/20"
+                className={`placeholder:text-white/20 ${styles.input}`}
               />
             </div>
 
             {!isForgot && (
               <div className="space-y-1.5">
-                <label htmlFor="password" className="text-xs font-medium" style={{ color: "rgba(255,255,255,0.5)" }}>
+                <label htmlFor="password" className={`text-xs font-medium ${styles.label}`}>
                   Mot de passe
                 </label>
                 <div className="relative">
@@ -255,14 +229,12 @@ export default function Auth() {
                     placeholder="••••••••"
                     required
                     minLength={6}
-                    style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", color: "white", paddingRight: "2.5rem" }}
-                    className="placeholder:text-white/20"
+                    className={`placeholder:text-white/20 ${styles.input} ${styles.passwordInput}`}
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2"
-                    style={{ color: "rgba(255,255,255,0.3)" }}
+                    className={`absolute right-3 top-1/2 -translate-y-1/2 ${styles.eyeButton}`}
                   >
                     {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
@@ -272,7 +244,7 @@ export default function Auth() {
 
             {isReset && (
               <div className="space-y-1.5">
-                <label htmlFor="confirmPassword" className="text-xs font-medium" style={{ color: "rgba(255,255,255,0.5)" }}>
+                <label htmlFor="confirmPassword" className={`text-xs font-medium ${styles.label}`}>
                   Confirmer le mot de passe
                 </label>
                 <Input
@@ -283,15 +255,14 @@ export default function Auth() {
                   placeholder="••••••••"
                   required
                   minLength={6}
-                  style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", color: "white" }}
-                  className="placeholder:text-white/20"
+                  className={`placeholder:text-white/20 ${styles.input}`}
                 />
               </div>
             )}
 
             {isReset && (
               <div className="space-y-1.5">
-                <label htmlFor="resetToken" className="text-xs font-medium" style={{ color: "rgba(255,255,255,0.5)" }}>
+                <label htmlFor="resetToken" className={`text-xs font-medium ${styles.label}`}>
                   Token de réinitialisation
                 </label>
                 <Input
@@ -300,8 +271,7 @@ export default function Auth() {
                   onChange={(e) => setResetToken(e.target.value)}
                   placeholder="Colle le token si nécessaire"
                   required
-                  style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", color: "white" }}
-                  className="placeholder:text-white/20"
+                  className={`placeholder:text-white/20 ${styles.input}`}
                 />
               </div>
             )}
@@ -309,11 +279,9 @@ export default function Auth() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 rounded-lg text-sm font-semibold text-white transition-all duration-200 hover:brightness-110 disabled:opacity-50 mt-2 flex items-center justify-center gap-2"
-              style={{
-                background: "linear-gradient(135deg, hsl(265,78%,58%) 0%, hsl(265,60%,44%) 100%)",
-                boxShadow: loading ? "none" : "0 4px 20px rgba(139,92,246,0.35)",
-              }}
+              className={`w-full py-3 rounded-lg text-sm font-semibold text-white transition-all duration-200 hover:brightness-110 disabled:opacity-50 mt-2 flex items-center justify-center gap-2 ${styles.submitButton} ${
+                !loading ? styles.submitButtonShadow : ""
+              }`}
             >
               {loading ? (
                 <>
@@ -332,8 +300,7 @@ export default function Auth() {
               <button
                 type="button"
                 onClick={() => setMode("forgot")}
-                className="w-full text-xs font-medium hover:opacity-80"
-                style={{ color: "hsl(265,78%,72%)" }}
+                className={`w-full text-xs font-medium hover:opacity-80 ${styles.violetLink}`}
               >
                 Mot de passe oublié ?
               </button>
@@ -346,8 +313,7 @@ export default function Auth() {
                   setMode("login");
                   navigate("/auth", { replace: true });
                 }}
-                className="w-full text-xs font-medium hover:opacity-80"
-                style={{ color: "hsl(265,78%,72%)" }}
+                className={`w-full text-xs font-medium hover:opacity-80 ${styles.violetLink}`}
               >
                 Retour à la connexion
               </button>
@@ -357,12 +323,11 @@ export default function Auth() {
 
         {/* Toggle */}
         {(isLogin || isRegister) && (
-          <p className="text-center mt-5 text-sm" style={{ color: "rgba(255,255,255,0.35)" }}>
+          <p className={`text-center mt-5 text-sm ${styles.toggleText}`}>
             {isLogin ? "Pas encore de compte ?" : "Déjà un compte ?"}{" "}
             <button
               onClick={() => setMode(isLogin ? "register" : "login")}
-              className="font-semibold transition-colors hover:opacity-80"
-              style={{ color: "hsl(265,78%,72%)" }}
+              className={`font-semibold transition-colors hover:opacity-80 ${styles.violetLink}`}
             >
               {isLogin ? "S'inscrire" : "Se connecter"}
             </button>

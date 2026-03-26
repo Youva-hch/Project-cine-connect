@@ -3,6 +3,7 @@ import { Star, X, Loader2 } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
 import type { OmdbMovie, OmdbMovieDetail } from "@/lib/omdb";
+import styles from "./ReviewModal.module.css";
 
 const API_BASE = import.meta.env.VITE_API_URL || "";
 
@@ -90,12 +91,7 @@ export function ReviewModal({ film, onClose }: ReviewModalProps) {
 
       {/* Modal */}
       <div
-        className="relative z-10 w-full max-w-md mx-4 rounded-xl p-6 space-y-5"
-        style={{
-          background: "rgba(15,10,30,0.97)",
-          border: "1px solid rgba(139,92,246,0.25)",
-          boxShadow: "0 20px 60px rgba(0,0,0,0.8), 0 0 40px rgba(139,92,246,0.12)",
-        }}
+        className={`relative z-10 w-full max-w-md mx-4 rounded-xl p-6 space-y-5 ${styles.panel}`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -114,6 +110,7 @@ export function ReviewModal({ film, onClose }: ReviewModalProps) {
           <button
             onClick={onClose}
             className="shrink-0 p-1.5 rounded-lg hover:bg-white/10 transition-colors text-white/50 hover:text-white"
+            type="button"
           >
             <X className="h-4 w-4" />
           </button>
@@ -130,6 +127,7 @@ export function ReviewModal({ film, onClose }: ReviewModalProps) {
                 onMouseLeave={() => setHovered(0)}
                 onClick={() => setRating(i)}
                 className="transition-transform hover:scale-110 active:scale-95"
+                type="button"
               >
                 <Star
                   className="h-8 w-8 transition-colors duration-100"
@@ -155,23 +153,13 @@ export function ReviewModal({ film, onClose }: ReviewModalProps) {
             onChange={(e) => setComment(e.target.value)}
             placeholder="Donne ton avis sur ce film..."
             rows={4}
-            className="w-full resize-none rounded-lg px-3 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-colors"
-            style={{
-              background: "rgba(255,255,255,0.05)",
-              border: "1px solid rgba(255,255,255,0.1)",
-            }}
-            onFocus={(e) =>
-              (e.currentTarget.style.borderColor = "rgba(139,92,246,0.5)")
-            }
-            onBlur={(e) =>
-              (e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)")
-            }
+            className={`w-full resize-none rounded-lg px-3 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-colors ${styles.textarea}`}
           />
         </div>
 
         {/* Error */}
         {error && (
-          <p className="text-red-400 text-sm rounded-lg px-3 py-2" style={{ background: "rgba(239,68,68,0.1)" }}>
+          <p className={`text-red-400 text-sm rounded-lg px-3 py-2 ${styles.error}`}>
             {error}
           </p>
         )}
@@ -187,19 +175,16 @@ export function ReviewModal({ film, onClose }: ReviewModalProps) {
         <div className="flex gap-3 pt-1">
           <button
             onClick={onClose}
-            className="flex-1 py-2.5 rounded-lg text-sm font-semibold text-white/60 hover:text-white hover:bg-white/8 transition-colors"
-            style={{ border: "1px solid rgba(255,255,255,0.1)" }}
+            type="button"
+            className={`flex-1 py-2.5 rounded-lg text-sm font-semibold text-white/60 hover:text-white hover:bg-white/8 transition-colors ${styles.secondaryAction}`}
           >
             Annuler
           </button>
           <button
             onClick={handleSubmit}
             disabled={mutation.isPending || !user}
-            className="flex-1 py-2.5 rounded-lg text-sm font-semibold text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-            style={{
-              background: "linear-gradient(135deg, hsl(265,78%,58%) 0%, hsl(265,60%,44%) 100%)",
-              boxShadow: "0 4px 16px rgba(139,92,246,0.35)",
-            }}
+            type="button"
+            className={`flex-1 py-2.5 rounded-lg text-sm font-semibold text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 ${styles.primaryAction}`}
           >
             {mutation.isPending ? (
               <Loader2 className="h-4 w-4 animate-spin" />

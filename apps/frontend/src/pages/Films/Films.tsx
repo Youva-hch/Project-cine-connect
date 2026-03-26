@@ -5,6 +5,7 @@ import { searchMovies } from "@/lib/omdb";
 import { FilmCard } from "@/components/FilmCard";
 import { Input } from "@/components/ui/input";
 import type { OmdbMovie } from "@/lib/omdb";
+import styles from "./Films.module.css";
 
 // ─── Genre tags ─────────────────────────────────────────────────────────────
 const GENRES: { label: string; queries: string[] }[] = [
@@ -152,7 +153,7 @@ export default function Films() {
       {/* Header */}
       <div className="text-center space-y-2">
         <h1 className="font-display text-5xl text-gradient-cinema">Films</h1>
-        <p style={{ color: "rgba(255,255,255,0.55)" }} className="text-sm">
+        <p className={`text-sm ${styles.subtitle}`}>
           {isLoading
             ? "Chargement des films..."
             : activeGenre
@@ -166,25 +167,19 @@ export default function Films() {
       {/* Barre de recherche */}
       <div className="max-w-xl mx-auto relative">
         <Search
-          className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5"
-          style={{ color: "rgba(255,255,255,0.4)" }}
+          className={`absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 ${styles.searchIcon}`}
         />
         <Input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Rechercher parmi les films..."
-          className="pl-12 h-12 text-base"
-          style={{
-            background: "rgba(255,255,255,0.05)",
-            border: "1px solid rgba(255,255,255,0.12)",
-            color: "white",
-          }}
+          className={`pl-12 h-12 text-base ${styles.searchInput}`}
         />
         {search && (
           <button
             onClick={() => setSearch("")}
-            className="absolute right-4 top-1/2 -translate-y-1/2"
-            style={{ color: "rgba(255,255,255,0.4)" }}
+            className={`absolute right-4 top-1/2 -translate-y-1/2 ${styles.clearSearchButton}`}
+            type="button"
           >
             <X className="h-4 w-4" />
           </button>
@@ -199,18 +194,10 @@ export default function Films() {
             <button
               key={genre.label}
               onClick={() => handleGenreClick(genre.label)}
-              className="px-4 py-2 rounded-full text-sm font-medium transition-all duration-200"
-              style={{
-                background: isActive
-                  ? "linear-gradient(135deg, hsl(265,78%,55%), hsl(280,70%,45%))"
-                  : "rgba(255,255,255,0.06)",
-                border: isActive
-                  ? "1px solid hsl(265,78%,72%)"
-                  : "1px solid rgba(255,255,255,0.12)",
-                color: isActive ? "white" : "rgba(255,255,255,0.7)",
-                boxShadow: isActive ? "0 0 16px rgba(147,51,234,0.4)" : "none",
-                transform: isActive ? "scale(1.05)" : "scale(1)",
-              }}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${styles.genreButton} ${
+                isActive ? styles.genreButtonActive : ""
+              }`}
+              type="button"
             >
               {genre.label}
             </button>
@@ -221,12 +208,8 @@ export default function Films() {
         {(activeGenre || search) && (
           <button
             onClick={clearFilters}
-            className="px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 flex items-center gap-1"
-            style={{
-              background: "rgba(239,68,68,0.15)",
-              border: "1px solid rgba(239,68,68,0.35)",
-              color: "rgb(252,165,165)",
-            }}
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 flex items-center gap-1 ${styles.resetFilters}`}
+            type="button"
           >
             <X className="h-3 w-3" /> Tout effacer
           </button>
@@ -253,7 +236,7 @@ export default function Films() {
           ))}
         </div>
       ) : (
-        <div className="text-center py-20" style={{ color: "rgba(255,255,255,0.4)" }}>
+        <div className={`text-center py-20 ${styles.emptyState}`}>
           <FilmIcon className="h-16 w-16 mx-auto mb-4 opacity-30" />
           <p className="text-lg">Aucun film trouve</p>
           {search && (
@@ -261,8 +244,8 @@ export default function Films() {
               Essayez un autre titre ou{" "}
               <button
                 onClick={clearFilters}
-                style={{ color: "hsl(265,78%,72%)" }}
-                className="underline"
+                className={`underline ${styles.clearFiltersLink}`}
+                type="button"
               >
                 effacez les filtres
               </button>
