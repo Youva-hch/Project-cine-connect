@@ -6,9 +6,10 @@ import type { OmdbMovie } from "../shared/types/omdb.types";
 import { cleanMovies } from "../shared/movieFilters";
 
 export function Browse() {
-  const [searchQuery, setSearchQuery] = useState("movie");
+  const [searchQuery, setSearchQuery] = useState("");
+  const effectiveQuery = searchQuery.trim() || "movie";
 
-  const { data, isLoading, error } = useSearchMovies(searchQuery);
+  const { data, isLoading, error } = useSearchMovies(effectiveQuery);
   const movies = data?.Search ?? [];
   const visibleMovies = cleanMovies(movies as OmdbMovie[]);
 
@@ -36,7 +37,7 @@ export function Browse() {
 
       {error && (
         <div className="py-20 text-center">
-          <p className="text-xl text-red-400">
+          <p className="text-xl text-amber-300">
             {(error as Error).message || "Erreur lors du chargement des films"}
           </p>
         </div>
@@ -58,7 +59,7 @@ export function Browse() {
         !isLoading && (
           <div className="py-20 text-center">
             <p className="text-xl text-white/60">
-              Aucun film trouvé pour "{searchQuery}"
+              Aucun resultat pour "{effectiveQuery}"
             </p>
           </div>
         )
@@ -68,4 +69,3 @@ export function Browse() {
 }
 
 export default Browse;
-

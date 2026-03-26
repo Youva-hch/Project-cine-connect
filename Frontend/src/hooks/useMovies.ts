@@ -8,7 +8,7 @@ import type {
 export const useSearchMovies = (query: string) =>
   useQuery<OmdbSearchResponse>({
     queryKey: ["movies", query],
-    queryFn: () => searchMovies(query),
+    queryFn: () => searchMovies(query, 1, 3),
     enabled: !!query,
   });
 

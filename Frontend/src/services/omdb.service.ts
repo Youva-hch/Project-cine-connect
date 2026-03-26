@@ -1,3 +1,5 @@
+import type { OmdbMovie, OmdbSearchResponse } from "../shared/types/omdb.types";
+
 const API_KEY = import.meta.env.VITE_OMDB_API_KEY;
 const BASE_URL = "https://www.omdbapi.com/";
 
@@ -39,18 +41,39 @@ const categorySeeds: Record<string, string[]> = {
   ],
 };
 
-export async function searchMovies(query: string, page = 1) {
-  const res = await fetch(
-    `${BASE_URL}?apikey=${API_KEY}&s=${encodeURIComponent(query)}&type=movie&page=${page}`
+export async function searchMovies(query: string, page = 1, pagesToLoad = 1) {
+  const requests = Array.from({ length: pagesToLoad }, (_, index) => {
+    const currentPage = page + index;
+
+    return fetch(
+      `${BASE_URL}?apikey=${API_KEY}&s=${encodeURIComponent(query)}&type=movie&page=${currentPage}`
+    ).then((res) => res.json());
+  });
+
+  const responses = await Promise.all(requests);
+  const validResponses = responses.filter(
+    (response: OmdbSearchResponse) => response.Response !== "False"
   );
 
-  const data = await res.json();
-
-  if (data.Response === "False") {
+  if (!validResponses.length) {
     return { Search: [], totalResults: "0", Response: "False" };
   }
 
-  return data;
+  const uniqueMovies = new Map<string, OmdbMovie>();
+
+  for (const response of validResponses) {
+    for (const movie of response.Search ?? []) {
+      if (!uniqueMovies.has(movie.imdbID)) {
+        uniqueMovies.set(movie.imdbID, movie);
+      }
+    }
+  }
+
+  return {
+    Search: Array.from(uniqueMovies.values()),
+    totalResults: validResponses[0].totalResults ?? String(uniqueMovies.size),
+    Response: "True",
+  };
 }
 
 export async function getMovieById(imdbID: string) {
