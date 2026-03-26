@@ -22,12 +22,37 @@ interface FullUser {
   createdAt: string;
 }
 
+interface ProfileStats {
+  reviewsCount: number;
+  friendsCount: number;
+  recentConversations: Array<{
+    friendId: number;
+    friendName: string;
+    friendAvatar: string | null;
+    lastMessage: {
+      id: number;
+      content: string;
+      createdAt: string;
+      isMine: boolean;
+    } | null;
+  }>;
+}
+
 function getInitials(name: string) {
   return name.split(" ").filter(Boolean).slice(0, 2).map((w) => w[0].toUpperCase()).join("");
 }
 
 function formatDate(dateStr: string) {
   return new Date(dateStr).toLocaleDateString("fr-FR", { month: "long", year: "numeric" });
+}
+
+function formatConversationDate(dateStr: string) {
+  return new Date(dateStr).toLocaleString("fr-FR", {
+    day: "2-digit",
+    month: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
 
 export default function Profile() {
@@ -41,6 +66,12 @@ export default function Profile() {
   const { data: fullUser } = useQuery<{ success: boolean; data: FullUser }>({
     queryKey: ["me"],
     queryFn: () => apiRequest("/api/auth/me"),
+    enabled: !!user,
+  });
+
+  const { data: statsResponse } = useQuery<{ success: boolean; data: ProfileStats }>({
+    queryKey: ["profile-stats"],
+    queryFn: () => apiRequest("/users/me/stats"),
     enabled: !!user,
   });
 
@@ -71,6 +102,7 @@ export default function Profile() {
   const avatarUrl = user.avatarUrl;
   const initials = getInitials(user.name ?? user.email ?? "?");
   const createdAt = fullUser?.data?.createdAt;
+  const stats = statsResponse?.data;
 
   return (
     <div className={`min-h-screen px-4 py-8 relative ${styles.page}`}>
@@ -155,9 +187,9 @@ export default function Profile() {
         {/* ── Stats ── */}
         <div className="grid grid-cols-3 gap-3">
           {[
-            { icon: Star, label: "Films notés", value: "0", color: "hsl(38,92%,55%)" },
-            { icon: MessageCircle, label: "Avis postés", value: "0", color: "hsl(265,78%,62%)" },
-            { icon: Film, label: "Films vus", value: "0", color: "hsl(200,78%,62%)" },
+            { icon: Star, label: "Notes", value: String(stats?.reviewsCount ?? 0), color: "hsl(38,92%,55%)" },
+            { icon: Film, label: "Amis", value: String(stats?.friendsCount ?? 0), color: "hsl(200,78%,62%)" },
+            { icon: MessageCircle, label: "Conversations", value: String(stats?.recentConversations.length ?? 0), color: "hsl(265,78%,62%)" },
           ].map(({ icon: Icon, label, value, color }) => (
             <div key={label} className={`rounded-xl p-4 text-center space-y-2 ${styles.statCard}`}>
               <Icon className="h-5 w-5 mx-auto" style={{ color }} />
@@ -194,21 +226,48 @@ export default function Profile() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <MessageCircle className="h-5 w-5" style={{ color: "hsl(265,78%,62%)" }} />
-              <h2 className={`font-display text-2xl ${styles.name}`}>Mes discussions</h2>
+              <h2 className={`font-display text-2xl ${styles.name}`}>Conversations récentes</h2>
             </div>
             <Link to="/discussion" className={`flex items-center gap-1 text-xs font-medium hover:opacity-80 ${styles.linkAccent}`}>
               Voir tout <ChevronRight className="h-3.5 w-3.5" />
             </Link>
           </div>
-          <div className="py-8 flex flex-col items-center gap-3">
-            <div className={`w-14 h-14 rounded-full flex items-center justify-center ${styles.emptyIconWrap}`}>
-              <MessageCircle className="h-7 w-7" style={{ color: "hsl(265,78%,62%)", opacity: 0.5 }} />
+          {stats && stats.recentConversations.length > 0 ? (
+            <div className="space-y-2">
+              {stats.recentConversations.map((conversation) => (
+                <Link
+                  key={conversation.lastMessage?.id ?? conversation.friendId}
+                  to={`/discussion?with=${conversation.friendId}`}
+                  className="block rounded-lg px-3 py-2 hover:bg-white/5 transition-colors"
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className={`text-sm font-semibold truncate ${styles.name}`}>{conversation.friendName}</p>
+                      <p className={`text-xs truncate ${styles.muted}`}>
+                        {conversation.lastMessage?.isMine ? "Vous: " : ""}
+                        {conversation.lastMessage?.content ?? "Aucun message"}
+                      </p>
+                    </div>
+                    {conversation.lastMessage && (
+                      <span className={`text-[11px] whitespace-nowrap ${styles.muted}`}>
+                        {formatConversationDate(conversation.lastMessage.createdAt)}
+                      </span>
+                    )}
+                  </div>
+                </Link>
+              ))}
             </div>
-            <p className={styles.muted} style={{ fontSize: "0.875rem" }}>Tu n'as pas encore participé à une discussion</p>
-            <Link to="/discussion" className={`px-4 py-2 rounded-lg text-sm font-semibold hover:brightness-110 ${styles.actionSoft}`}>
-              Rejoindre une discussion
-            </Link>
-          </div>
+          ) : (
+            <div className="py-8 flex flex-col items-center gap-3">
+              <div className={`w-14 h-14 rounded-full flex items-center justify-center ${styles.emptyIconWrap}`}>
+                <MessageCircle className="h-7 w-7" style={{ color: "hsl(265,78%,62%)", opacity: 0.5 }} />
+              </div>
+              <p className={styles.muted} style={{ fontSize: "0.875rem" }}>Tu n'as pas encore participé à une discussion</p>
+              <Link to="/discussion" className={`px-4 py-2 rounded-lg text-sm font-semibold hover:brightness-110 ${styles.actionSoft}`}>
+                Rejoindre une discussion
+              </Link>
+            </div>
+          )}
         </div>
 
         {/* ── Déconnexion ── */}

@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import { setAuthTokens, clearAuthTokens } from "@/api/config";
+import { clearUserCookie, getUserCookie, setUserCookie } from "@/lib/userCookie";
 
 export interface AppUser {
   id: string;
@@ -41,13 +42,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    const userStr = localStorage.getItem("user");
-    if (token && userStr) {
+    const storedUser = getUserCookie<AppUser>();
+    if (token && storedUser) {
       try {
-        setUser(toAppUser(JSON.parse(userStr)));
+        setUser(storedUser);
       } catch {
         localStorage.removeItem("token");
-        localStorage.removeItem("user");
+        clearUserCookie();
       }
     }
     setLoading(false);
@@ -65,7 +66,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { token, refreshToken, user: u } = data.data;
     const appUser = toAppUser(u);
     setAuthTokens(token, refreshToken);
-    localStorage.setItem("user", JSON.stringify(appUser));
+    setUserCookie(appUser);
     if (!refreshToken) {
       localStorage.removeItem('refreshToken');
     }
@@ -84,7 +85,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { token, refreshToken, user: u } = data.data;
     const appUser = toAppUser(u);
     setAuthTokens(token, refreshToken);
-    localStorage.setItem("user", JSON.stringify(appUser));
+    setUserCookie(appUser);
     if (!refreshToken) {
       localStorage.removeItem('refreshToken');
     }
@@ -117,7 +118,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = async () => {
     clearAuthTokens();
-    localStorage.removeItem("user");
+    clearUserCookie();
     setUser(null);
   };
 

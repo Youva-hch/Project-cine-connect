@@ -7,6 +7,33 @@ import type { AuthRequest } from '../middlewares/auth.middleware.js';
  */
 export class UserController {
   /**
+   * GET /users/me/stats - Récupère les statistiques du profil utilisateur connecté
+   */
+  static async getMyStats(req: AuthRequest, res: Response) {
+    try {
+      const userId = req.userId;
+      if (!userId) {
+        return res.status(401).json({
+          success: false,
+          message: 'Non authentifié',
+        });
+      }
+
+      const stats = await UserService.getUserStats(userId);
+      return res.json({
+        success: true,
+        data: stats,
+      });
+    } catch (error) {
+      console.error('Error fetching user stats:', error);
+      return res.status(500).json({
+        success: false,
+        message: 'Erreur lors de la récupération des statistiques',
+      });
+    }
+  }
+
+  /**
    * GET /users - Récupère tous les utilisateurs
    */
   static async getAllUsers(_req: Request, res: Response) {

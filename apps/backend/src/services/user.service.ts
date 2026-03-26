@@ -1,9 +1,70 @@
-import { db, users, eq } from '@cineconnect/database';
+import { db, users, reviews, messages, eq, and, or, desc, sql } from '@cineconnect/database';
+import { FriendService } from './friend.service.js';
 
 /**
  * Service pour gérer les utilisateurs
  */
 export class UserService {
+  static async getUserStats(userId: number) {
+    const [reviewsResult] = await db
+      .select({ count: sql<number>`count(*)::int` })
+      .from(reviews)
+      .where(eq(reviews.userId, userId));
+
+    const friendsList = await FriendService.listFriends(userId);
+
+    const recentConversationsRaw = await Promise.all(
+      friendsList.map(async (friend) => {
+        const [lastMessage] = await db
+          .select({
+            id: messages.id,
+            content: messages.content,
+            createdAt: messages.createdAt,
+            senderId: messages.senderId,
+            receiverId: messages.receiverId,
+          })
+          .from(messages)
+          .where(
+            or(
+              and(eq(messages.senderId, userId), eq(messages.receiverId, friend.otherUserId)),
+              and(eq(messages.senderId, friend.otherUserId), eq(messages.receiverId, userId))
+            )
+          )
+          .orderBy(desc(messages.createdAt))
+          .limit(1);
+
+        return {
+          friendId: friend.otherUserId,
+          friendName: friend.otherUserName,
+          friendAvatar: friend.otherUserAvatar,
+          lastMessage: lastMessage
+            ? {
+                id: lastMessage.id,
+                content: lastMessage.content,
+                createdAt: lastMessage.createdAt,
+                isMine: lastMessage.senderId === userId,
+              }
+            : null,
+        };
+      })
+    );
+
+    const recentConversations = recentConversationsRaw
+      .filter((item) => item.lastMessage !== null)
+      .sort((a, b) => {
+        const aTime = new Date(a.lastMessage!.createdAt).getTime();
+        const bTime = new Date(b.lastMessage!.createdAt).getTime();
+        return bTime - aTime;
+      })
+      .slice(0, 5);
+
+    return {
+      reviewsCount: Number(reviewsResult?.count ?? 0),
+      friendsCount: friendsList.length,
+      recentConversations,
+    };
+  }
+
   /**
    * Récupère tous les utilisateurs
    */
