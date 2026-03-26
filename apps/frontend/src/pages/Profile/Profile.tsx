@@ -38,6 +38,17 @@ interface ProfileStats {
   }>;
 }
 
+interface UserReviewItem {
+  id: number;
+  rating: number;
+  comment: string | null;
+  createdAt: string;
+  filmId: number;
+  filmTitle: string;
+  filmImdbId: string | null;
+  filmPosterUrl: string | null;
+}
+
 function getInitials(name: string) {
   return name.split(" ").filter(Boolean).slice(0, 2).map((w) => w[0].toUpperCase()).join("");
 }
@@ -52,6 +63,14 @@ function formatConversationDate(dateStr: string) {
     month: "2-digit",
     hour: "2-digit",
     minute: "2-digit",
+  });
+}
+
+function formatReviewDate(dateStr: string) {
+  return new Date(dateStr).toLocaleDateString("fr-FR", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
   });
 }
 
@@ -72,6 +91,12 @@ export default function Profile() {
   const { data: statsResponse } = useQuery<{ success: boolean; data: ProfileStats }>({
     queryKey: ["profile-stats"],
     queryFn: () => apiRequest("/users/me/stats"),
+    enabled: !!user,
+  });
+
+  const { data: myReviewsResponse } = useQuery<{ success: boolean; data: UserReviewItem[] }>({
+    queryKey: ["my-reviews"],
+    queryFn: () => apiRequest("/users/me/reviews"),
     enabled: !!user,
   });
 
@@ -103,6 +128,7 @@ export default function Profile() {
   const initials = getInitials(user.name ?? user.email ?? "?");
   const createdAt = fullUser?.data?.createdAt;
   const stats = statsResponse?.data;
+  const myReviews = myReviewsResponse?.data ?? [];
 
   return (
     <div className={`min-h-screen px-4 py-8 relative ${styles.page}`}>
@@ -210,15 +236,39 @@ export default function Profile() {
               Explorer les films <ChevronRight className="h-3.5 w-3.5" />
             </Link>
           </div>
-          <div className="py-8 flex flex-col items-center gap-3">
-            <div className={`w-14 h-14 rounded-full flex items-center justify-center ${styles.emptyIconWrap}`}>
-              <Star className="h-7 w-7" style={{ color: "hsl(265,78%,62%)", opacity: 0.5 }} />
+          {myReviews.length > 0 ? (
+            <div className="space-y-2.5">
+              {myReviews.map((review) => (
+                <Link
+                  key={review.id}
+                  to={`/film/${review.filmImdbId ?? review.filmId}`}
+                  className="block rounded-lg px-3 py-2 hover:bg-white/5 transition-colors"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0 space-y-0.5">
+                      <p className={`text-sm font-semibold truncate ${styles.name}`}>{review.filmTitle}</p>
+                      <p className={`text-xs ${styles.muted}`}>{formatReviewDate(review.createdAt)}</p>
+                      <p className={`text-xs ${styles.muted}`}>
+                        {"★".repeat(review.rating)}
+                        {"☆".repeat(Math.max(0, 5 - review.rating))}
+                      </p>
+                      {review.comment && <p className={`text-xs truncate ${styles.muted}`}>{review.comment}</p>}
+                    </div>
+                  </div>
+                </Link>
+              ))}
             </div>
-            <p className={styles.muted} style={{ fontSize: "0.875rem" }}>Tu n'as pas encore noté de film</p>
-            <Link to="/films" className={`px-4 py-2 rounded-lg text-sm font-semibold text-white hover:brightness-110 ${styles.actionPrimary}`}>
-              Découvrir des films
-            </Link>
-          </div>
+          ) : (
+            <div className="py-8 flex flex-col items-center gap-3">
+              <div className={`w-14 h-14 rounded-full flex items-center justify-center ${styles.emptyIconWrap}`}>
+                <Star className="h-7 w-7" style={{ color: "hsl(265,78%,62%)", opacity: 0.5 }} />
+              </div>
+              <p className={styles.muted} style={{ fontSize: "0.875rem" }}>Tu n'as pas encore noté de film</p>
+              <Link to="/films" className={`px-4 py-2 rounded-lg text-sm font-semibold text-white hover:brightness-110 ${styles.actionPrimary}`}>
+                Découvrir des films
+              </Link>
+            </div>
+          )}
         </div>
 
         {/* ── Mes discussions ── */}

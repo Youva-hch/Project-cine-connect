@@ -1,10 +1,29 @@
-import { db, users, reviews, messages, eq, and, or, desc, sql } from '@cineconnect/database';
+import { db, users, reviews, messages, films, eq, and, or, desc, sql } from '@cineconnect/database';
 import { FriendService } from './friend.service.js';
 
 /**
  * Service pour gérer les utilisateurs
  */
 export class UserService {
+  static async getUserReviews(userId: number) {
+    return db
+      .select({
+        id: reviews.id,
+        rating: reviews.rating,
+        comment: reviews.comment,
+        createdAt: reviews.createdAt,
+        updatedAt: reviews.updatedAt,
+        filmId: films.id,
+        filmTitle: films.title,
+        filmImdbId: films.imdbId,
+        filmPosterUrl: films.posterUrl,
+      })
+      .from(reviews)
+      .innerJoin(films, eq(films.id, reviews.filmId))
+      .where(eq(reviews.userId, userId))
+      .orderBy(desc(reviews.createdAt));
+  }
+
   static async getUserStats(userId: number) {
     const [reviewsResult] = await db
       .select({ count: sql<number>`count(*)::int` })

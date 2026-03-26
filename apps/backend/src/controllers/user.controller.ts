@@ -7,6 +7,33 @@ import type { AuthRequest } from '../middlewares/auth.middleware.js';
  */
 export class UserController {
   /**
+   * GET /users/me/reviews - Récupère les avis de l'utilisateur connecté
+   */
+  static async getMyReviews(req: AuthRequest, res: Response) {
+    try {
+      const userId = req.userId;
+      if (!userId) {
+        return res.status(401).json({
+          success: false,
+          message: 'Non authentifié',
+        });
+      }
+
+      const reviews = await UserService.getUserReviews(userId);
+      return res.json({
+        success: true,
+        data: reviews,
+      });
+    } catch (error) {
+      console.error('Error fetching my reviews:', error);
+      return res.status(500).json({
+        success: false,
+        message: 'Erreur lors de la récupération des avis',
+      });
+    }
+  }
+
+  /**
    * GET /users/me/stats - Récupère les statistiques du profil utilisateur connecté
    */
   static async getMyStats(req: AuthRequest, res: Response) {

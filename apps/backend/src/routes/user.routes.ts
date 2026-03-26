@@ -10,6 +10,9 @@ router.get('/', UserController.getAllUsers);
 // PATCH /users/me - Met à jour le profil (authentification requise)
 router.patch('/me', requireAuth, UserController.updateMe);
 
+// GET /users/me/reviews - Avis de l'utilisateur connecté (authentification requise)
+router.get('/me/reviews', requireAuth, UserController.getMyReviews);
+
 // GET /users/me/stats - Statistiques du profil (authentification requise)
 router.get('/me/stats', requireAuth, UserController.getMyStats);
 
