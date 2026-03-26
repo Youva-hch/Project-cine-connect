@@ -1,3 +1,5 @@
+import { clearUserCookie } from '@/lib/userCookie';
+
 const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 const ACCESS_TOKEN_KEY = 'token';
 
@@ -41,7 +43,7 @@ async function performTokenRefresh(): Promise<string | null> {
 
     if (!response.ok || !data?.success || !nextToken) {
       clearAuthTokens();
-      localStorage.removeItem('user');
+      clearUserCookie();
       return null;
     }
 
@@ -49,7 +51,7 @@ async function performTokenRefresh(): Promise<string | null> {
     return nextToken;
   } catch {
     clearAuthTokens();
-    localStorage.removeItem('user');
+    clearUserCookie();
     return null;
   }
 }

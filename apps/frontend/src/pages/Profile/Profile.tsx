@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { apiRequest } from "@/api/config";
 import styles from "./Profile.module.css";
+import { setUserCookie } from "@/lib/userCookie";
 
 interface FullUser {
   id: number;
@@ -54,7 +55,7 @@ export default function Profile() {
     }),
     onSuccess: (res) => {
       const updated = { ...user!, name: res.data.name, bio: res.data.bio };
-      localStorage.setItem("user", JSON.stringify(updated));
+      setUserCookie(updated);
       queryClient.invalidateQueries({ queryKey: ["me"] });
       setIsEditing(false);
       toast({ title: "Profil mis à jour !" });

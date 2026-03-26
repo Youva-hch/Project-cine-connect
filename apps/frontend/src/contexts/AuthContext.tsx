@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect } from 'react'
 import type { ReactNode } from 'react'
 import { authApi } from '@/api/auth.api'
 import type { User } from '@/api/types'
+import { getUserCookie, setUserCookie } from '@/lib/userCookie'
 
 interface AuthContextType {
   user: User | null
@@ -23,19 +24,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Vérifier si l'utilisateur est déjà connecté
     const checkAuth = async () => {
       try {
-        // Vérifier d'abord dans localStorage
-        const storedUser = localStorage.getItem('user')
+        // Vérifier d'abord dans le cookie
+        const storedUser = getUserCookie()
         const token = localStorage.getItem('token')
         
         if (storedUser && token) {
           try {
-            const userData = JSON.parse(storedUser)
-            setUser(userData)
+            setUser(storedUser)
             // Vérifier que le token est toujours valide
-            await authApi.getCurrentUser()
+            const currentUser = await authApi.getCurrentUser()
+            if (currentUser) {
+              setUser(currentUser)
+              setUserCookie(currentUser)
+            }
           } catch {
             // Si le token n'est plus valide, nettoyer
             authApi.logout()
+          }
+        } else if (token) {
+          const currentUser = await authApi.getCurrentUser()
+          if (currentUser) {
+            setUser(currentUser)
+            setUserCookie(currentUser)
           }
         }
         // Ne pas appeler getCurrentUser() si pas de token pour éviter les erreurs inutiles
@@ -59,7 +69,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } else {
       localStorage.removeItem('refreshToken')
     }
-    localStorage.setItem('user', JSON.stringify(response.user))
+    setUserCookie(response.user)
     setUser(response.user)
   }
 
@@ -68,7 +78,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (refreshToken) {
       localStorage.setItem('refreshToken', refreshToken)
     }
-    localStorage.setItem('user', JSON.stringify(user))
+    setUserCookie(user)
     setUser(user)
   }
 
@@ -80,7 +90,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } else {
       localStorage.removeItem('refreshToken')
     }
-    localStorage.setItem('user', JSON.stringify(response.user))
+    setUserCookie(response.user)
     setUser(response.user)
   }
 

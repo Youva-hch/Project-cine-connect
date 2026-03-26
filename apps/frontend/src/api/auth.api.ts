@@ -1,5 +1,6 @@
 import { apiRequest } from './config'
 import type { User } from './types'
+import { clearUserCookie, getUserCookie } from '@/lib/userCookie'
 
 export interface LoginCredentials {
   email: string
@@ -51,7 +52,7 @@ export const authApi = {
     }).catch(() => undefined)
     localStorage.removeItem('token')
     localStorage.removeItem('refreshToken')
-    localStorage.removeItem('user')
+    clearUserCookie()
   },
 
   getCurrentUser: async (): Promise<User | null> => {
@@ -66,9 +67,8 @@ export const authApi = {
       })
       return response.data
     } catch {
-      // Si l'API n'est pas disponible ou le token invalide, utiliser localStorage
-      const userStr = localStorage.getItem('user')
-      return userStr ? JSON.parse(userStr) : null
+      // Si l'API n'est pas disponible ou le token invalide, utiliser le cookie
+      return getUserCookie()
     }
   },
 }

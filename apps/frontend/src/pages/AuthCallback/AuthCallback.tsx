@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Film } from "lucide-react";
 import styles from "./AuthCallback.module.css";
+import { setUserCookie } from "@/lib/userCookie";
 
 export default function AuthCallback() {
   const [searchParams] = useSearchParams();
@@ -18,7 +19,7 @@ export default function AuthCallback() {
         if (refreshToken) {
           localStorage.setItem("refreshToken", refreshToken);
         }
-        localStorage.setItem("user", JSON.stringify({ ...user, id: String(user.id) }));
+        setUserCookie({ ...user, id: Number(user.id) });
       } catch {
         // Ignore invalid callback payload
       }
