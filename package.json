@@ -13,6 +13,7 @@
     "db:migrate": "pnpm --filter @cineconnect/database migrate",
     "db:generate": "pnpm --filter @cineconnect/database generate",
     "db:seed": "pnpm --filter @cineconnect/database seed",
+    "db:seed:categories": "pnpm --filter @cineconnect/database seed:omdb-categories",
     "db:studio": "pnpm --filter @cineconnect/database studio",
     "docker:up": "docker-compose up -d",
     "docker:down": "docker-compose down",

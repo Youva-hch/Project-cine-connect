@@ -1,7 +1,8 @@
-import 'dotenv/config';
+import dotenv from 'dotenv';
+import { fileURLToPath } from 'url';
+import { dirname, resolve } from 'path';
 import bcrypt from 'bcryptjs';
-import { db } from './index.js';
-import { sql } from 'drizzle-orm';
+import { sql, inArray, eq } from 'drizzle-orm';
 import {
   users,
   categories,
@@ -11,6 +12,45 @@ import {
   friends,
   filmCategories,
 } from './schema.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Charger .env dans le même ordre que les migrations pour cibler la bonne base.
+dotenv.config();
+dotenv.config({ path: resolve(__dirname, '../../../.env') });
+dotenv.config({ path: resolve(__dirname, '../../../apps/backend/.env') });
+
+const OMDB_CATEGORY_SEED: Array<{ name: string; slug: string; description: string }> = [
+  { name: 'Action', slug: 'action', description: 'Action movies' },
+  { name: 'Adventure', slug: 'aventure', description: 'Adventure movies' },
+  { name: 'Animation', slug: 'animation', description: 'Animated movies and series' },
+  { name: 'Biography', slug: 'biographie', description: 'Biography movies' },
+  { name: 'Comedy', slug: 'comedie', description: 'Comedy movies' },
+  { name: 'Crime', slug: 'crime', description: 'Crime movies' },
+  { name: 'Documentary', slug: 'documentaire', description: 'Documentary movies' },
+  { name: 'Drama', slug: 'drame', description: 'Drama movies' },
+  { name: 'Family', slug: 'famille', description: 'Family movies' },
+  { name: 'Fantasy', slug: 'fantastique', description: 'Fantasy movies' },
+  { name: 'Film-Noir', slug: 'film-noir', description: 'Film-noir movies' },
+  { name: 'History', slug: 'histoire', description: 'History movies' },
+  { name: 'Horror', slug: 'horreur', description: 'Horror movies' },
+  { name: 'Music', slug: 'musique', description: 'Music movies' },
+  { name: 'Musical', slug: 'musical', description: 'Musical movies' },
+  { name: 'Mystery', slug: 'mystere', description: 'Mystery movies' },
+  { name: 'Romance', slug: 'romance', description: 'Romance movies' },
+  { name: 'Sci-Fi', slug: 'science-fiction', description: 'Science-fiction movies' },
+  { name: 'Sport', slug: 'sport', description: 'Sport movies' },
+  { name: 'Thriller', slug: 'thriller', description: 'Thriller movies' },
+  { name: 'War', slug: 'guerre', description: 'War movies' },
+  { name: 'Western', slug: 'western', description: 'Western movies' },
+  { name: 'Adult', slug: 'adult', description: 'Adult content' },
+  { name: 'Game-Show', slug: 'game-show', description: 'Game-show content' },
+  { name: 'News', slug: 'news', description: 'News content' },
+  { name: 'Reality-TV', slug: 'reality-tv', description: 'Reality TV content' },
+  { name: 'Short', slug: 'short', description: 'Short films' },
+  { name: 'Talk-Show', slug: 'talk-show', description: 'Talk-show content' },
+];
 
 /**
  * Seed function to populate the database with initial data
@@ -23,6 +63,8 @@ import {
  */
 export async function seed() {
   try {
+    const { db } = await import('./index.js');
+
     console.log('🌱 Starting database seed...');
 
     // Hash password pour les utilisateurs (mot de passe par défaut: "password123")
@@ -88,56 +130,24 @@ export async function seed() {
 
     // 2. Créer des catégories
     console.log('📝 Creating categories...');
-    let insertedCategories;
-    try {
-      insertedCategories = await db
-        .insert(categories)
-        .values([
-        {
-          name: 'Action',
-          description: 'Films d\'action avec scènes de combat et poursuites',
-          slug: 'action',
-        },
-        {
-          name: 'Comédie',
-          description: 'Films comiques et humoristiques',
-          slug: 'comedie',
-        },
-        {
-          name: 'Drame',
-          description: 'Films dramatiques avec des histoires émotionnelles',
-          slug: 'drame',
-        },
-        {
-          name: 'Science-Fiction',
-          description: 'Films de science-fiction et futuristes',
-          slug: 'science-fiction',
-        },
-        {
-          name: 'Thriller',
-          description: 'Films à suspense et thriller',
-          slug: 'thriller',
-        },
-        {
-          name: 'Horreur',
-          description: 'Films d\'horreur et de terreur',
-          slug: 'horreur',
-        },
-      ])
-      .returning();
-    } catch (error: any) {
-      if (error.code === '23505') {
-        console.log('⚠️  Categories already exist, fetching existing categories...');
-        insertedCategories = await db
-          .select()
-          .from(categories)
-          .where(
-            sql`slug IN ('action', 'comedie', 'drame', 'science-fiction', 'thriller', 'horreur')`
-          );
-      } else {
-        throw error;
-      }
+    await db.insert(categories).values(OMDB_CATEGORY_SEED).onConflictDoNothing();
+
+    // Harmoniser les libellés existants pour correspondre aux genres OMDb affichés sur les cards.
+    for (const item of OMDB_CATEGORY_SEED) {
+      await db
+        .update(categories)
+        .set({
+          name: item.name,
+          description: item.description,
+        })
+        .where(eq(categories.slug, item.slug));
     }
+
+    const categorySlugs = OMDB_CATEGORY_SEED.map((item) => item.slug);
+    const insertedCategories = await db
+      .select()
+      .from(categories)
+      .where(inArray(categories.slug, categorySlugs));
 
     console.log(`✅ Created ${insertedCategories.length} categories`);
 
