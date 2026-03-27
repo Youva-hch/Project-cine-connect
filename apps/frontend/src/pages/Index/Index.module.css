@@ -1,7 +1,7 @@
 .pageBackground {
 	background: radial-gradient(
 		ellipse at top left,
-		hsl(265 40% 8%) 0%,
+		hsl(151 38% 8%) 0%,
 		hsl(240 18% 4%) 60%
 	);
 }
@@ -34,12 +34,12 @@
 }
 
 .bottomGlow {
-	background: radial-gradient(ellipse at 20% 100%, hsl(265 78% 50%), transparent 70%);
+	background: radial-gradient(ellipse at 20% 100%, hsl(137 62% 46%), transparent 70%);
 }
 
 .heroBadge {
-	background: linear-gradient(135deg, hsl(265 78% 58% / 0.4) 0%, hsl(265 60% 44% / 0.4) 100%);
-	box-shadow: 0 4px 24px rgba(139, 92, 246, 0.1);
+	background: linear-gradient(135deg, hsl(137 70% 56% / 0.4) 0%, hsl(137 58% 42% / 0.4) 100%);
+	box-shadow: 0 4px 24px rgba(34, 197, 94, 0.1);
 	backdrop-filter: blur(8px);
 }
 
@@ -52,8 +52,8 @@
 }
 
 .primaryCta {
-	background: linear-gradient(135deg, hsl(265 78% 58%) 0%, hsl(265 60% 44%) 100%);
-	box-shadow: 0 4px 24px rgba(139, 92, 246, 0.4);
+	background: linear-gradient(135deg, hsl(137 70% 56%) 0%, hsl(137 58% 42%) 100%);
+	box-shadow: 0 4px 24px rgba(34, 197, 94, 0.4);
 }
 
 .secondaryCta {

@@ -59,7 +59,7 @@ export function FilmCard({ film, size = "normal", eagerDetails = false }: FilmCa
     >
       <div
         className={`relative overflow-hidden rounded-md transition-all duration-300 ease-out cursor-pointer
-          aspect-[2/3] focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black ${styles.cardContainer}`}
+          aspect-[2/3] focus-visible:ring-2 focus-visible:ring-green-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black ${styles.cardContainer}`}
       >
         {/* Poster */}
         {hasPoster ? (
@@ -132,7 +132,7 @@ export function FilmCard({ film, size = "normal", eagerDetails = false }: FilmCa
             {/* Avis */}
             <button
               title="Voir les avis"
-              className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-xs font-semibold transition-all duration-150 hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-300 ${styles.reviewsCta}`}
+              className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-xs font-semibold transition-all duration-150 hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-300 ${styles.reviewsCta}`}
               onClick={(e) => {
                 e.preventDefault();
                 navigate(`/film/${film.imdbID}`);

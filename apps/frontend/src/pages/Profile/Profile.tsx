@@ -327,7 +327,7 @@ export default function Profile() {
               icon: MessageCircle,
               label: 'Conversations',
               value: String(stats?.recentConversations.length ?? 0),
-              color: 'hsl(265,78%,62%)',
+              color: 'hsl(137,70%,56%)',
             },
           ].map(({ icon: Icon, label, value, color }) => (
             <div key={label} className={`rounded-xl p-4 text-center space-y-2 ${styles.statCard}`}>
@@ -385,7 +385,7 @@ export default function Profile() {
               <div
                 className={`w-14 h-14 rounded-full flex items-center justify-center ${styles.emptyIconWrap}`}
               >
-                <Star className="h-7 w-7" style={{ color: 'hsl(265,78%,62%)', opacity: 0.5 }} />
+                <Star className="h-7 w-7" style={{ color: 'hsl(137,70%,56%)', opacity: 0.5 }} />
               </div>
               <p className={styles.muted} style={{ fontSize: '0.875rem' }}>
                 Tu n'as pas encore noté de film
@@ -404,7 +404,7 @@ export default function Profile() {
         <div className={`rounded-xl p-6 space-y-4 ${styles.sectionCard}`}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <MessageCircle className="h-5 w-5" style={{ color: 'hsl(265,78%,62%)' }} />
+              <MessageCircle className="h-5 w-5" style={{ color: 'hsl(137,70%,56%)' }} />
               <h2 className={`font-display text-2xl ${styles.name}`}>Conversations récentes</h2>
             </div>
             <Link
@@ -448,7 +448,7 @@ export default function Profile() {
               >
                 <MessageCircle
                   className="h-7 w-7"
-                  style={{ color: 'hsl(265,78%,62%)', opacity: 0.5 }}
+                  style={{ color: 'hsl(137,70%,56%)', opacity: 0.5 }}
                 />
               </div>
               <p className={styles.muted} style={{ fontSize: '0.875rem' }}>

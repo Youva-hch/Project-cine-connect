@@ -151,7 +151,7 @@ export default function PublicProfile() {
         <div className={`rounded-xl p-6 space-y-4 ${styles.sectionCard}`}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <MessageCircle className="h-5 w-5" style={{ color: 'hsl(265,78%,62%)' }} />
+              <MessageCircle className="h-5 w-5" style={{ color: 'hsl(137,70%,56%)' }} />
               <h2 className={`font-display text-2xl ${styles.name}`}>Avis récents</h2>
             </div>
             <Link to="/films" className={`flex items-center gap-1 text-xs font-medium hover:opacity-80 ${styles.linkAccent}`}>

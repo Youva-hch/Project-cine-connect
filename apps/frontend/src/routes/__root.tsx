@@ -83,7 +83,7 @@ function RootLayout() {
                               className="w-8 h-8 rounded-full object-cover"
                             />
                           ) : (
-                            <span className="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center text-indigo-600 dark:text-indigo-300 text-xs font-semibold">
+                            <span className="w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-900 flex items-center justify-center text-emerald-600 dark:text-emerald-300 text-xs font-semibold">
                               {user.name.charAt(0).toUpperCase()}
                             </span>
                           )}

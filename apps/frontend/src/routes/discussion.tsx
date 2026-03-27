@@ -68,7 +68,7 @@ function Discussion() {
                     key={friend.id}
                     onClick={() => setSelectedFriend(friend)}
                     className={`w-full p-4 text-left hover:bg-gray-50 transition-colors ${
-                      selectedFriend.id === friend.id ? 'bg-indigo-50' : ''
+                      selectedFriend.id === friend.id ? 'bg-emerald-50' : ''
                     }`}
                   >
                     <div className="flex items-center gap-3">
@@ -142,14 +142,14 @@ function Discussion() {
                     <div
                       className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
                         msg.sender === 'Alice Martin'
-                          ? 'bg-indigo-600 text-white'
+                          ? 'bg-emerald-600 text-white'
                           : 'bg-gray-200 text-gray-900'
                       }`}
                     >
                       <p className="text-sm">{msg.content}</p>
                       <p
                         className={`text-xs mt-1 ${
-                          msg.sender === 'Alice Martin' ? 'text-indigo-200' : 'text-gray-500'
+                          msg.sender === 'Alice Martin' ? 'text-emerald-200' : 'text-gray-500'
                         }`}
                       >
                         {msg.timestamp}
@@ -171,7 +171,7 @@ function Discussion() {
                   />
                   <button
                     type="submit"
-                    className="px-6 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors"
+                    className="px-6 py-2 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 transition-colors"
                   >
                     Envoyer
                   </button>

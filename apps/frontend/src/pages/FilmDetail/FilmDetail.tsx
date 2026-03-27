@@ -235,7 +235,7 @@ export default function FilmDetail() {
         <div className="flex items-center justify-between flex-wrap gap-3">
           <div className="flex items-center gap-4">
             <h2 className="text-foreground font-display text-2xl flex items-center gap-2">
-              <MessageCircle className="h-5 w-5 text-violet-400" />
+              <MessageCircle className="h-5 w-5 text-green-400" />
               Avis
               {reviews.length > 0 && (
                 <span className="text-muted-foreground text-lg font-normal">({reviews.length})</span>
@@ -260,7 +260,7 @@ export default function FilmDetail() {
             </button>
           )}
           {!user && (
-            <a href="/auth" className="text-sm text-violet-400 hover:text-violet-300 transition-colors">
+            <a href="/auth" className="text-sm text-green-400 hover:text-green-300 transition-colors">
               Connecte-toi pour noter →
             </a>
           )}
@@ -270,7 +270,7 @@ export default function FilmDetail() {
         {userReview && (
           <div className={`rounded-xl p-4 space-y-2 ${styles.myReview}`}>
             <div className="flex items-center justify-between">
-              <p className="text-xs font-bold text-violet-400 uppercase tracking-wider">Ma note</p>
+              <p className="text-xs font-bold text-green-400 uppercase tracking-wider">Ma note</p>
               <div className="flex gap-1.5">
                 <button
                   onClick={() => setEditingId(editingId === userReview.id ? null : userReview.id)}
@@ -310,7 +310,7 @@ export default function FilmDetail() {
             <MessageCircle className="h-10 w-10 text-muted-foreground/40 mx-auto mb-3" />
             <p className="text-muted-foreground text-sm">Sois le premier à donner ton avis !</p>
             {!user && (
-              <a href="/auth" className="inline-block mt-3 text-sm text-violet-400 hover:text-violet-300 transition-colors">
+              <a href="/auth" className="inline-block mt-3 text-sm text-green-400 hover:text-green-300 transition-colors">
                 Se connecter →
               </a>
             )}

@@ -23,7 +23,7 @@ export function ThemeToggle({ className = '' }: ThemeToggleProps) {
     >
       <span
         className={`inline-flex h-6 w-6 items-center justify-center rounded-full ${
-          isLight ? 'bg-amber-100 text-amber-600' : 'bg-indigo-500/25 text-indigo-200'
+          isLight ? 'bg-amber-100 text-amber-600' : 'bg-emerald-500/25 text-emerald-200'
         }`}
       >
         {isLight ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}

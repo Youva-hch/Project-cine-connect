@@ -299,7 +299,7 @@ export default function Auth() {
               <button
                 type="button"
                 onClick={() => setMode("forgot")}
-                className={`w-full text-xs font-medium hover:opacity-80 ${styles.violetLink}`}
+                className={`w-full text-xs font-medium hover:opacity-80 ${styles.greenLink}`}
               >
                 Mot de passe oublié ?
               </button>
@@ -312,7 +312,7 @@ export default function Auth() {
                   setMode("login");
                   navigate("/auth", { replace: true });
                 }}
-                className={`w-full text-xs font-medium hover:opacity-80 ${styles.violetLink}`}
+                className={`w-full text-xs font-medium hover:opacity-80 ${styles.greenLink}`}
               >
                 Retour à la connexion
               </button>
@@ -326,7 +326,7 @@ export default function Auth() {
             {isLogin ? "Pas encore de compte ?" : "Déjà un compte ?"}{" "}
             <button
               onClick={() => setMode(isLogin ? "register" : "login")}
-              className={`font-semibold transition-colors hover:opacity-80 ${styles.violetLink}`}
+              className={`font-semibold transition-colors hover:opacity-80 ${styles.greenLink}`}
             >
               {isLogin ? "S'inscrire" : "Se connecter"}
             </button>

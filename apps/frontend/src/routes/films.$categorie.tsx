@@ -66,7 +66,7 @@ function FilmsByCategory() {
                 params={{ id: film.id.toString() }}
                 className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow cursor-pointer block"
               >
-              <div className="aspect-[2/3] bg-gradient-to-br from-indigo-100 to-purple-100 overflow-hidden relative">
+              <div className="aspect-[2/3] bg-gradient-to-br from-emerald-100 to-emerald-100 overflow-hidden relative">
                 {film.posterUrl && film.posterUrl !== 'N/A' ? (
                   <img
                     src={film.posterUrl}

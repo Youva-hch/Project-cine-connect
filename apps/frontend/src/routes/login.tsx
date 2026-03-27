@@ -102,7 +102,7 @@ function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full px-4 py-2 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full px-4 py-2 bg-emerald-600 text-white font-medium rounded-lg hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? 'Connexion...' : 'Se connecter'}
           </button>
@@ -133,7 +133,7 @@ function LoginPage() {
 
         <p className="mt-6 text-center text-sm text-gray-500">
           Vous n'avez pas de compte ?{' '}
-          <Link to="/register" className="text-indigo-600 hover:underline font-medium">
+          <Link to="/register" className="text-emerald-600 hover:underline font-medium">
             Inscrivez-vous
           </Link>
         </p>

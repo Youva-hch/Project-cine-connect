@@ -14,7 +14,7 @@
 
 .tabActive {
 	color: hsl(0 0% 100%);
-	background: linear-gradient(135deg, hsl(265, 78%, 48%), hsl(280, 70%, 38%));
+	background: linear-gradient(135deg, hsl(137, 62%, 46%), hsl(148, 58%, 34%));
 }
 
 .tabBadge {
@@ -27,7 +27,7 @@
 }
 
 .avatarFallback {
-	background: linear-gradient(135deg, hsl(265, 78%, 55%), hsl(280, 70%, 45%));
+	background: linear-gradient(135deg, hsl(137, 66%, 50%), hsl(148, 62%, 40%));
 }
 
 .card {
@@ -96,7 +96,7 @@
 }
 
 .addBtn {
-	background: linear-gradient(135deg, hsl(265, 78%, 55%), hsl(280, 70%, 45%));
+	background: linear-gradient(135deg, hsl(137, 66%, 50%), hsl(148, 62%, 40%));
 	color: white;
 }
 

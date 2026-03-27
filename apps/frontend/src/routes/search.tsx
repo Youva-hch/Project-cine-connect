@@ -49,7 +49,7 @@ function SearchPage() {
             <button
               type="submit"
               disabled={!searchTerm.trim() || isFetching}
-              className="px-6 py-2 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-6 py-2 bg-emerald-600 text-white font-medium rounded-lg hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isFetching ? 'Recherche...' : 'Rechercher'}
             </button>
@@ -64,7 +64,7 @@ function SearchPage() {
 
         {isLoading && searchQ && (
           <div className="flex justify-center py-12">
-            <div className="animate-spin h-10 w-10 border-2 border-indigo-600 border-t-transparent rounded-full" />
+            <div className="animate-spin h-10 w-10 border-2 border-emerald-600 border-t-transparent rounded-full" />
           </div>
         )}
 
@@ -91,7 +91,7 @@ function SearchPage() {
                   <Link
                     to="/film/$imdbId"
                     params={{ imdbId: film.imdbID }}
-                    className="block p-4 bg-white rounded-xl shadow-sm border border-gray-200 hover:border-indigo-200 hover:shadow-md transition"
+                    className="block p-4 bg-white rounded-xl shadow-sm border border-gray-200 hover:border-emerald-200 hover:shadow-md transition"
                   >
                     <div className="aspect-[2/3] bg-gray-200 rounded-lg overflow-hidden mb-3">
                       {film.Poster && film.Poster !== 'N/A' ? (

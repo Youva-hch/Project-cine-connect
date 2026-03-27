@@ -32,7 +32,7 @@
 }
 
 .avatarFallback {
-	background: linear-gradient(135deg, hsl(265, 78%, 55%), hsl(280, 70%, 45%));
+	background: linear-gradient(135deg, hsl(137, 66%, 50%), hsl(148, 62%, 40%));
 }
 
 .friendItem {
@@ -41,8 +41,8 @@
 }
 
 .friendItemActive {
-	background: rgba(139, 92, 246, 0.12);
-	border-left: 2px solid hsl(265, 78%, 62%);
+	background: rgba(34, 197, 94, 0.12);
+	border-left: 2px solid hsl(137, 70%, 56%);
 }
 
 .friendName {
@@ -64,7 +64,7 @@
 }
 
 .bubbleMine {
-	background: linear-gradient(135deg, hsl(265, 78%, 52%), hsl(280, 70%, 42%));
+	background: linear-gradient(135deg, hsl(137, 64%, 48%), hsl(148, 60%, 38%));
 	color: white;
 }
 
@@ -92,7 +92,7 @@
 }
 
 .sendActive {
-	background: linear-gradient(135deg, hsl(265, 78%, 55%), hsl(280, 70%, 45%));
+	background: linear-gradient(135deg, hsl(137, 66%, 50%), hsl(148, 62%, 40%));
 	color: white;
 }
 

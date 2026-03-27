@@ -104,7 +104,7 @@ export default function Index() {
         {/* Gradient overlays */}
         <div className="absolute inset-0 bg-gradient-to-t via-background/50 to-background/10" />
         <div className="absolute inset-0 bg-gradient-to-r via-background/40 to-transparent" />
-        {/* Violet ambient glow bottom */}
+        {/* Green ambient glow bottom */}
         <div
           className={`absolute bottom-0 left-0 right-0 h-64 opacity-20 ${styles.bottomGlow}`}
         />

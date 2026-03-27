@@ -13,7 +13,7 @@
 
 .panel {
 	background: rgba(14, 14, 28, 0.98);
-	border: 1px solid rgba(139, 92, 246, 0.25);
+	border: 1px solid rgba(34, 197, 94, 0.25);
 	backdrop-filter: blur(20px);
 }
 
@@ -26,7 +26,7 @@
 }
 
 .actionLink {
-	color: hsl(265, 78%, 72%);
+	color: hsl(137, 72%, 66%);
 }
 
 .emptyState {
@@ -38,7 +38,7 @@
 }
 
 .itemUnread {
-	background: rgba(139, 92, 246, 0.06);
+	background: rgba(34, 197, 94, 0.06);
 }
 
 .itemRead {
@@ -62,7 +62,7 @@
 }
 
 .unreadDot {
-	background: hsl(265, 78%, 72%);
+	background: hsl(137, 72%, 66%);
 }
 
 .footer {
@@ -70,7 +70,7 @@
 }
 
 .iconFriendRequest {
-	color: hsl(265, 78%, 72%);
+	color: hsl(137, 72%, 66%);
 }
 
 .iconFriendAccepted {

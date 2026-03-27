@@ -28,7 +28,7 @@
 }
 
 .avatarFallback {
-	background: linear-gradient(135deg, hsl(265, 78%, 50%), hsl(265, 60%, 35%));
+	background: linear-gradient(135deg, hsl(137, 62%, 46%), hsl(137, 54%, 34%));
 	box-shadow: 0 0 0 3px hsl(var(--primary) / 0.35), 0 0 20px hsl(var(--primary) / 0.25);
 }
 
@@ -39,7 +39,7 @@
 }
 
 .actionPrimary {
-	background: linear-gradient(135deg, hsl(265, 78%, 58%), hsl(265, 60%, 44%));
+	background: linear-gradient(135deg, hsl(137, 70%, 56%), hsl(137, 58%, 42%));
 }
 
 .input {

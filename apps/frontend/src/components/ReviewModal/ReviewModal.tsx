@@ -97,7 +97,7 @@ export function ReviewModal({ film, onClose }: ReviewModalProps) {
         {/* Header */}
         <div className="flex items-start justify-between gap-3">
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-wider text-violet-400 mb-1">
+            <p className="text-[11px] font-bold uppercase tracking-wider text-green-400 mb-1">
               Noter ce film
             </p>
             <h2 className="text-white font-semibold text-lg leading-tight">

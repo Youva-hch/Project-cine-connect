@@ -25,11 +25,11 @@
 }
 
 .avatarFallback {
-	background: linear-gradient(135deg, hsl(265, 78%, 55%), hsl(280, 70%, 45%));
+	background: linear-gradient(135deg, hsl(137, 66%, 50%), hsl(148, 62%, 40%));
 }
 
 .bubbleMine {
-	background: linear-gradient(135deg, hsl(265, 78%, 52%), hsl(280, 70%, 42%));
+	background: linear-gradient(135deg, hsl(137, 64%, 48%), hsl(148, 60%, 38%));
 	color: white;
 }
 
@@ -57,7 +57,7 @@
 }
 
 .sendActive {
-	background: linear-gradient(135deg, hsl(265, 78%, 55%), hsl(280, 70%, 45%));
+	background: linear-gradient(135deg, hsl(137, 66%, 50%), hsl(148, 62%, 40%));
 	color: white;
 }
 

@@ -37,7 +37,7 @@ function FilmDetail() {
       <div className="max-w-7xl mx-auto">
         {/* Breadcrumb */}
         <nav className="mb-6">
-          <Link to="/films" className="text-indigo-600 hover:text-indigo-700">
+          <Link to="/films" className="text-emerald-600 hover:text-emerald-700">
             ← Retour aux films
           </Link>
         </nav>
@@ -46,7 +46,7 @@ function FilmDetail() {
           <div className="md:flex">
             {/* Affiche */}
               <div className="md:w-1/3">
-              <div className="aspect-[2/3] bg-gradient-to-br from-indigo-100 to-purple-100 relative">
+              <div className="aspect-[2/3] bg-gradient-to-br from-emerald-100 to-emerald-100 relative">
                 {film.posterUrl && film.posterUrl !== 'N/A' ? (
                   <img
                     src={film.posterUrl}
@@ -110,10 +110,10 @@ function FilmDetail() {
               )}
 
               <div className="flex gap-4">
-                <button className="px-6 py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors">
+                <button className="px-6 py-3 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 transition-colors">
                   Noter ce film
                 </button>
-                <button className="px-6 py-3 bg-white text-indigo-600 border-2 border-indigo-600 rounded-lg font-medium hover:bg-indigo-50 transition-colors">
+                <button className="px-6 py-3 bg-white text-emerald-600 border-2 border-emerald-600 rounded-lg font-medium hover:bg-emerald-50 transition-colors">
                   Ajouter un avis
                 </button>
               </div>
@@ -132,8 +132,8 @@ function FilmDetail() {
                 <div key={review.id} className="border-b border-gray-200 pb-4">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center">
-                        <span className="text-indigo-600 font-semibold">U</span>
+                      <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center">
+                        <span className="text-emerald-600 font-semibold">U</span>
                       </div>
                       <div>
                         <p className="font-semibold text-gray-900">Utilisateur #{review.userId}</p>

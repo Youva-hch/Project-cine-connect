@@ -124,7 +124,7 @@ function RegisterPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full px-4 py-2 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full px-4 py-2 bg-emerald-600 text-white font-medium rounded-lg hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? 'Inscription...' : 'S\'inscrire'}
           </button>
@@ -157,7 +157,7 @@ function RegisterPage() {
 
         <p className="mt-6 text-center text-sm text-gray-500">
           Déjà un compte ?{' '}
-          <Link to="/login" className="text-indigo-600 hover:underline font-medium">
+          <Link to="/login" className="text-emerald-600 hover:underline font-medium">
             Se connecter
           </Link>
         </p>

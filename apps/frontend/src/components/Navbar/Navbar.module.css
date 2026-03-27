@@ -13,7 +13,7 @@
 }
 
 .logoGlow {
-	filter: drop-shadow(0 0 8px rgba(139, 92, 246, 0.5));
+	filter: drop-shadow(0 0 8px rgba(34, 197, 94, 0.5));
 }
 
 .logoIcon {
@@ -44,7 +44,7 @@
 }
 
 .activeIndicator {
-	background: linear-gradient(90deg, hsl(265, 78%, 62%), hsl(38, 92%, 55%));
+	background: linear-gradient(90deg, hsl(137, 70%, 56%), hsl(38, 92%, 55%));
 }
 
 .searchLink {
@@ -160,8 +160,8 @@
 }
 
 .categoryChip:hover {
-	border-color: hsl(265 78% 62% / 0.65);
-	background: hsl(265 78% 62% / 0.14);
+	border-color: hsl(137 70% 56% / 0.65);
+	background: hsl(137 70% 56% / 0.14);
 	color: hsl(var(--foreground));
 }
 
@@ -171,8 +171,8 @@
 }
 
 .profileButton {
-	background: linear-gradient(135deg, hsl(265, 78%, 58%), hsl(265, 60%, 44%));
-	box-shadow: 0 0 12px rgba(139, 92, 246, 0.4);
+	background: linear-gradient(135deg, hsl(137, 70%, 56%), hsl(137, 58%, 42%));
+	box-shadow: 0 0 12px rgba(34, 197, 94, 0.4);
 }
 
 .logoutButton {
@@ -180,8 +180,8 @@
 }
 
 .authButton {
-	background: linear-gradient(135deg, hsl(265, 78%, 58%) 0%, hsl(265, 60%, 44%) 100%);
-	box-shadow: 0 2px 16px rgba(139, 92, 246, 0.35);
+	background: linear-gradient(135deg, hsl(137, 70%, 56%) 0%, hsl(137, 58%, 42%) 100%);
+	box-shadow: 0 2px 16px rgba(34, 197, 94, 0.35);
 }
 
 .mobileToggle {
@@ -203,7 +203,7 @@
 .mobileItemActive {
 	color: hsl(var(--foreground));
 	background: hsl(var(--primary) / 0.14);
-	border-left: 2px solid hsl(265, 78%, 62%);
+	border-left: 2px solid hsl(137, 70%, 56%);
 }
 
 .mobileSecondary {
@@ -215,7 +215,7 @@
 }
 
 .mobileAuth {
-	background: linear-gradient(135deg, hsl(265, 78%, 58%), hsl(265, 60%, 44%));
+	background: linear-gradient(135deg, hsl(137, 70%, 56%), hsl(137, 58%, 42%));
 }
 
 .themeToggleDesktop {

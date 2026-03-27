@@ -12,7 +12,7 @@ function FilmDetailPage() {
   if (isLoading) {
     return (
       <div className="flex justify-center py-20">
-        <div className="animate-spin h-12 w-12 border-2 border-indigo-600 border-t-transparent rounded-full" />
+        <div className="animate-spin h-12 w-12 border-2 border-emerald-600 border-t-transparent rounded-full" />
       </div>
     )
   }
@@ -23,7 +23,7 @@ function FilmDetailPage() {
         <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
           {error instanceof Error ? error.message : 'Erreur lors du chargement'}
         </div>
-        <Link to="/search" search={{ q: '', page: 1 }} className="mt-4 inline-block text-indigo-600 hover:underline">
+        <Link to="/search" search={{ q: '', page: 1 }} className="mt-4 inline-block text-emerald-600 hover:underline">
           Retour à la recherche
         </Link>
       </div>
@@ -34,7 +34,7 @@ function FilmDetailPage() {
     return (
       <div className="max-w-2xl mx-auto px-4 py-8">
         <p className="text-gray-500">Film introuvable.</p>
-        <Link to="/search" search={{ q: '', page: 1 }} className="mt-4 inline-block text-indigo-600 hover:underline">
+        <Link to="/search" search={{ q: '', page: 1 }} className="mt-4 inline-block text-emerald-600 hover:underline">
           Retour à la recherche
         </Link>
       </div>
@@ -47,7 +47,7 @@ function FilmDetailPage() {
         <Link
           to="/search"
           search={{ q: '', page: 1 }}
-          className="inline-flex items-center text-indigo-600 hover:underline mb-6"
+          className="inline-flex items-center text-emerald-600 hover:underline mb-6"
         >
           ← Retour à la recherche
         </Link>
