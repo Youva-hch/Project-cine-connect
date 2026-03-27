@@ -47,6 +47,8 @@ async function patchReview(reviewId: number, data: { rating?: number; comment?: 
 }
 
 function StarDisplay({ rating, size = 16 }: { rating: number; size?: number }) {
+  const inactiveStarColor = "hsl(var(--muted-foreground) / 0.35)";
+
   return (
     <div className="flex items-center gap-0.5">
       {[1, 2, 3, 4, 5].map((i) => (
@@ -55,8 +57,8 @@ function StarDisplay({ rating, size = 16 }: { rating: number; size?: number }) {
           style={{
             width: size,
             height: size,
-            color: i <= rating ? "#f59e0b" : "rgba(255,255,255,0.15)",
-            fill: i <= rating ? "#f59e0b" : "rgba(255,255,255,0.15)",
+            color: i <= rating ? "#f59e0b" : inactiveStarColor,
+            fill: i <= rating ? "#f59e0b" : inactiveStarColor,
           }}
         />
       ))}
@@ -81,7 +83,9 @@ function EditReviewForm({ review, imdbId, onDone }: { review: Review; imdbId: st
     },
   });
 
-  const starColor = (i: number) => i <= (hovered || rating) ? "#f59e0b" : "rgba(255,255,255,0.15)";
+  const starColor = (i: number) => i <= (hovered || rating)
+    ? "#f59e0b"
+    : "hsl(var(--muted-foreground) / 0.35)";
 
   return (
     <div className="space-y-3 pt-2">
@@ -219,8 +223,8 @@ export default function FilmDetail() {
 
           {movie.Actors && (
             <div>
-              <h3 className="text-white/40 text-xs font-semibold uppercase tracking-wider mb-1.5">Acteurs</h3>
-              <p className="text-sm text-white/50">{movie.Actors}</p>
+              <h3 className="text-muted-foreground text-xs font-semibold uppercase tracking-wider mb-1.5">Acteurs</h3>
+              <p className="text-sm text-foreground/75">{movie.Actors}</p>
             </div>
           )}
         </div>
@@ -270,7 +274,7 @@ export default function FilmDetail() {
               <div className="flex gap-1.5">
                 <button
                   onClick={() => setEditingId(editingId === userReview.id ? null : userReview.id)}
-                  className="p-1.5 rounded-lg hover:bg-white/10 transition-colors text-muted-foreground hover:text-foreground"
+                  className="p-1.5 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"
                   type="button"
                 >
                   {editingId === userReview.id ? <X className="h-3.5 w-3.5" /> : <Pencil className="h-3.5 w-3.5" />}

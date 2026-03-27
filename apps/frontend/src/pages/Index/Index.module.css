@@ -1,3 +1,29 @@
+.pageBackground {
+	background: radial-gradient(
+		ellipse at top left,
+		hsl(265 40% 8%) 0%,
+		hsl(240 18% 4%) 60%
+	);
+}
+
+.rowsArea {
+	background: transparent;
+}
+
+:global(.light) .pageBackground {
+	background: linear-gradient(
+		to bottom,
+		hsl(220 28% 96%) 0%,
+		hsl(220 26% 94%) 35%,
+		hsl(220 23% 92%) 100%
+	);
+}
+
+:global(.light) .rowsArea {
+	background: hsl(220 24% 93%);
+	border-top: 1px solid hsl(220 18% 84%);
+}
+
 .heroPoster {
 	filter: saturate(0.88) brightness(0.58);
 	object-position: center 22%;
@@ -31,7 +57,6 @@
 }
 
 .secondaryCta {
-	background: rgba(255, 255, 255, 0.08);
 	backdrop-filter: blur(8px);
 	border: 1px solid rgba(255, 255, 255, 0.15);
 }

@@ -81,7 +81,7 @@ export default function Index() {
   const heroPoster = getHighResPosterUrl(heroFilm?.Poster);
 
   return (
-    <div className="min-h-screen -mt-16 bg-cinema-gradient">
+    <div className={`min-h-screen -mt-16 ${styles.pageBackground}`}>
       {/* ── Hero Billboard ── */}
       <section className="relative h-[88vh] min-h-[540px] flex items-end">
         {/* Background poster */}
@@ -102,8 +102,8 @@ export default function Index() {
         )}
 
         {/* Gradient overlays */}
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-background/10" />
-        <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t via-background/50 to-background/10" />
+        <div className="absolute inset-0 bg-gradient-to-r via-background/40 to-transparent" />
         {/* Violet ambient glow bottom */}
         <div
           className={`absolute bottom-0 left-0 right-0 h-64 opacity-20 ${styles.bottomGlow}`}
@@ -151,7 +151,7 @@ export default function Index() {
             <Link to="/discussion">
               <Button
                 size="lg"
-                variant="secondary"
+                variant="default"
                 className={`gap-2 rounded-sm px-7 font-semibold text-white ${styles.secondaryCta}`}
               >
                 <MessageCircle className="h-5 w-5" />
@@ -163,7 +163,7 @@ export default function Index() {
       </section>
 
       {/* ── Film rows ── */}
-      <div className="relative z-10 space-y-1 pb-16">
+      <div className={`relative z-10 space-y-1 pb-16 ${styles.rowsArea}`}>
         {SECTIONS.map((section, idx) => {
           const films = sectionQueries[idx]?.data?.Search ?? [];
           const displayFilms =

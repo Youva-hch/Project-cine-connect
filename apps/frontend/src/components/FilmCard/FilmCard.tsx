@@ -18,7 +18,7 @@ function getInitials(title: string) {
 
 interface FilmCardProps {
   film: OmdbMovie;
-  size?: "normal" | "large";
+  size?: "normal" | "large" | "category";
   eagerDetails?: boolean;
 }
 
@@ -28,7 +28,12 @@ export function FilmCard({ film, size = "normal", eagerDetails = false }: FilmCa
   const navigate = useNavigate();
   const posterUrl = getBestPosterUrl(film.Poster, { omdbSize: 1200 });
   const hasPoster = !imgError && !!posterUrl;
-  const isLarge = size === "large";
+  const sizeClass =
+    size === "large"
+      ? "w-[205px] md:w-[235px]"
+      : size === "category"
+      ? "w-[150px] sm:w-[165px] md:w-[185px] lg:w-[200px]"
+      : "w-[135px] md:w-[165px]";
 
   const { data: details } = useQuery({
     queryKey: ["film-card-detail", film.imdbID],
@@ -48,15 +53,13 @@ export function FilmCard({ film, size = "normal", eagerDetails = false }: FilmCa
   return (
     <Link
       to={`/film/${film.imdbID}`}
-      className={`group relative block flex-shrink-0 focus-visible:outline-none ${
-        isLarge ? "w-[205px] md:w-[235px]" : "w-[135px] md:w-[165px]"
-      }`}
+      className={`group relative block flex-shrink-0 focus-visible:outline-none ${sizeClass}`}
       onMouseEnter={() => setShouldLoadDetails(true)}
       onFocus={() => setShouldLoadDetails(true)}
     >
       <div
         className={`relative overflow-hidden rounded-md transition-all duration-300 ease-out cursor-pointer
-          ${isLarge ? "aspect-[2/3]" : "aspect-[2/3]"} focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black ${styles.cardContainer}`}
+          aspect-[2/3] focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black ${styles.cardContainer}`}
       >
         {/* Poster */}
         {hasPoster ? (

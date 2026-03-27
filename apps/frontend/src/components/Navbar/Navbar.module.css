@@ -1,15 +1,15 @@
 .nav {
-	background: linear-gradient(to bottom, hsl(var(--background) / 0.92) 0%, transparent 100%);
-	backdrop-filter: none;
-	border-bottom: none;
-	box-shadow: none;
+	background: linear-gradient(to bottom, hsl(var(--background) / 0.92) 0%, hsl(var(--background) / 0.74) 70%, transparent 100%);
+	backdrop-filter: blur(12px);
+	border-bottom: 1px solid hsl(var(--border) / 0.58);
+	box-shadow: 0 1px 18px hsl(0 0% 0% / 0.16);
 }
 
 .navScrolled {
-	background: hsl(var(--background) / 0.96);
+	background: hsl(var(--background) / 0.97);
 	backdrop-filter: blur(16px);
 	border-bottom: 1px solid hsl(var(--border) / 0.85);
-	box-shadow: 0 1px 20px hsl(0 0% 0% / 0.18);
+	box-shadow: 0 2px 24px hsl(0 0% 0% / 0.2);
 }
 
 .logoGlow {
@@ -17,21 +17,29 @@
 }
 
 .logoIcon {
-	color: rgba(47, 255, 0, 0.35);
+	color: hsl(137 70% 56% / 0.88);
 }
 
 .brandText {
-	background: rgba(47, 255, 0, 0.35);
+	background: linear-gradient(90deg, hsl(137 70% 62%) 0%, hsl(137 58% 50%) 100%);
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
 	background-clip: text;
 }
 
 .desktopLink {
-	color: hsl(var(--muted-foreground));
+	color: hsl(var(--foreground) / 0.78);
 }
 
 .desktopLinkActive {
+	color: hsl(var(--foreground));
+}
+
+.desktopLinkLabel {
+	transition: color 200ms ease;
+}
+
+.desktopLink:hover .desktopLinkLabel {
 	color: hsl(var(--foreground));
 }
 
@@ -55,16 +63,16 @@
 	height: 2.35rem;
 	padding: 0 0.7rem;
 	border-radius: 9999px;
-	border: 1px solid hsl(var(--border) / 0.72);
-	background: hsl(var(--background) / 0.64);
+	border: 1px solid hsl(var(--border) / 0.86);
+	background: hsl(var(--card) / 0.9);
 	backdrop-filter: blur(10px);
 	transition: border-color 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
 }
 
 .searchInputWrap:focus-within {
-	border-color: hsl(265 78% 62% / 0.7);
-	box-shadow: 0 0 0 3px hsl(265 78% 62% / 0.14);
-	background: hsl(var(--background) / 0.86);
+	border-color: hsl(var(--border) / 0.86);
+	box-shadow: none;
+	background: hsl(var(--card) / 0.98);
 }
 
 .searchInputIcon {
@@ -87,6 +95,12 @@
 	opacity: 0.82;
 }
 
+.searchInput:focus,
+.searchInput:focus-visible {
+	outline: none;
+	box-shadow: none;
+}
+
 .categoryDropdown {
 	position: absolute;
 	top: calc(100% + 0.55rem);
@@ -100,7 +114,7 @@
 	padding: 0;
 	border-radius: 0.85rem;
 	border: 1px solid transparent;
-	background: hsl(var(--card) / 0.96);
+	background: hsl(var(--card) / 0.98);
 	backdrop-filter: blur(12px);
 	box-shadow: 0 12px 30px hsl(0 0% 0% / 0.2);
 	transition: max-height 240ms ease, opacity 180ms ease, transform 180ms ease, padding 180ms ease, border-color 180ms ease;
@@ -140,7 +154,7 @@
 	font-size: 0.78rem;
 	font-weight: 600;
 	color: hsl(var(--foreground));
-	background: hsl(var(--background) / 0.65);
+	background: hsl(var(--background) / 0.8);
 	border: 1px solid hsl(var(--border) / 0.72);
 	transition: all 160ms ease;
 }
@@ -212,7 +226,7 @@
 	display: flex;
 	justify-content: center;
 	padding: 0.25rem 0 0.5rem;
-	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+	border-bottom: 1px solid hsl(var(--border) / 0.8);
 	margin-bottom: 0.5rem;
 }
 

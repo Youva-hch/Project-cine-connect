@@ -104,12 +104,6 @@ export default function FilmsByCategory() {
         <h1 className="font-display text-5xl text-gradient-cinema">
           {category?.name ?? categorie}
         </h1>
-        <p className="text-muted-foreground">Films de la catégorie {category?.name ?? categorie}</p>
-        {!isLoading && (
-          <p className="text-sm text-muted-foreground/80">
-            {films.length} film{films.length > 1 ? "s" : ""} trouves · {ITEMS_PER_PAGE} par page
-          </p>
-        )}
       </div>
 
       {isLoading ? (
@@ -126,9 +120,9 @@ export default function FilmsByCategory() {
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-1 sm:gap-1.5 md:gap-2 justify-items-center">
             {paginatedFilms.map((film) => (
-              <FilmCard key={film.imdbID} film={film} />
+              <FilmCard key={film.imdbID} film={film} size="category" />
             ))}
           </div>
 
@@ -138,7 +132,7 @@ export default function FilmsByCategory() {
                 type="button"
                 onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
                 disabled={currentPage === 1}
-                className="px-3 py-1.5 rounded-md border border-border text-sm disabled:opacity-40 disabled:cursor-not-allowed"
+                className="px-3 py-1.5 rounded-md border border-border bg-card text-foreground text-sm hover:bg-secondary disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 Precedent
               </button>
@@ -151,7 +145,7 @@ export default function FilmsByCategory() {
                   className={`px-3 py-1.5 rounded-md border text-sm ${
                     page === currentPage
                       ? "border-primary bg-primary text-primary-foreground"
-                      : "border-border"
+                      : "border-border bg-card text-foreground hover:bg-secondary"
                   }`}
                 >
                   {page}
@@ -162,7 +156,7 @@ export default function FilmsByCategory() {
                 type="button"
                 onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))}
                 disabled={currentPage === totalPages}
-                className="px-3 py-1.5 rounded-md border border-border text-sm disabled:opacity-40 disabled:cursor-not-allowed"
+                className="px-3 py-1.5 rounded-md border border-border bg-card text-foreground text-sm hover:bg-secondary disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 Suivant
               </button>

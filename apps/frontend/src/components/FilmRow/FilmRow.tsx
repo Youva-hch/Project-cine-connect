@@ -40,7 +40,7 @@ export function FilmRow({
       transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
     >
       <h2
-        className={`font-display text-2xl md:text-3xl text-foreground mb-3 px-4 md:px-12 tracking-wide text-white ${styles.rowTitle}`}
+        className={`font-display text-2xl md:text-3xl text-foreground mb-3 px-4 md:px-12 tracking-wide ${styles.rowTitle}`}
       >
         {title}
       </h2>

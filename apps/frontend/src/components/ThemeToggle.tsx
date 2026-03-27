@@ -1,4 +1,5 @@
 import { useThemeContext } from '../contexts/ThemeContext'
+import { Moon, Sun } from 'lucide-react'
 
 interface ThemeToggleProps {
   /** Classes CSS additionnelles */
@@ -9,40 +10,26 @@ interface ThemeToggleProps {
  * Composant de toggle pour changer le thème (clair/sombre)
  */
 export function ThemeToggle({ className = '' }: ThemeToggleProps) {
-  const { resolvedTheme, setTheme } = useThemeContext()
+  const { resolvedTheme, toggleTheme } = useThemeContext()
   const isLight = resolvedTheme === 'light'
 
   return (
-    <div
-      className={`inline-flex items-center rounded-xl border border-border bg-card/90 p-1 shadow-sm backdrop-blur-sm ${className}`}
-      role="group"
-      aria-label="Sélecteur de thème"
+    <button
+      type="button"
+      onClick={toggleTheme}
+      aria-label={isLight ? 'Passer en mode sombre' : 'Passer en mode clair'}
+      title={isLight ? 'Mode sombre' : 'Mode clair'}
+      className={`inline-flex items-center gap-2 rounded-full border border-border bg-card/92 px-3 py-1.5 text-sm font-semibold text-foreground shadow-sm backdrop-blur-sm transition-all duration-200 hover:bg-card ${className}`}
     >
-      <button
-        type="button"
-        onClick={() => setTheme('light')}
-        aria-pressed={isLight}
-        className={`min-w-[86px] px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 ${
-          isLight
-            ? 'bg-white text-slate-900 shadow-sm ring-1 ring-black/10'
-            : 'text-foreground/80 hover:text-foreground hover:bg-background/60'
+      <span
+        className={`inline-flex h-6 w-6 items-center justify-center rounded-full ${
+          isLight ? 'bg-amber-100 text-amber-600' : 'bg-indigo-500/25 text-indigo-200'
         }`}
       >
-        White
-      </button>
-      <button
-        type="button"
-        onClick={() => setTheme('dark')}
-        aria-pressed={!isLight}
-        className={`min-w-[86px] px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 ${
-          !isLight
-            ? 'bg-slate-900 text-slate-100 shadow-sm ring-1 ring-white/15'
-            : 'text-foreground/80 hover:text-foreground hover:bg-background/60'
-        }`}
-      >
-        Dark
-      </button>
-    </div>
+        {isLight ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+      </span>
+      <span>{isLight ? 'Lune' : 'Soleil'}</span>
+    </button>
   )
 }
 

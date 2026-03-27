@@ -1,24 +1,39 @@
 .subtitle {
-	color: rgba(255, 255, 255, 0.55);
+	color: hsl(var(--muted-foreground));
 }
 
 .searchIcon,
 .clearSearchButton {
-	color: rgba(255, 255, 255, 0.4);
+	color: hsl(var(--muted-foreground));
 }
 
 .searchInput {
-	background: rgba(255, 255, 255, 0.05);
-	border: 1px solid rgba(255, 255, 255, 0.12);
-	color: white;
+	background: hsl(var(--card) / 0.92);
+	border: 1px solid hsl(var(--border) / 0.9);
+	color: hsl(var(--foreground));
+}
+
+.searchInput::placeholder {
+	color: hsl(var(--muted-foreground));
+}
+
+.searchInput:focus,
+.searchInput:focus-visible {
+	outline: none;
+	box-shadow: none;
 }
 
 .genreButton {
-	background: rgba(255, 255, 255, 0.06);
-	border: 1px solid rgba(255, 255, 255, 0.12);
-	color: rgba(255, 255, 255, 0.7);
+	background: hsl(var(--card) / 0.95);
+	border: 1px solid hsl(var(--border) / 0.92);
+	color: hsl(var(--foreground) / 0.82);
 	box-shadow: none;
 	transform: scale(1);
+}
+
+.genreButton:hover {
+	background: hsl(var(--secondary));
+	color: hsl(var(--foreground));
 }
 
 .genreButtonActive {
@@ -30,13 +45,17 @@
 }
 
 .resetFilters {
-	background: rgba(239, 68, 68, 0.15);
-	border: 1px solid rgba(239, 68, 68, 0.35);
-	color: rgb(252, 165, 165);
+	background: hsl(var(--destructive) / 0.14);
+	border: 1px solid hsl(var(--destructive) / 0.34);
+	color: hsl(var(--destructive));
+}
+
+.resetFilters:hover {
+	background: hsl(var(--destructive) / 0.2);
 }
 
 .emptyState {
-	color: rgba(255, 255, 255, 0.4);
+	color: hsl(var(--muted-foreground));
 }
 
 .clearFiltersLink {

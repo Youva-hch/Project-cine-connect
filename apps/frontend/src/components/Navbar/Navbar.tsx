@@ -150,7 +150,7 @@ export function Navbar() {
                   isActive ? styles.desktopLinkActive : ""
                 }`}
               >
-                <span className="relative z-10 group-hover:text-white transition-colors">
+                <span className={`relative z-10 ${styles.desktopLinkLabel}`}>
                   {item.label}
                 </span>
                 {/* Active indicator */}

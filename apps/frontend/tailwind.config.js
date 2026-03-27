@@ -8,20 +8,39 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Couleurs sémantiques pour le thème
-        background: 'var(--color-background)',
-        foreground: 'var(--color-foreground)',
-        card: 'var(--color-card)',
-        'card-foreground': 'var(--color-card-foreground)',
-        primary: 'var(--color-primary)',
-        'primary-foreground': 'var(--color-primary-foreground)',
-        secondary: 'var(--color-secondary)',
-        'secondary-foreground': 'var(--color-secondary-foreground)',
-        muted: 'var(--color-muted)',
-        'muted-foreground': 'var(--color-muted-foreground)',
-        accent: 'var(--color-accent)',
-        'accent-foreground': 'var(--color-accent-foreground)',
-        border: 'var(--color-border)',
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        primary: {
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+        },
+        secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        accent: {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
       },
     },
   },
