@@ -17,6 +17,16 @@ dotenv.config({ path: resolve(__dirname, '../../../apps/backend/.env') });
  */
 async function runMigrations() {
   try {
+    // En Upsun, on utilise PLATFORM_RELATIONSHIPS pour construire l'URL DB.
+    // Ne recharge pas les .env locaux (sinon DATABASE_URL serait réécrit avec localhost).
+    const hasPlatformRelationships = Boolean(process.env.PLATFORM_RELATIONSHIPS);
+    if (!hasPlatformRelationships) {
+      // Charger .env pour utiliser la MÊME base que le backend (ordre : package → racine → backend)
+      dotenv.config();
+      dotenv.config({ path: resolve(__dirname, '../../../.env') });
+      dotenv.config({ path: resolve(__dirname, '../../../apps/backend/.env') });
+    }
+
     const { db } = await import('./index.js');
     console.log('🔄 Running migrations...');
     const migrationsFolder = resolve(__dirname, './migrations');
