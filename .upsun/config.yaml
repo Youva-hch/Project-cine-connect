@@ -12,7 +12,7 @@ applications:
       build: |
         set -eu
         echo "[frontend] pnpm install start"
-        pnpm install --frozen-lockfile --reporter=append-only --loglevel=info
+        pnpm install --filter frontend... --frozen-lockfile --reporter=append-only --loglevel=info
         echo "[frontend] build start"
         pnpm --filter frontend build
         echo "[frontend] build done"
@@ -40,7 +40,7 @@ applications:
       build: |
         set -eu
         echo "[backend] pnpm install start"
-        pnpm install --frozen-lockfile --reporter=append-only --loglevel=info
+        pnpm install --filter backend... --frozen-lockfile --reporter=append-only --loglevel=info
         echo "[backend] build start"
         pnpm --filter backend build
         echo "[backend] build done"
