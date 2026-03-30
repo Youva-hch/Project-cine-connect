@@ -5,12 +5,14 @@ applications:
     type: "nodejs:20"
     build:
       flavor: none
-    dependencies:
-      nodejs:
-        pnpm: "8.15.0"
     hooks:
       build: |
         set -eu
+        echo "[frontend] enable corepack"
+        corepack enable
+        echo "[frontend] prepare pnpm@8.15.0"
+        corepack prepare pnpm@8.15.0 --activate
+        echo "[frontend] pnpm version: $(pnpm -v)"
         echo "[frontend] pnpm install start"
         pnpm install --filter frontend... --frozen-lockfile --reporter=append-only --loglevel=info
         echo "[frontend] build start"
@@ -33,12 +35,14 @@ applications:
     type: "nodejs:20"
     build:
       flavor: none
-    dependencies:
-      nodejs:
-        pnpm: "8.15.0"
     hooks:
       build: |
         set -eu
+        echo "[backend] enable corepack"
+        corepack enable
+        echo "[backend] prepare pnpm@8.15.0"
+        corepack prepare pnpm@8.15.0 --activate
+        echo "[backend] pnpm version: $(pnpm -v)"
         echo "[backend] pnpm install start"
         pnpm install --filter backend... --frozen-lockfile --reporter=append-only --loglevel=info
         echo "[backend] build start"
