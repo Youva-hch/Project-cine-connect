@@ -12,6 +12,7 @@ out/
 
 # Environment variables
 .env
+apps/frontend/.env
 .env.local
 .env.development.local
 .env.test.local

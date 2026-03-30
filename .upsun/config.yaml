@@ -13,6 +13,7 @@ applications:
         echo "[frontend] pnpm install start"
         pnpm install --filter frontend... --frozen-lockfile --reporter=append-only --loglevel=info
         echo "[frontend] build start"
+        unset VITE_API_URL || true
         pnpm --filter frontend build
         echo "[frontend] build done"
     web:
