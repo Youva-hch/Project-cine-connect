@@ -6,7 +6,7 @@ const ACCESS_TOKEN_KEY = 'token';
 let refreshPromise: Promise<string | null> | null = null;
 
 export const apiConfig = {
-  baseURL: API_BASE_URL || (typeof window !== 'undefined' ? '' : 'http://localhost:3000'),
+  baseURL: API_BASE_URL,
 };
 
 export function getAccessToken() {
