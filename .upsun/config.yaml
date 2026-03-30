@@ -45,8 +45,11 @@ applications:
       deploy: |
         set -eu
         echo "[backend] migrations start"
-        pnpm db:migrate
-        echo "[backend] migrations done"
+        if pnpm db:migrate; then
+          echo "[backend] migrations done"
+        else
+          echo "[backend] migrations failed, continuing startup to avoid 502"
+        fi
     web:
       commands:
         start: "node apps/backend/dist/index.js"
