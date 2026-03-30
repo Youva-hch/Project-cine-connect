@@ -9,11 +9,11 @@ applications:
       build: |
         set -eu
         echo "[frontend] prepare pnpm@8.15.0"
-        corepack prepare pnpm@8.15.0
+        npm install -g pnpm@8.15.0 --no-fund --no-audit
         echo "[frontend] pnpm install start"
-        corepack exec pnpm@8.15.0 -- pnpm install --filter frontend... --frozen-lockfile --reporter=append-only --loglevel=info
+        pnpm install --filter frontend... --frozen-lockfile --reporter=append-only --loglevel=info
         echo "[frontend] build start"
-        corepack exec pnpm@8.15.0 -- pnpm --filter frontend build
+        pnpm --filter frontend build
         echo "[frontend] build done"
     web:
       locations:
@@ -36,16 +36,16 @@ applications:
       build: |
         set -eu
         echo "[backend] prepare pnpm@8.15.0"
-        corepack prepare pnpm@8.15.0
+        npm install -g pnpm@8.15.0 --no-fund --no-audit
         echo "[backend] pnpm install start"
-        corepack exec pnpm@8.15.0 -- pnpm install --filter backend... --frozen-lockfile --reporter=append-only --loglevel=info
+        pnpm install --filter backend... --frozen-lockfile --reporter=append-only --loglevel=info
         echo "[backend] build start"
-        corepack exec pnpm@8.15.0 -- pnpm --filter backend build
+        pnpm --filter backend build
         echo "[backend] build done"
       deploy: |
         set -eu
         echo "[backend] migrations start"
-        corepack exec pnpm@8.15.0 -- pnpm db:migrate
+        pnpm db:migrate
         echo "[backend] migrations done"
     web:
       commands:
