@@ -7,7 +7,7 @@ applications:
       flavor: none
     dependencies:
       nodejs:
-        pnpm: "*"
+        pnpm: "8.15.0"
     hooks:
       build: |
         set -eu
@@ -35,7 +35,7 @@ applications:
       flavor: none
     dependencies:
       nodejs:
-        pnpm: "*"
+        pnpm: "8.15.0"
     hooks:
       build: |
         set -eu
