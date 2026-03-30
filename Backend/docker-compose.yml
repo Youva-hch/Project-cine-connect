@@ -1,0 +1,17 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:15
+    container_name: cineconnect-db
+    environment:
+      POSTGRES_USER: cineuser
+      POSTGRES_PASSWORD: cinepass
+      POSTGRES_DB: cineconnect
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:
