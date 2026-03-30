@@ -39,6 +39,8 @@ applications:
         npm install -g pnpm@8.15.0 --no-fund --no-audit
         echo "[backend] pnpm install start"
         pnpm install --filter backend... --frozen-lockfile --reporter=append-only --loglevel=info
+        echo "[backend] build database package"
+        pnpm --filter @cineconnect/database build
         echo "[backend] build start"
         pnpm --filter backend build
         echo "[backend] build done"
