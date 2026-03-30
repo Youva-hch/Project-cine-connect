@@ -1,0 +1,64 @@
+applications:
+  frontend:
+    source:
+      root: "/"
+    type: "nodejs:20"
+    build:
+      flavor: none
+    dependencies:
+      nodejs:
+        pnpm: "*"
+    hooks:
+      build: |
+        pnpm install
+        pnpm --filter frontend build
+    web:
+      locations:
+        "/":
+          root: "apps/frontend/dist"
+          index:
+            - "index.html"
+          allow: true
+          rules:
+            ^/.*$:
+              passthru: "/index.html"
+
+  backend:
+    source:
+      root: "/"
+    type: "nodejs:20"
+    build:
+      flavor: none
+    dependencies:
+      nodejs:
+        pnpm: "*"
+    hooks:
+      build: |
+        pnpm install
+        pnpm --filter backend build
+      deploy: |
+        pnpm db:migrate
+    web:
+      commands:
+        start: "node apps/backend/dist/index.js"
+      locations:
+        "/":
+          passthru: true
+    relationships:
+      database: "postgres:postgresql"
+
+services:
+  postgres:
+    type: postgresql:15
+
+routes:
+  "https://www.{default}/":
+    type: upstream
+    upstream: "frontend:http"
+  "https://www.{default}/api/":
+    type: upstream
+    upstream: "backend:http"
+  "https://{default}/":
+    type: redirect
+    to: "https://www.{default}/"
+
