@@ -41,7 +41,7 @@ export interface OmdbSearchResult {
 
 async function callOmdb(params: Record<string, string>) {
   const query = new URLSearchParams(params).toString();
-  const url = `${API_BASE}/omdb/search?${query}`;
+  const url = `${API_BASE}/api/omdb/search?${query}`;
   const res = await fetch(url);
   const json = await res.json();
   if (!res.ok || !json.success) throw new Error(json.message || 'OMDb error');
@@ -49,7 +49,7 @@ async function callOmdb(params: Record<string, string>) {
 }
 
 async function callOmdbMovie(imdbId: string) {
-  const url = `${API_BASE}/omdb/movie/${encodeURIComponent(imdbId)}`;
+  const url = `${API_BASE}/api/omdb/movie/${encodeURIComponent(imdbId)}`;
   const res = await fetch(url);
   const json = await res.json();
   if (!res.ok || !json.success) throw new Error(json.message || 'OMDb error');

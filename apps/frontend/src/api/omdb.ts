@@ -105,7 +105,7 @@ export async function searchFilms(params: SearchParams): Promise<OMDbSearchResul
   if (params.type) searchParams.set('type', params.type)
   if (params.year != null) searchParams.set('year', String(params.year))
 
-  const url = `${API_BASE}/omdb/search?${searchParams.toString()}`
+  const url = `${API_BASE}/api/omdb/search?${searchParams.toString()}`
   return fetchApi<OMDbSearchResult>(url)
 }
 
@@ -114,7 +114,7 @@ export async function searchFilms(params: SearchParams): Promise<OMDbSearchResul
  */
 export async function getFilmByImdbId(imdbId: string): Promise<OMDbMovie> {
   const encoded = encodeURIComponent(imdbId)
-  const url = `${API_BASE}/omdb/movie/${encoded}`
+  const url = `${API_BASE}/api/omdb/movie/${encoded}`
   return fetchApi<OMDbMovie>(url)
 }
 
@@ -127,6 +127,6 @@ export async function getFilmByTitle(
 ): Promise<OMDbMovie> {
   const encodedTitle = encodeURIComponent(title)
   const searchParams = year != null ? `?year=${year}` : ''
-  const url = `${API_BASE}/omdb/movie/title/${encodedTitle}${searchParams}`
+  const url = `${API_BASE}/api/omdb/movie/title/${encodedTitle}${searchParams}`
   return fetchApi<OMDbMovie>(url)
 }
