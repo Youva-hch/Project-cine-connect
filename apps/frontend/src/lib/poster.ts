@@ -5,17 +5,12 @@ export function getBestPosterUrl(
   if (!posterUrl || posterUrl === "N/A") return "";
 
   const omdbSize = options?.omdbSize ?? 1000;
-
-  // IMDb/OMDb: remplacer les variants SX/SY pour une image plus grande.
-  if (/_V1_.*\.(jpg|jpeg|png)$/i.test(posterUrl)) {
-    return posterUrl.replace(
-      /_V1_.*\.(jpg|jpeg|png)$/i,
-      `_V1_QL75_UX${omdbSize}_.jpg`
-    );
-  }
-
+  // IMDb/OMDb: certaines URLs cassent si on réécrit entièrement le suffixe _V1_...
+  // On remplace uniquement les tokens de taille quand ils existent.
   return posterUrl
-    .replace(/SX\d+/i, `SX${omdbSize}`)
-    .replace(/SY\d+/i, `SY${omdbSize}`);
+    .replace(/_SX\d+/i, `_SX${omdbSize}`)
+    .replace(/_SY\d+/i, `_SY${omdbSize}`)
+    .replace(/_UX\d+/i, `_UX${omdbSize}`)
+    .replace(/_UY\d+/i, `_UY${omdbSize}`);
 }
 
