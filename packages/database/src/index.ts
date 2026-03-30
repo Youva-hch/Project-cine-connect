@@ -40,8 +40,8 @@ function resolveDatabaseUrl(): string {
 
     const u = encodeURIComponent(username);
     const p = encodeURIComponent(password);
-    // SSL requis pour Postgres managé Upsun / Platform.sh
-    return `postgresql://${u}:${p}@${host}:${port}/${path}?sslmode=require`;
+    // Upsun/Platform.sh: connexion interne, ne pas forcer TLS ici.
+    return `postgresql://${u}:${p}@${host}:${port}/${path}`;
   }
 
   throw new Error('No database configuration found');
