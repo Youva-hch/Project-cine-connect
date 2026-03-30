@@ -8,8 +8,6 @@ applications:
     hooks:
       build: |
         set -eu
-        echo "[frontend] enable corepack"
-        corepack enable
         echo "[frontend] prepare pnpm@8.15.0"
         corepack prepare pnpm@8.15.0 --activate
         echo "[frontend] pnpm version: $(pnpm -v)"
@@ -38,8 +36,6 @@ applications:
     hooks:
       build: |
         set -eu
-        echo "[backend] enable corepack"
-        corepack enable
         echo "[backend] prepare pnpm@8.15.0"
         corepack prepare pnpm@8.15.0 --activate
         echo "[backend] pnpm version: $(pnpm -v)"
