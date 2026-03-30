@@ -78,12 +78,14 @@ app.use(passport.session());
 
 // Routes HTTP
 app.use('/health', healthRouter);
+app.use('/api/health', healthRouter);
 app.use('/api/auth', authRouter);
 app.use('/users', userRouter);
 app.use('/api/films', filmRouter);
 app.use('/api/reviews', reviewRouter);
 app.use('/categories', categoryRouter);
 app.use('/omdb', omdbRouter);
+app.use('/api/omdb', omdbRouter);
 app.use('/api/friends', friendRouter);
 app.use('/api/notifications', notificationRouter);
 app.use('/api/messages', messageRouter);
