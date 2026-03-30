@@ -5,21 +5,57 @@ dotenv.config();
 dotenv.config({ path: '../../.env' });
 dotenv.config({ path: '../../apps/backend/.env' });
 
-// Environment variables are loaded from .env file in the root
-// Make sure to set them before running drizzle-kit commands
+function resolveDatabaseUrl(): string {
+  const fromEnv = process.env.DATABASE_URL?.trim();
+  if (fromEnv) return fromEnv;
+
+  const raw = process.env.PLATFORM_RELATIONSHIPS?.trim();
+  if (raw) {
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(Buffer.from(raw, 'base64').toString('utf8'));
+    } catch {
+      throw new Error('Invalid PLATFORM_RELATIONSHIPS: failed to decode base64 or parse JSON');
+    }
+
+    const root = parsed as Record<string, unknown>;
+    const databaseRel = root.database;
+    if (!Array.isArray(databaseRel) || databaseRel.length === 0) {
+      throw new Error(
+        'PLATFORM_RELATIONSHIPS: expected non-empty "database" relationship (database: "postgres:postgresql")'
+      );
+    }
+
+    const cred = databaseRel[0] as Record<string, string | number | undefined>;
+    const hostVal = cred.host ?? cred.hostname;
+    const host = hostVal != null && String(hostVal) !== '' ? String(hostVal) : '';
+    const port =
+      cred.port != null && String(cred.port) !== '' ? String(cred.port) : '5432';
+    const username = String(cred.username ?? '');
+    const password = String(cred.password ?? '');
+
+    let path = cred.path != null && String(cred.path) !== '' ? String(cred.path) : 'postgres';
+    path = path.replace(/^\//, '') || 'postgres';
+
+    if (!host || !username) {
+      throw new Error('PLATFORM_RELATIONSHIPS: database entry missing host or username');
+    }
+
+    const u = encodeURIComponent(username);
+    const p = encodeURIComponent(password);
+    return `postgresql://${u}:${p}@${host}:${port}/${path}?sslmode=require`;
+  }
+
+  throw new Error('No database configuration found');
+}
+
+const url = resolveDatabaseUrl();
 
 export default defineConfig({
   schema: './src/schema.ts',
   out: './src/migrations',
   dialect: 'postgresql',
   dbCredentials: {
-    host: process.env.DB_HOST || 'localhost',
-    port: parseInt(process.env.DB_PORT || '5432'),
-    user: process.env.DB_USER || 'postgres',
-    password: process.env.DB_PASSWORD || 'postgres',
-    database: process.env.DB_NAME || 'cineconnect_dev',
-    ssl: false, // Désactiver SSL pour les connexions locales
+    url,
   },
 });
-
-
