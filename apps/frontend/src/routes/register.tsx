@@ -3,8 +3,7 @@ import { useState } from 'react'
 import { useAuth } from '@/context/AuthContext'
 import { register as apiRegister } from '@/api/auth'
 
-const API_BASE =
-  (import.meta.env.VITE_API_URL as string) || 'http://localhost:3000'
+const API_BASE = (import.meta.env.VITE_API_URL as string) || ''
 
 export const Route = createFileRoute('/register')({
   component: RegisterPage,

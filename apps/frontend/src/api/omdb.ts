@@ -3,8 +3,7 @@
  * Les appels passent par le backend qui possède la clé API OMDb.
  */
 
-const API_BASE =
-  (import.meta.env.VITE_API_URL as string) || 'http://localhost:3000'
+const API_BASE = (import.meta.env.VITE_API_URL as string) || ''
 
 // Types alignés sur les réponses du backend (provenant d'OMDb)
 export interface OMDbMovie {

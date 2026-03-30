@@ -30,7 +30,7 @@ let socket: Socket | null = null;
 
 function getSocket(token: string): Socket {
   if (!socket || !socket.connected) {
-    socket = io(API || "http://localhost:3000", {
+    socket = io(API || window.location.origin, {
       auth: { token },
       transports: ["websocket"],
     });

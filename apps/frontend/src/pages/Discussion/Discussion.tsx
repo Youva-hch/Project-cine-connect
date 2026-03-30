@@ -104,7 +104,7 @@ export default function Discussion() {
   useEffect(() => {
     if (!token || !user) return;
 
-    socketRef.current = io(API || "http://localhost:3000", {
+    socketRef.current = io(API || window.location.origin, {
       auth: { token },
       transports: ["websocket"],
     });

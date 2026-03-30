@@ -3,8 +3,7 @@ import { useState, useEffect } from 'react'
 import { useAuth } from '@/context/AuthContext'
 import { login as apiLogin } from '@/api/auth'
 
-const API_BASE =
-  (import.meta.env.VITE_API_URL as string) || 'http://localhost:3000'
+const API_BASE = (import.meta.env.VITE_API_URL as string) || ''
 
 export const Route = createFileRoute('/login')({
   component: LoginPage,
