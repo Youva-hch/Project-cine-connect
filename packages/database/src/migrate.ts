@@ -37,11 +37,22 @@ async function runMigrations() {
         process.exit(0);
       } catch (error) {
         lastError = error;
+        const errAny = error as any;
+        const text =
+          [
+            error instanceof Error ? error.message : undefined,
+            typeof errAny?.cause?.message === 'string' ? errAny.cause.message : undefined,
+            typeof errAny?.cause?.cause?.message === 'string' ? errAny.cause.cause.message : undefined,
+            typeof errAny?.message === 'string' ? errAny.message : undefined,
+            typeof errAny?.cause === 'string' ? errAny.cause : undefined,
+          ]
+            .filter(Boolean)
+            .join(' | ') || String(error);
+
         const transient =
-          error instanceof Error &&
-          (error.message.includes('ECONNRESET') ||
-            error.message.toLowerCase().includes('socket disconnected') ||
-            error.message.toLowerCase().includes('tls'));
+          /ECONNRESET/i.test(text) ||
+          /socket disconnected/i.test(text) ||
+          /tls/i.test(text);
 
         console.warn(
           `⚠️ Migrations attempt ${attempt}/${maxAttempts} failed${transient ? ' (transient)' : ''}.`
