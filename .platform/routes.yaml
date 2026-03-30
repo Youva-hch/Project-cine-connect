@@ -1,0 +1,12 @@
+"https://www.{default}/":
+  type: upstream
+  upstream: "frontend:http"
+
+"https://www.{default}/api/":
+  type: upstream
+  upstream: "backend:http"
+
+"https://{default}/":
+  type: redirect
+  to: "https://www.{default}/"
+

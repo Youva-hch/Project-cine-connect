@@ -1,0 +1,31 @@
+name: backend
+type: "nodejs:20"
+
+source:
+  root: "/"
+
+build:
+  flavor: none
+
+dependencies:
+  nodejs:
+    pnpm: "*"
+
+hooks:
+  build: |
+    pnpm install
+    pnpm --filter backend build
+
+  deploy: |
+    pnpm db:migrate
+
+web:
+  commands:
+    start: "node apps/backend/dist/index.js"
+  locations:
+    "/":
+      passthru: true
+
+relationships:
+  database: "postgres:postgresql"
+

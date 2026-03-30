@@ -1,0 +1,29 @@
+name: frontend
+type: "nodejs:20"
+
+source:
+  root: "/"
+
+build:
+  flavor: none
+
+dependencies:
+  nodejs:
+    pnpm: "*"
+
+hooks:
+  build: |
+    pnpm install
+    pnpm --filter frontend build
+
+web:
+  locations:
+    "/":
+      root: "apps/frontend/dist"
+      index:
+        - "index.html"
+      allow: true
+      rules:
+        ^/.*$:
+          passthru: "/index.html"
+
