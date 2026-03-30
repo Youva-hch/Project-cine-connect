@@ -9,6 +9,7 @@ import ProfilPage from './pages/ProfilPage';
 import DiscussionPage from './pages/DiscussionPage';
 import Browse from './pages/Browse';
 import NotFoundPage from "./pages/NotFoundPage";
+import AuthPage from "./pages/AuthPage";
 
 
 const rootRoute = createRootRoute({
@@ -52,6 +53,18 @@ const discussionRoute = createRoute({
   component: DiscussionPage,
 });
 
+const authRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/auth',
+  component: AuthPage,
+});
+
+const amisRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/amis',
+  component: Browse,
+});
+
 const browseRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/browse',
@@ -65,6 +78,8 @@ const routeTree = rootRoute.addChildren([
   filmRoute,
   profilRoute,
   discussionRoute,
+  authRoute,
+  amisRoute,
   browseRoute,
 ]);
 

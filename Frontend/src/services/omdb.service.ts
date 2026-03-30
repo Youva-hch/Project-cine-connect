@@ -7,9 +7,23 @@ const categorySeeds: Record<string, string[]> = {
   action: [
     "The Dark Knight",
     "Mad Max Fury Road",
-    "Gladiator",
+    "Top Gun Maverick",
     "John Wick",
-    "Mission Impossible",
+    "The Batman",
+  ],
+  adventure: [
+    "The Lord of the Rings",
+    "Harry Potter",
+    "Jurassic Park",
+    "Pirates of the Caribbean",
+    "Avatar",
+  ],
+  crime: [
+    "Joker",
+    "The Godfather",
+    "Heat",
+    "Se7en",
+    "The Departed",
   ],
   romance: [
     "27 Dresses",
@@ -38,6 +52,27 @@ const categorySeeds: Record<string, string[]> = {
     "Scream",
     "Hereditary",
     "The Ring",
+  ],
+  thriller: [
+    "Gone Girl",
+    "Prisoners",
+    "Nightcrawler",
+    "Shutter Island",
+    "The Silence of the Lambs",
+  ],
+  animation: [
+    "Spider-Man Into the Spider-Verse",
+    "Toy Story",
+    "Coco",
+    "Your Name",
+    "How to Train Your Dragon",
+  ],
+  "sci-fi": [
+    "Interstellar",
+    "Inception",
+    "Dune",
+    "Blade Runner 2049",
+    "The Matrix",
   ],
 };
 

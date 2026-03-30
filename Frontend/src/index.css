@@ -1,46 +1,46 @@
+@import url("https://fonts.googleapis.com/css2?family=Allura&family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800&display=swap");
 @import "tailwindcss";
 
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Inter", sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
   color: white;
-  background-color: #000; /* 🔥 full noir Netflix */
-
+  background-color: #050507;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-body {
-  margin: 0;
-  background: rgb(24, 148, 49);
-  min-height: 100vh;
-   font-family: 'Inter', sans-serif;
+html,
+body,
+#root {
+  min-height: 100%;
 }
 
-/* 🔗 Liens */
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: #050507;
+  color: white;
+}
+
 a {
-  font-weight: 500;
-  color: #127a339b; /* 🔥 rouge Netflix */
   text-decoration: none;
 }
 
-a:hover {
-  color: #31ff2a00;
-}
-
-/* 🎬 Titres */
- h2, h3 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   margin: 0;
 }
 
-
-
-/* 🎥 Scroll horizontal Netflix */
 ::-webkit-scrollbar {
+  width: 6px;
   height: 6px;
 }
 
@@ -49,22 +49,6 @@ a:hover {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #444;
-  border-radius: 10px;
+  background: rgba(47, 226, 156, 0.5);
+  border-radius: 999px;
 }
-
-/* 🎞️ Effet zoom images */
-img {
-  transition: transform 0.3s ease, opacity 0.3s ease;
-}
-
-img:hover {
-  transform: scale(1.05);
-}
-
-/* 🎬 Fade smooth pour changement d'affiche */
-.hero-image {
-  transition: opacity 0.4s ease-in-out;
-}
-
-/* ❌ On supprime le mode light (inutile ici) */
