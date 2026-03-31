@@ -4,8 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "pnpm --parallel run dev",
-    "build": "pnpm --recursive run build"
+    "dev": "vite",
+    "build": "vite build",
+    "lint": " eslint .",
+    "preview": "vite preview",
+    "test": "pnpm --parallel run test",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "keywords": [],
   "author": "",
@@ -13,8 +18,11 @@
   "packageManager": "pnpm@11.0.0-alpha.13",
   "type": "module",
   "devDependencies": {
+    "@vitest/coverage-v8": "^4.1.2",
     "autoprefixer": "^10.4.27",
     "postcss": "^8.5.8",
-    "tailwindcss": "^4.2.1"
+    "tailwindcss": "^4.2.1",
+    "vite": "^8.0.3",
+    "vitest": "^4.1.2"
   }
 }
