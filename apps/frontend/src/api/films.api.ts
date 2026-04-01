@@ -1,27 +1,7 @@
 import { apiRequest } from './config'
-import type { Film, Category, Review } from './types'
+import type { Film, Category, Review, FilmsQueryParams, FilmsListResponse } from '../types'
 
-export interface FilmsQueryParams {
-  search?: string
-  category?: string
-  year?: number
-  yearMin?: number
-  yearMax?: number
-  ratingMin?: number
-  ratingMax?: number
-  page?: number
-  limit?: number
-}
-
-export interface FilmsListResponse {
-  data: Film[]
-  pagination: {
-    page: number
-    limit: number
-    total: number
-    totalPages: number
-  }
-}
+export type { FilmsQueryParams, FilmsListResponse }
 
 export const filmsApi = {
   getAll: async (params?: FilmsQueryParams): Promise<FilmsListResponse> => {

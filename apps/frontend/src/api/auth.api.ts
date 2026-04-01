@@ -1,23 +1,8 @@
 import { apiRequest } from './config'
-import type { User } from './types'
+import type { User, LoginCredentials, RegisterData, AuthResponse } from '../types'
 import { clearUserCookie, getUserCookie } from '@/lib/userCookie'
 
-export interface LoginCredentials {
-  email: string
-  password: string
-}
-
-export interface RegisterData {
-  name: string
-  email: string
-  password: string
-}
-
-export interface AuthResponse {
-  token: string
-  refreshToken?: string
-  user: User
-}
+export type { LoginCredentials, RegisterData, AuthResponse }
 
 export const authApi = {
   login: async (credentials: LoginCredentials): Promise<AuthResponse> => {

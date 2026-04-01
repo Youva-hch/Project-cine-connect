@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { filmsApi } from '@/api/films.api'
-import type { FilmsQueryParams } from '@/api/films.api'
+import type { FilmsQueryParams } from '@/types'
 
 export function useFilms(params?: FilmsQueryParams) {
   return useQuery({

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
+import type { Theme } from '../types'
 
-export type Theme = 'light' | 'dark'
+export type { Theme }
 
 const THEME_STORAGE_KEY = 'cine-connect-theme'
 

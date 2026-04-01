@@ -1,4 +1,7 @@
 import 'dotenv/config';
+import type { OMDbMovie, OMDbSearchItem, OMDbSearchResult, OMDbError } from '../types.js';
+
+export type { OMDbMovie, OMDbSearchItem, OMDbSearchResult, OMDbError };
 
 const OMDB_API_URL = 'https://www.omdbapi.com/';
 const API_KEY = process.env.OMDB_API_KEY;
@@ -7,54 +10,6 @@ const CACHE_MAX_ENTRIES = Number.parseInt(process.env.OMDB_CACHE_MAX_ENTRIES ?? 
 
 if (!API_KEY) {
   console.warn('OMDB_API_KEY is not set in environment variables');
-}
-
-export interface OMDbMovie {
-  Title: string;
-  Year: string;
-  Rated: string;
-  Released: string;
-  Runtime: string;
-  Genre: string;
-  Director: string;
-  Writer: string;
-  Actors: string;
-  Plot: string;
-  Language: string;
-  Country: string;
-  Awards: string;
-  Poster: string;
-  Ratings: Array<{
-    Source: string;
-    Value: string;
-  }>;
-  Metascore: string;
-  imdbRating: string;
-  imdbVotes: string;
-  imdbID: string;
-  Type: string;
-  DVD: string;
-  BoxOffice: string;
-  Production: string;
-  Website: string;
-  Response: string;
-}
-
-export interface OMDbSearchResult {
-  Search: Array<{
-    Title: string;
-    Year: string;
-    imdbID: string;
-    Type: string;
-    Poster: string;
-  }>;
-  totalResults: string;
-  Response: string;
-}
-
-export interface OMDbError {
-  Response: string;
-  Error: string;
 }
 
 export class OMDbApiError extends Error {

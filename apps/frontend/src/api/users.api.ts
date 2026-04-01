@@ -1,5 +1,5 @@
 import { apiRequest } from './config'
-import type { User } from './types'
+import type { User } from '../types'
 
 export const usersApi = {
   getAll: async (): Promise<User[]> => {

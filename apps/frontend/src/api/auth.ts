@@ -2,18 +2,11 @@
  * API d'authentification et profil utilisateur.
  */
 
-const API_BASE = (import.meta.env.VITE_API_URL as string) || ''
+import type { User, AuthResponse } from '../types'
 
-export interface User {
-  id: number
-  email: string
-  name: string
-  avatarUrl: string | null
-  bio: string | null
-  isOnline?: boolean
-  createdAt?: string
-  updatedAt?: string
-}
+export type { User, AuthResponse }
+
+const API_BASE = (import.meta.env.VITE_API_URL as string) || ''
 
 interface ApiResponse<T> {
   success: boolean
@@ -57,11 +50,7 @@ export async function updateMe(
   return json.data
 }
 
-/** Réponse login/register */
-export interface AuthResponse {
-  token: string
-  user: User
-}
+/** Réponse login/register — définie dans @/types */
 
 /**
  * Inscription (email + mot de passe).

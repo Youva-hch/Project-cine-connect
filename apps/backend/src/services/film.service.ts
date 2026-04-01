@@ -16,18 +16,7 @@ import {
   lte,
 } from '@cineconnect/database';
 import type { NewFilm } from '@cineconnect/database';
-
-export interface FilmQueryParams {
-  search?: string;
-  category?: string;
-  year?: number;
-  yearMin?: number;
-  yearMax?: number;
-  ratingMin?: number;
-  ratingMax?: number;
-  page?: number;
-  limit?: number;
-}
+import type { FilmQueryParams } from '../types.js';
 
 export interface FilmsListResult {
   data: typeof films.$inferSelect[];

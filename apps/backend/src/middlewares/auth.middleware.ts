@@ -1,10 +1,8 @@
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
+import type { AuthRequest } from '../types.js';
 
-export interface AuthRequest extends Request {
-  userId?: number;
-  userEmail?: string;
-}
+export type { AuthRequest };
 
 const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || 'admin@cineconnect.com')
   .split(',')

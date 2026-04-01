@@ -3,50 +3,11 @@
  * Les appels passent par le backend qui possède la clé API OMDb.
  */
 
+import type { OMDbMovie, OMDbSearchItem, OMDbSearchResult, SearchParams } from '../types'
+
+export type { OMDbMovie, OMDbSearchItem, OMDbSearchResult, SearchParams }
+
 const API_BASE = (import.meta.env.VITE_API_URL as string) || ''
-
-// Types alignés sur les réponses du backend (provenant d'OMDb)
-export interface OMDbMovie {
-  Title: string
-  Year: string
-  Rated: string
-  Released: string
-  Runtime: string
-  Genre: string
-  Director: string
-  Writer: string
-  Actors: string
-  Plot: string
-  Language: string
-  Country: string
-  Awards: string
-  Poster: string
-  Ratings: Array<{ Source: string; Value: string }>
-  Metascore: string
-  imdbRating: string
-  imdbVotes: string
-  imdbID: string
-  Type: string
-  DVD: string
-  BoxOffice: string
-  Production: string
-  Website: string
-  Response: string
-}
-
-export interface OMDbSearchItem {
-  Title: string
-  Year: string
-  imdbID: string
-  Type: string
-  Poster: string
-}
-
-export interface OMDbSearchResult {
-  Search: OMDbSearchItem[]
-  totalResults: string
-  Response: string
-}
 
 interface ApiSuccess<T> {
   success: true
@@ -85,13 +46,6 @@ async function fetchApi<T>(url: string, options?: RequestInit): Promise<T> {
   }
 
   return json.data
-}
-
-export interface SearchParams {
-  s: string
-  page?: number
-  type?: 'movie' | 'series' | 'episode'
-  year?: number
 }
 
 /**
