@@ -1,16 +1,20 @@
 import { useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearch } from "@tanstack/react-router";
 import { Film } from "lucide-react";
 import styles from "./AuthCallback.module.css";
 import { setUserCookie } from "@/lib/userCookie";
 
 export default function AuthCallback() {
-  const [searchParams] = useSearchParams();
+  const search = useSearch({ strict: false }) as {
+    token?: string;
+    refreshToken?: string;
+    user?: string;
+  };
 
   useEffect(() => {
-    const token = searchParams.get("token");
-    const refreshToken = searchParams.get("refreshToken");
-    const userStr = searchParams.get("user");
+    const token = search.token;
+    const refreshToken = search.refreshToken;
+    const userStr = search.user;
 
     if (token && userStr) {
       try {
@@ -26,7 +30,7 @@ export default function AuthCallback() {
     }
     // Reload complet pour que AuthProvider relise le localStorage
     window.location.replace("/");
-  }, [searchParams]);
+  }, [search]);
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center gap-4">

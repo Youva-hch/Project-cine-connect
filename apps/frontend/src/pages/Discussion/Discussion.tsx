@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useSearchParams, Navigate } from "react-router-dom";
+import { useSearch, useNavigate, Navigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { io, Socket } from "socket.io-client";
 import { MessageCircle, Send, ArrowLeft } from "lucide-react";
@@ -62,14 +62,15 @@ function formatTime(dateStr: string) {
 
 export default function Discussion() {
   const { user, loading: authLoading } = useAuth();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const search = useSearch({ strict: false }) as { with?: string };
+  const navigate = useNavigate();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const bottomRef = useRef<HTMLDivElement>(null);
   const socketRef = useRef<Socket | null>(null);
   const token = getToken();
 
-  const selectedId = searchParams.get("with") ? parseInt(searchParams.get("with")!, 10) : null;
+  const selectedId = search.with ? parseInt(search.with, 10) : null;
 
   // Liste des amis
   const { data: friends = [] } = useQuery({
@@ -171,7 +172,7 @@ export default function Discussion() {
               return (
                 <button
                   key={f.friendshipId}
-                  onClick={() => setSearchParams({ with: String(f.otherUserId) })}
+                  onClick={() => navigate({ to: '/discussion', search: { with: String(f.otherUserId) } })}
                   className={`w-full flex items-center gap-3 px-4 py-3 transition-all text-left ${styles.friendItem} ${
                     isActive ? styles.friendItemActive : ""
                   }`}
@@ -205,7 +206,7 @@ export default function Discussion() {
             >
               {/* Bouton retour mobile */}
               <button
-                onClick={() => setSearchParams({})}
+                onClick={() => navigate({ to: '/discussion', search: {} })}
                 className={`md:hidden p-2 rounded-lg ${styles.muted50}`}
                 type="button"
               >

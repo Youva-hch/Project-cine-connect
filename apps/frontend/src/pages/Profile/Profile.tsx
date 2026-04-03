@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/hooks/useAuth';
-import { Navigate, Link, useNavigate } from 'react-router-dom';
+import { Navigate, Link, useNavigate } from '@tanstack/react-router';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useState, useEffect } from 'react';
@@ -176,7 +176,7 @@ export default function Profile() {
     onSuccess: async () => {
       await signOut();
       toast({ title: 'Compte supprimé' });
-      navigate('/auth', { replace: true });
+      navigate({ to: '/auth', replace: true });
     },
     onError: (e: unknown) => {
       toast({

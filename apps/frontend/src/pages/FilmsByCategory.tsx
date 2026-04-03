@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useParams } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { searchByGenre } from "@/lib/omdb";
 import { FilmCard } from "@/components/FilmCard";
@@ -21,7 +21,7 @@ function getPaginationWindow(currentPage: number, totalPages: number): number[] 
 }
 
 export default function FilmsByCategory() {
-  const { categorie } = useParams<{ categorie: string }>();
+  const { categorie } = useParams({ strict: false }) as { categorie: string };
   const [currentPage, setCurrentPage] = useState(1);
 
   const { data: categories } = useQuery({

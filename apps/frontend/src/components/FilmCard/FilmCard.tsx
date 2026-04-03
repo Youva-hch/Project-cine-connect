@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { Star, MessageCircle, Film } from "lucide-react";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -135,7 +135,7 @@ export function FilmCard({ film, size = "normal", eagerDetails = false }: FilmCa
               className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-xs font-semibold transition-all duration-150 hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-300 ${styles.reviewsCta}`}
               onClick={(e) => {
                 e.preventDefault();
-                navigate(`/film/${film.imdbID}`);
+                navigate({ to: `/film/${film.imdbID}` });
               }}
             >
               <MessageCircle className="h-3 w-3" />

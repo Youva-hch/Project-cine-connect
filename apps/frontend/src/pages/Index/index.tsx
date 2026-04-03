@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
 import { Star, MessageCircle } from 'lucide-react';
 import { searchMovies, getMovieById } from '../../lib/omdb';

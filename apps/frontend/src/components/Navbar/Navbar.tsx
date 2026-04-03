@@ -1,4 +1,4 @@
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { Film, MessageCircle, User, LogIn, LogOut, Menu, X, Search, Users } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
@@ -49,7 +49,7 @@ export function Navbar() {
 
   const goToFilmsSearch = () => {
     const q = filmSearch.trim();
-    navigate(q ? `/films?search=${encodeURIComponent(q)}` : "/films");
+    navigate({ to: "/films", search: q ? { search: q } : {} });
     setIsSearchOpen(false);
   };
 

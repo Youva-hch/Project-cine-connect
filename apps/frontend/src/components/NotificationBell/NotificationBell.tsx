@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Bell, UserPlus, UserCheck, MessageSquare, CheckCheck } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "@tanstack/react-router";
 import { apiRequest } from "@/api/config";
 import styles from "./NotificationBell.module.css";
 
@@ -160,7 +160,7 @@ export function NotificationBell() {
                   }`}
                   onClick={() => {
                     markRead.mutate(n.id);
-                    navigate("/amis");
+                    navigate({ to: "/amis" });
                     setOpen(false);
                   }}
                 >
@@ -191,7 +191,7 @@ export function NotificationBell() {
           {/* Footer */}
           <div className={`px-4 py-2 ${styles.footer}`}>
             <button
-              onClick={() => { navigate("/amis"); setOpen(false); }}
+              onClick={() => { navigate({ to: "/amis" }); setOpen(false); }}
               className={`text-xs w-full text-center transition-colors ${styles.actionLink}`}
               type="button"
             >

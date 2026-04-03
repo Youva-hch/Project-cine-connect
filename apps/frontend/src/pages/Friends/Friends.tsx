@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from '@tanstack/react-router';
 import { Users, UserPlus, Clock, Check, X, Search, UserX, MessageSquare } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import styles from './Friends.module.css';
@@ -190,7 +190,7 @@ export default function Friends() {
                   <p className={`text-xs ${styles.email}`}>{f.otherUserEmail}</p>
                 </div>
                 <button
-                  onClick={() => navigate(`/discussion?with=${f.otherUserId}`)}
+                  onClick={() => navigate({ to: '/discussion', search: { with: String(f.otherUserId) } })}
                   className={`p-2 rounded-lg transition-colors ${styles.messageBtn}`}
                   title="Envoyer un message"
                   type="button"

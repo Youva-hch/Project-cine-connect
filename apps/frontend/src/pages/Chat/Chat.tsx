@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { io, Socket } from "socket.io-client";
 import { Send, ArrowLeft } from "lucide-react";
@@ -54,7 +54,7 @@ function Avatar({ name, src, size = 36 }: { name: string; src?: string | null; s
 
 // ─── Page Chat ───────────────────────────────────────────────────────────
 export default function Chat() {
-  const { friendId } = useParams<{ friendId: string }>();
+  const { friendId } = useParams({ strict: false }) as { friendId: string };
   const navigate = useNavigate();
   const { user } = useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
@@ -151,7 +151,7 @@ export default function Chat() {
       {/* Header */}
       <div className={`flex items-center gap-3 px-4 py-3 flex-shrink-0 border-b ${styles.header}`}>
         <button
-          onClick={() => navigate("/amis")}
+          onClick={() => navigate({ to: "/amis" })}
           className={`p-2 rounded-lg transition-colors ${styles.headerMuted}`}
           type="button"
         >

@@ -1,4 +1,4 @@
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getMovieById } from "@/lib/omdb";
 import { Clock, Globe, Award, User, Star, MessageCircle, Pencil, Trash2, Loader2, X } from "lucide-react";
@@ -121,7 +121,7 @@ function EditReviewForm({ review, imdbId, onDone }: { review: Review; imdbId: st
 }
 
 export default function FilmDetail() {
-  const { id: imdbId } = useParams<{ id: string }>();
+  const { id: imdbId } = useParams({ strict: false }) as { id: string };
   const { user } = useAuth();
   const queryClient = useQueryClient();
 

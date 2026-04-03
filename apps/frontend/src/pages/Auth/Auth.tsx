@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/useAuth";
 import { Input } from "@/components/ui/input";
 import { Film, Star, Eye, EyeOff, AlertCircle } from "lucide-react";
@@ -10,19 +10,27 @@ const API_BASE = import.meta.env.VITE_API_URL || '';
 
 type AuthMode = "login" | "register" | "forgot" | "reset";
 
-function resolveMode(searchParams: URLSearchParams): AuthMode {
-  const mode = searchParams.get("mode");
+interface AuthSearch {
+  mode?: string;
+  token?: string;
+  email?: string;
+  error?: string;
+  message?: string;
+}
+
+function resolveMode(search: AuthSearch): AuthMode {
+  const mode = search.mode;
   if (mode === "forgot") return "forgot";
-  if (mode === "reset" && searchParams.get("token") && searchParams.get("email")) return "reset";
+  if (mode === "reset" && search.token && search.email) return "reset";
   return "login";
 }
 
 export default function Auth() {
-  const [searchParams] = useSearchParams();
-  const [mode, setMode] = useState<AuthMode>(() => resolveMode(searchParams));
+  const search = useSearch({ strict: false }) as AuthSearch;
+  const [mode, setMode] = useState<AuthMode>(() => resolveMode(search));
   const [email, setEmail] = useState("");
-  const [resetEmail, setResetEmail] = useState(searchParams.get("email") || "");
-  const [resetToken, setResetToken] = useState(searchParams.get("token") || "");
+  const [resetEmail, setResetEmail] = useState(search.email || "");
+  const [resetToken, setResetToken] = useState(search.token || "");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [username, setUsername] = useState("");
@@ -31,8 +39,8 @@ export default function Auth() {
   const { signIn, signUp, requestPasswordReset, resetPassword } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const errorMessage = searchParams.get("message");
-  const isAuthFailed = searchParams.get("error") === "auth_failed";
+  const errorMessage = search.message;
+  const isAuthFailed = search.error === "auth_failed";
 
   const isLogin = mode === "login";
   const isRegister = mode === "register";
@@ -61,10 +69,10 @@ export default function Auth() {
   };
 
   useEffect(() => {
-    setMode(resolveMode(searchParams));
-    setResetEmail(searchParams.get("email") || "");
-    setResetToken(searchParams.get("token") || "");
-  }, [searchParams]);
+    setMode(resolveMode(search));
+    setResetEmail(search.email || "");
+    setResetToken(search.token || "");
+  }, [search]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,7 +80,7 @@ export default function Auth() {
     try {
       if (isLogin) {
         await signIn(email, password);
-        navigate("/");
+        navigate({ to: "/" });
       } else if (isRegister) {
         await signUp(email, password, username);
         toast({ title: "Compte créé !", description: "Bienvenue sur CinéConnect." });
@@ -104,7 +112,7 @@ export default function Auth() {
         setResetToken("");
         setResetEmail("");
         setMode("login");
-        navigate("/auth", { replace: true });
+        navigate({ to: "/auth", replace: true });
       }
     } catch (err: unknown) {
       toast({ title: "Erreur", description: err instanceof Error ? err.message : "Erreur", variant: "destructive" });
@@ -310,7 +318,7 @@ export default function Auth() {
                 type="button"
                 onClick={() => {
                   setMode("login");
-                  navigate("/auth", { replace: true });
+                  navigate({ to: "/auth", replace: true });
                 }}
                 className={`w-full text-xs font-medium hover:opacity-80 ${styles.greenLink}`}
               >

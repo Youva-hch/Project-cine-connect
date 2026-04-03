@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { Link, Navigate, useParams } from 'react-router-dom';
+import { Link, Navigate, useParams } from '@tanstack/react-router';
 import { Calendar, ChevronRight, Film, MessageCircle, Star } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { apiRequest } from '@/api/config';
@@ -51,7 +51,7 @@ function formatReviewDate(dateStr: string) {
 }
 
 export default function PublicProfile() {
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams({ strict: false }) as { id: string };
   const { user: connectedUser, loading } = useAuth();
 
   const userId = Number(id);
