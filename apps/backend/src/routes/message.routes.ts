@@ -4,6 +4,8 @@ import type { AuthRequest } from '../middlewares/auth.middleware.js';
 import { Response } from 'express';
 import { MessageService } from '../services/message.service.js';
 import { FriendService } from '../services/friend.service.js';
+import { validate } from '../middlewares/validate.middleware.js';
+import { messageFriendIdParamSchema } from '../validators/schemas.js';
 
 export const messageRouter: IRouter = Router();
 
@@ -37,11 +39,10 @@ export const messageRouter: IRouter = Router();
  *       401:
  *         description: Non authentifié
  */
-messageRouter.get('/:friendId', requireAuth, async (req: AuthRequest, res: Response) => {
+messageRouter.get('/:friendId', requireAuth, validate(messageFriendIdParamSchema), async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.userId!;
-    const friendId = parseInt(req.params.friendId, 10);
-    if (isNaN(friendId)) return res.status(400).json({ success: false, message: 'ID invalide' });
+    const friendId = req.params.friendId as unknown as number;
 
     // Vérifier qu'ils sont amis
     const friendship = await FriendService.getFriendshipStatus(userId, friendId);

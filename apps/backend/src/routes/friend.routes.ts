@@ -1,6 +1,13 @@
 import { Router, type IRouter } from 'express';
 import { FriendController } from '../controllers/friend.controller.js';
 import { requireAuth } from '../middlewares/auth.middleware.js';
+import { validate } from '../middlewares/validate.middleware.js';
+import {
+  targetIdParamSchema,
+  friendshipIdParamSchema,
+  friendIdParamSchema,
+  searchUsersQuerySchema,
+} from '../validators/schemas.js';
 
 export const friendRouter: IRouter = Router();
 
@@ -32,7 +39,7 @@ export const friendRouter: IRouter = Router();
  *       401:
  *         description: Non authentifié
  */
-friendRouter.get('/search', requireAuth, FriendController.searchUsers);
+friendRouter.get('/search', requireAuth, validate(searchUsersQuerySchema), FriendController.searchUsers);
 
 /**
  * @swagger
@@ -57,7 +64,7 @@ friendRouter.get('/search', requireAuth, FriendController.searchUsers);
  *       401:
  *         description: Non authentifié
  */
-friendRouter.post('/request/:targetId', requireAuth, FriendController.sendRequest);
+friendRouter.post('/request/:targetId', requireAuth, validate(targetIdParamSchema), FriendController.sendRequest);
 
 /**
  * @swagger
@@ -112,7 +119,7 @@ friendRouter.get('/sent', requireAuth, FriendController.getSentRequests);
  *       404:
  *         description: Demande introuvable
  */
-friendRouter.patch('/requests/:id/accept', requireAuth, FriendController.acceptRequest);
+friendRouter.patch('/requests/:id/accept', requireAuth, validate(friendshipIdParamSchema), FriendController.acceptRequest);
 
 /**
  * @swagger
@@ -135,7 +142,7 @@ friendRouter.patch('/requests/:id/accept', requireAuth, FriendController.acceptR
  *       404:
  *         description: Demande introuvable
  */
-friendRouter.patch('/requests/:id/reject', requireAuth, FriendController.rejectRequest);
+friendRouter.patch('/requests/:id/reject', requireAuth, validate(friendshipIdParamSchema), FriendController.rejectRequest);
 
 /**
  * @swagger
@@ -157,7 +164,7 @@ friendRouter.patch('/requests/:id/reject', requireAuth, FriendController.rejectR
  *       401:
  *         description: Non authentifié
  */
-friendRouter.get('/status/:targetId', requireAuth, FriendController.getStatus);
+friendRouter.get('/status/:targetId', requireAuth, validate(targetIdParamSchema), FriendController.getStatus);
 
 /**
  * @swagger
@@ -195,4 +202,4 @@ friendRouter.get('/', requireAuth, FriendController.getFriends);
  *       404:
  *         description: Ami introuvable
  */
-friendRouter.delete('/:friendId', requireAuth, FriendController.removeFriend);
+friendRouter.delete('/:friendId', requireAuth, validate(friendIdParamSchema), FriendController.removeFriend);

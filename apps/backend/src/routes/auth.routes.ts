@@ -1,5 +1,7 @@
 import { Router, type IRouter } from 'express';
 import { AuthController } from '../controllers/auth.controller.js';
+import { validate } from '../middlewares/validate.middleware.js';
+import { registerSchema, loginSchema, forgotPasswordSchema, resetPasswordSchema } from '../validators/schemas.js';
 
 const router: IRouter = Router();
 
@@ -39,7 +41,7 @@ const router: IRouter = Router();
  *       400:
  *         description: Email déjà utilisé ou données invalides
  */
-router.post('/register', AuthController.register);
+router.post('/register', validate(registerSchema), AuthController.register);
 
 /**
  * @swagger
@@ -67,7 +69,7 @@ router.post('/register', AuthController.register);
  *       401:
  *         description: Email ou mot de passe incorrect
  */
-router.post('/login', AuthController.login);
+router.post('/login', validate(loginSchema), AuthController.login);
 
 /**
  * @swagger
@@ -90,7 +92,7 @@ router.post('/login', AuthController.login);
  *       200:
  *         description: Email envoyé (ou réponse neutre si compte introuvable)
  */
-router.post('/forgot-password', AuthController.forgotPassword);
+router.post('/forgot-password', validate(forgotPasswordSchema), AuthController.forgotPassword);
 
 /**
  * @swagger
@@ -118,7 +120,7 @@ router.post('/forgot-password', AuthController.forgotPassword);
  *       400:
  *         description: Token invalide ou expiré
  */
-router.post('/reset-password', AuthController.resetPassword);
+router.post('/reset-password', validate(resetPasswordSchema), AuthController.resetPassword);
 
 /**
  * @swagger

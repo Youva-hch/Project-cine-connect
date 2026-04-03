@@ -1,6 +1,8 @@
 import { Router, type IRouter } from 'express';
 import { NotificationController } from '../controllers/notification.controller.js';
 import { requireAuth } from '../middlewares/auth.middleware.js';
+import { validate } from '../middlewares/validate.middleware.js';
+import { notificationIdParamSchema } from '../validators/schemas.js';
 
 export const notificationRouter: IRouter = Router();
 
@@ -95,4 +97,4 @@ notificationRouter.patch('/read-all', requireAuth, NotificationController.markAl
  *       401:
  *         description: Non authentifié
  */
-notificationRouter.patch('/:id/read', requireAuth, NotificationController.markRead);
+notificationRouter.patch('/:id/read', requireAuth, validate(notificationIdParamSchema), NotificationController.markRead);

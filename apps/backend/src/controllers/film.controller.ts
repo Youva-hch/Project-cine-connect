@@ -17,18 +17,18 @@ export class FilmController {
   static async getAllFilms(req: Request, res: Response) {
     try {
       const { search, category, year, yearMin, yearMax, ratingMin, ratingMax, page, limit } =
-        req.query;
+        req.query as any;
 
       const result = await FilmService.getAllFilms({
-        search: search as string | undefined,
-        category: category as string | undefined,
-        year: year ? parseInt(year as string, 10) : undefined,
-        yearMin: yearMin ? parseInt(yearMin as string, 10) : undefined,
-        yearMax: yearMax ? parseInt(yearMax as string, 10) : undefined,
-        ratingMin: ratingMin != null ? parseFloat(ratingMin as string) : undefined,
-        ratingMax: ratingMax != null ? parseFloat(ratingMax as string) : undefined,
-        page: page ? parseInt(page as string, 10) : undefined,
-        limit: limit ? parseInt(limit as string, 10) : undefined,
+        search,
+        category,
+        year,
+        yearMin,
+        yearMax,
+        ratingMin,
+        ratingMax,
+        page,
+        limit,
       });
 
       res.json({
@@ -57,13 +57,7 @@ export class FilmController {
    */
   static async getFilmById(req: Request, res: Response) {
     try {
-      const id = parseInt(req.params.id, 10);
-      if (isNaN(id)) {
-        return res.status(400).json({
-          success: false,
-          message: 'ID invalide',
-        });
-      }
+      const id = req.params.id as unknown as number;
 
       const film = await FilmService.getFilmById(id);
       if (!film) {
@@ -134,21 +128,14 @@ export class FilmController {
       const { title, description, director, releaseYear, durationMinutes, posterUrl, categoryIds } =
         req.body;
 
-      if (!title || typeof title !== 'string' || !title.trim()) {
-        return res.status(400).json({
-          success: false,
-          message: 'Le titre est requis',
-        });
-      }
-
       const film = await FilmService.createFilm({
-        title: title.trim(),
+        title,
         description: description ?? null,
         director: director ?? null,
-        releaseYear: releaseYear != null ? parseInt(String(releaseYear), 10) : null,
-        durationMinutes: durationMinutes != null ? parseInt(String(durationMinutes), 10) : null,
+        releaseYear: releaseYear ?? null,
+        durationMinutes: durationMinutes ?? null,
         posterUrl: posterUrl ?? null,
-        categoryIds: Array.isArray(categoryIds) ? categoryIds.map(Number).filter(Boolean) : undefined,
+        categoryIds: Array.isArray(categoryIds) ? categoryIds : undefined,
       });
 
       if (!film) {
@@ -176,31 +163,20 @@ export class FilmController {
    */
   static async updateFilm(req: Request, res: Response) {
     try {
-      const id = parseInt(req.params.id, 10);
-      if (isNaN(id)) {
-        return res.status(400).json({
-          success: false,
-          message: 'ID invalide',
-        });
-      }
+      const id = req.params.id as unknown as number;
 
       const { title, description, director, releaseYear, durationMinutes, posterUrl, categoryIds } =
         req.body;
 
       const film = await FilmService.updateFilm(id, {
-        ...(title !== undefined && { title: typeof title === 'string' ? title.trim() : title }),
+        ...(title !== undefined && { title }),
         ...(description !== undefined && { description }),
         ...(director !== undefined && { director }),
-        ...(releaseYear !== undefined && {
-          releaseYear: releaseYear == null ? null : parseInt(String(releaseYear), 10),
-        }),
-        ...(durationMinutes !== undefined && {
-          durationMinutes:
-            durationMinutes == null ? null : parseInt(String(durationMinutes), 10),
-        }),
+        ...(releaseYear !== undefined && { releaseYear }),
+        ...(durationMinutes !== undefined && { durationMinutes }),
         ...(posterUrl !== undefined && { posterUrl }),
         ...(categoryIds !== undefined && {
-          categoryIds: Array.isArray(categoryIds) ? categoryIds.map(Number).filter(Boolean) : [],
+          categoryIds: Array.isArray(categoryIds) ? categoryIds : [],
         }),
       });
 
@@ -229,13 +205,7 @@ export class FilmController {
    */
   static async deleteFilm(req: Request, res: Response) {
     try {
-      const id = parseInt(req.params.id, 10);
-      if (isNaN(id)) {
-        return res.status(400).json({
-          success: false,
-          message: 'ID invalide',
-        });
-      }
+      const id = req.params.id as unknown as number;
 
       const deleted = await FilmService.deleteFilm(id);
       if (!deleted) {
@@ -263,13 +233,7 @@ export class FilmController {
    */
   static async getFilmReviews(req: Request, res: Response) {
     try {
-      const id = parseInt(req.params.id, 10);
-      if (isNaN(id)) {
-        return res.status(400).json({
-          success: false,
-          message: 'ID invalide',
-        });
-      }
+      const id = req.params.id as unknown as number;
 
       const reviews = await FilmService.getFilmReviews(id);
       return res.json({
@@ -290,26 +254,14 @@ export class FilmController {
    */
   static async createReview(req: AuthRequest, res: Response) {
     try {
-      const filmId = parseInt(req.params.id, 10);
-      if (isNaN(filmId)) {
-        return res.status(400).json({ success: false, message: 'ID film invalide' });
-      }
-
+      const filmId = req.params.id as unknown as number;
       const { rating, comment } = req.body;
-      const ratingNum = parseInt(String(rating), 10);
-
-      if (!rating || isNaN(ratingNum) || ratingNum < 1 || ratingNum > 5) {
-        return res.status(400).json({
-          success: false,
-          message: 'La note doit être un entier entre 1 et 5',
-        });
-      }
 
       const review = await FilmService.createReview({
         userId: req.userId!,
         filmId,
-        rating: ratingNum,
-        comment: typeof comment === 'string' ? comment.trim() : undefined,
+        rating,
+        comment: typeof comment === 'string' ? comment : undefined,
       });
 
       return res.status(201).json({ success: true, data: review });
@@ -345,7 +297,7 @@ export class FilmController {
         title,
         posterUrl,
         director,
-        releaseYear: releaseYear ? parseInt(String(releaseYear), 10) : undefined,
+        releaseYear: releaseYear ?? undefined,
         description,
       });
 

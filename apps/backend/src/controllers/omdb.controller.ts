@@ -113,19 +113,12 @@ export class OMDbController {
    */
   static async search(req: Request, res: Response) {
     try {
-      const { s: searchTerm, page, type, year } = req.query;
-
-      if (!searchTerm || typeof searchTerm !== 'string') {
-        return res.status(400).json({
-          success: false,
-          message: 'Le paramètre "s" (searchTerm) est requis',
-        });
-      }
+      const { s: searchTerm, page, type, year } = req.query as any;
 
       const result = await OMDbService.search(searchTerm, {
-        page: page ? parseInt(page as string, 10) : undefined,
-        type: type as 'movie' | 'series' | 'episode' | undefined,
-        year: year ? parseInt(year as string, 10) : undefined,
+        page,
+        type,
+        year,
       });
 
       return res.json({
@@ -166,13 +159,6 @@ export class OMDbController {
   static async getByImdbId(req: Request, res: Response) {
     try {
       const { imdbId } = req.params;
-
-      if (!imdbId) {
-        return res.status(400).json({
-          success: false,
-          message: 'ID IMDb requis',
-        });
-      }
 
       const movie = await OMDbService.getByImdbId(imdbId);
 

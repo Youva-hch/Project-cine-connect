@@ -1,6 +1,16 @@
 import { Router, type IRouter } from 'express';
 import { FilmController } from '../controllers/film.controller.js';
 import { requireAdmin, requireAuth } from '../middlewares/auth.middleware.js';
+import { validate } from '../middlewares/validate.middleware.js';
+import {
+  getAllFilmsQuerySchema,
+  filmIdParamSchema,
+  createFilmSchema,
+  updateFilmSchema,
+  createReviewSchema,
+  omdbSyncSchema,
+  reviewsByImdbIdSchema,
+} from '../validators/schemas.js';
 
 const router: IRouter = Router();
 
@@ -37,7 +47,7 @@ const router: IRouter = Router();
  *       200:
  *         description: Liste des films
  */
-router.get('/', FilmController.getAllFilms);
+router.get('/', validate(getAllFilmsQuerySchema), FilmController.getAllFilms);
 
 /**
  * @swagger
@@ -62,7 +72,7 @@ router.get('/', FilmController.getAllFilms);
  *       400:
  *         description: Données invalides
  */
-router.post('/omdb-sync', FilmController.omdbSync);
+router.post('/omdb-sync', validate(omdbSyncSchema), FilmController.omdbSync);
 
 /**
  * @swagger
@@ -86,7 +96,7 @@ router.post('/omdb-sync', FilmController.omdbSync);
 router.get('/category/:slug', FilmController.getFilmsByCategory);
 
 // GET /api/films/by-imdb/:imdbId/reviews - Reviews par imdbId
-router.get('/by-imdb/:imdbId/reviews', FilmController.getReviewsByImdbId);
+router.get('/by-imdb/:imdbId/reviews', validate(reviewsByImdbIdSchema), FilmController.getReviewsByImdbId);
 
 /**
  * @swagger
@@ -136,8 +146,8 @@ router.get('/by-imdb/:imdbId/reviews', FilmController.getReviewsByImdbId);
  *       401:
  *         description: Token manquant ou invalide
  */
-router.get('/:id/reviews', FilmController.getFilmReviews);
-router.post('/:id/reviews', requireAuth, FilmController.createReview as any);
+router.get('/:id/reviews', validate(filmIdParamSchema), FilmController.getFilmReviews);
+router.post('/:id/reviews', requireAuth, validate(createReviewSchema), FilmController.createReview as any);
 
 /**
  * @swagger
@@ -189,9 +199,9 @@ router.post('/:id/reviews', requireAuth, FilmController.createReview as any);
  *       403:
  *         description: Accès refusé
  */
-router.get('/:id', FilmController.getFilmById);
-router.patch('/:id', requireAdmin, FilmController.updateFilm);
-router.delete('/:id', requireAdmin, FilmController.deleteFilm);
+router.get('/:id', validate(filmIdParamSchema), FilmController.getFilmById);
+router.patch('/:id', requireAdmin, validate(updateFilmSchema), FilmController.updateFilm);
+router.delete('/:id', requireAdmin, validate(filmIdParamSchema), FilmController.deleteFilm);
 
 /**
  * @swagger
@@ -218,6 +228,6 @@ router.delete('/:id', requireAdmin, FilmController.deleteFilm);
  *       403:
  *         description: Accès refusé
  */
-router.post('/', requireAdmin, FilmController.createFilm);
+router.post('/', requireAdmin, validate(createFilmSchema), FilmController.createFilm);
 
 export { router as filmRouter };

@@ -7,8 +7,7 @@ export class FriendController {
   static async sendRequest(req: AuthRequest, res: Response) {
     try {
       const senderId = req.userId!;
-      const targetId = parseInt(req.params.targetId, 10);
-      if (isNaN(targetId)) return res.status(400).json({ success: false, message: 'ID invalide' });
+      const targetId = req.params.targetId as unknown as number;
 
       const friendship = await FriendService.sendFriendRequest(senderId, targetId);
       return res.status(201).json({ success: true, data: friendship });
@@ -37,8 +36,7 @@ export class FriendController {
 
   static async acceptRequest(req: AuthRequest, res: Response) {
     try {
-      const friendshipId = parseInt(req.params.id, 10);
-      if (isNaN(friendshipId)) return res.status(400).json({ success: false, message: 'ID invalide' });
+      const friendshipId = req.params.id as unknown as number;
 
       await FriendService.acceptRequest(friendshipId, req.userId!);
       return res.json({ success: true });
@@ -49,8 +47,7 @@ export class FriendController {
 
   static async rejectRequest(req: AuthRequest, res: Response) {
     try {
-      const friendshipId = parseInt(req.params.id, 10);
-      if (isNaN(friendshipId)) return res.status(400).json({ success: false, message: 'ID invalide' });
+      const friendshipId = req.params.id as unknown as number;
 
       await FriendService.rejectRequest(friendshipId, req.userId!);
       return res.json({ success: true });
@@ -70,8 +67,7 @@ export class FriendController {
 
   static async removeFriend(req: AuthRequest, res: Response) {
     try {
-      const friendId = parseInt(req.params.friendId, 10);
-      if (isNaN(friendId)) return res.status(400).json({ success: false, message: 'ID invalide' });
+      const friendId = req.params.friendId as unknown as number;
 
       await FriendService.removeFriend(req.userId!, friendId);
       return res.json({ success: true });
@@ -82,8 +78,7 @@ export class FriendController {
 
   static async getStatus(req: AuthRequest, res: Response) {
     try {
-      const targetId = parseInt(req.params.targetId, 10);
-      if (isNaN(targetId)) return res.status(400).json({ success: false, message: 'ID invalide' });
+      const targetId = req.params.targetId as unknown as number;
 
       const status = await FriendService.getFriendshipStatus(req.userId!, targetId);
       return res.json({ success: true, data: status });

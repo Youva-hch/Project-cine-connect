@@ -37,8 +37,7 @@ export class NotificationController {
     }
 
     try {
-      const id = parseInt(req.params.id, 10);
-      if (isNaN(id)) return res.status(400).json({ success: false, message: 'ID invalide' });
+      const id = req.params.id as unknown as number;
 
       await NotificationService.markAsRead(id, req.userId);
       return res.json({ success: true });

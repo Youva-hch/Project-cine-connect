@@ -8,26 +8,12 @@ export class ReviewController {
    */
   static async updateReview(req: AuthRequest, res: Response) {
     try {
-      const reviewId = parseInt(req.params.id, 10);
-      if (isNaN(reviewId)) {
-        return res.status(400).json({ success: false, message: 'ID avis invalide' });
-      }
-
+      const reviewId = req.params.id as unknown as number;
       const { rating, comment } = req.body;
 
-      if (rating !== undefined) {
-        const ratingNum = parseInt(String(rating), 10);
-        if (isNaN(ratingNum) || ratingNum < 1 || ratingNum > 5) {
-          return res.status(400).json({
-            success: false,
-            message: 'La note doit être un entier entre 1 et 5',
-          });
-        }
-      }
-
       const data: { rating?: number; comment?: string } = {};
-      if (rating !== undefined) data.rating = parseInt(String(rating), 10);
-      if (comment !== undefined) data.comment = typeof comment === 'string' ? comment.trim() : comment;
+      if (rating !== undefined) data.rating = rating;
+      if (comment !== undefined) data.comment = comment;
 
       const result = await FilmService.updateReview(reviewId, req.userId!, data);
 
@@ -50,10 +36,7 @@ export class ReviewController {
    */
   static async deleteReview(req: AuthRequest, res: Response) {
     try {
-      const reviewId = parseInt(req.params.id, 10);
-      if (isNaN(reviewId)) {
-        return res.status(400).json({ success: false, message: 'ID avis invalide' });
-      }
+      const reviewId = req.params.id as unknown as number;
 
       const result = await FilmService.deleteReview(reviewId, req.userId!);
 

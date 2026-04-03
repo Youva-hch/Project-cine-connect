@@ -1,5 +1,7 @@
 import { Router, type IRouter } from 'express';
 import { OMDbController } from '../controllers/omdb.controller.js';
+import { validate } from '../middlewares/validate.middleware.js';
+import { omdbSearchQuerySchema, omdbImdbIdParamSchema, omdbTitleParamSchema } from '../validators/schemas.js';
 
 const router: IRouter = Router();
 
@@ -7,13 +9,13 @@ const router: IRouter = Router();
 router.get('/cache', OMDbController.getCache);
 
 // GET /omdb/search - Recherche de films
-router.get('/search', OMDbController.search);
+router.get('/search', validate(omdbSearchQuerySchema), OMDbController.search);
 
 // GET /omdb/movie/title/:title - Récupère un film par titre
-router.get('/movie/title/:title', OMDbController.getByTitle);
+router.get('/movie/title/:title', validate(omdbTitleParamSchema), OMDbController.getByTitle);
 
 // GET /omdb/movie/:imdbId - Récupère un film par ID IMDb
-router.get('/movie/:imdbId', OMDbController.getByImdbId);
+router.get('/movie/:imdbId', validate(omdbImdbIdParamSchema), OMDbController.getByImdbId);
 
 // POST /omdb/sync - Synchronise les films depuis OMDb vers la base de données
 router.post('/sync', OMDbController.syncFilms);

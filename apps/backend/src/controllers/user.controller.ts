@@ -11,10 +11,7 @@ export class UserController {
    */
   static async getUserStatsById(req: Request, res: Response) {
     try {
-      const id = parseInt(req.params.id, 10);
-      if (isNaN(id)) {
-        return res.status(400).json({ success: false, message: 'ID invalide' });
-      }
+      const id = req.params.id as unknown as number;
 
       const user = await UserService.getUserById(id);
       if (!user) {
@@ -37,10 +34,7 @@ export class UserController {
    */
   static async getUserReviewsById(req: Request, res: Response) {
     try {
-      const id = parseInt(req.params.id, 10);
-      if (isNaN(id)) {
-        return res.status(400).json({ success: false, message: 'ID invalide' });
-      }
+      const id = req.params.id as unknown as number;
 
       const user = await UserService.getUserById(id);
       if (!user) {
@@ -68,24 +62,7 @@ export class UserController {
         return res.status(401).json({ success: false, message: 'Non authentifié' });
       }
 
-      const { currentPassword, newPassword } = req.body as {
-        currentPassword?: string;
-        newPassword?: string;
-      };
-
-      if (!currentPassword || !newPassword) {
-        return res.status(400).json({
-          success: false,
-          message: 'Mot de passe actuel et nouveau mot de passe requis',
-        });
-      }
-
-      if (newPassword.length < 6) {
-        return res.status(400).json({
-          success: false,
-          message: 'Le nouveau mot de passe doit contenir au moins 6 caractères',
-        });
-      }
+      const { currentPassword, newPassword } = req.body;
 
       const result = await UserService.changePassword(userId, currentPassword, newPassword);
       if (!result.ok) {
@@ -211,13 +188,7 @@ export class UserController {
    */
   static async getUserById(req: Request, res: Response) {
     try {
-      const id = parseInt(req.params.id, 10);
-      if (isNaN(id)) {
-        return res.status(400).json({
-          success: false,
-          message: 'ID invalide',
-        });
-      }
+      const id = req.params.id as unknown as number;
 
       const user = await UserService.getUserById(id);
       if (!user) {
@@ -255,11 +226,7 @@ export class UserController {
         });
       }
 
-      const { name, bio, avatarUrl } = req.body as {
-        name?: string;
-        bio?: string | null;
-        avatarUrl?: string | null;
-      };
+      const { name, bio, avatarUrl } = req.body;
 
       const updated = await UserService.updateUser(userId, {
         name,

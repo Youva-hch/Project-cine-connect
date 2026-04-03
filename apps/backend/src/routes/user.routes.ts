@@ -1,6 +1,8 @@
 import { Router, type IRouter } from 'express';
 import { UserController } from '../controllers/user.controller.js';
 import { requireAuth } from '../middlewares/auth.middleware.js';
+import { validate } from '../middlewares/validate.middleware.js';
+import { userIdParamSchema, updateMeSchema, changePasswordSchema } from '../validators/schemas.js';
 
 const router: IRouter = Router();
 
@@ -8,10 +10,10 @@ const router: IRouter = Router();
 router.get('/', UserController.getAllUsers);
 
 // PATCH /users/me - Met à jour le profil (authentification requise)
-router.patch('/me', requireAuth, UserController.updateMe);
+router.patch('/me', requireAuth, validate(updateMeSchema), UserController.updateMe);
 
 // PATCH /users/me/password - Changer son mot de passe
-router.patch('/me/password', requireAuth, UserController.changeMyPassword);
+router.patch('/me/password', requireAuth, validate(changePasswordSchema), UserController.changeMyPassword);
 
 // DELETE /users/me - Supprimer son compte
 router.delete('/me', requireAuth, UserController.deleteMe);
@@ -23,13 +25,13 @@ router.get('/me/reviews', requireAuth, UserController.getMyReviews);
 router.get('/me/stats', requireAuth, UserController.getMyStats);
 
 // GET /users/:id/reviews - Avis publics d'un utilisateur
-router.get('/:id/reviews', UserController.getUserReviewsById);
+router.get('/:id/reviews', validate(userIdParamSchema), UserController.getUserReviewsById);
 
 // GET /users/:id/stats - Statistiques publiques d'un utilisateur
-router.get('/:id/stats', UserController.getUserStatsById);
+router.get('/:id/stats', validate(userIdParamSchema), UserController.getUserStatsById);
 
 // GET /users/:id - Récupère un utilisateur par son ID
-router.get('/:id', UserController.getUserById);
+router.get('/:id', validate(userIdParamSchema), UserController.getUserById);
 
 export { router as userRouter };
 

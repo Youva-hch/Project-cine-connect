@@ -20,7 +20,7 @@ export function useTheme() {
   const applyTheme = useCallback((themeValue: Theme) => {
     const root = document.documentElement
     root.classList.remove('light', 'dark')
-    root.classList.add(themeValue)
+    root.classList.add(themeValue)  
     setResolvedTheme(themeValue)
   }, [])
 

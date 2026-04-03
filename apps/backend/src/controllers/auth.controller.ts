@@ -119,20 +119,9 @@ export class AuthController {
    */
   static async register(req: Request, res: Response) {
     try {
-      const { email, name, password } = req.body as { email?: string; name?: string; password?: string };
-      if (!email?.trim() || !name?.trim() || !password) {
-        return res.status(400).json({
-          success: false,
-          message: 'Email, nom et mot de passe requis',
-        });
-      }
-      if (password.length < 6) {
-        return res.status(400).json({
-          success: false,
-          message: 'Le mot de passe doit contenir au moins 6 caractères',
-        });
-      }
-      const existing = await UserService.getUserByEmail(email.trim());
+      const { email, name, password } = req.body;
+
+      const existing = await UserService.getUserByEmail(email);
       if (existing) {
         return res.status(409).json({
           success: false,
@@ -141,8 +130,8 @@ export class AuthController {
       }
       const passwordHash = await bcrypt.hash(password, 10);
       const user = await UserService.createUser({
-        email: email.trim(),
-        name: name.trim(),
+        email,
+        name,
         passwordHash,
       });
       if (!user) {
@@ -177,14 +166,9 @@ export class AuthController {
    */
   static async login(req: Request, res: Response) {
     try {
-      const { email, password } = req.body as { email?: string; password?: string };
-      if (!email?.trim() || !password) {
-        return res.status(400).json({
-          success: false,
-          message: 'Email et mot de passe requis',
-        });
-      }
-      const user = await UserService.getUserByEmail(email.trim());
+      const { email, password } = req.body;
+
+      const user = await UserService.getUserByEmail(email);
       if (!user) {
         return res.status(401).json({
           success: false,
@@ -219,17 +203,9 @@ export class AuthController {
    */
   static async forgotPassword(req: Request, res: Response) {
     try {
-      const { email } = req.body as { email?: string };
-      const normalizedEmail = email?.trim();
+      const { email } = req.body;
 
-      if (!normalizedEmail) {
-        return res.status(400).json({
-          success: false,
-          message: 'Email requis',
-        });
-      }
-
-      const user = await UserService.getUserByEmail(normalizedEmail);
+      const user = await UserService.getUserByEmail(email);
       if (!user) {
         return res.json({
           success: true,
@@ -275,21 +251,7 @@ export class AuthController {
    */
   static async resetPassword(req: Request, res: Response) {
     try {
-      const { email, token, password } = req.body as {
-        email?: string;
-        token?: string;
-        password?: string;
-      };
-
-      const normalizedEmail = email?.trim();
-      const normalizedToken = token?.trim();
-
-      if (!normalizedEmail || !normalizedToken || !password) {
-        return res.status(400).json({
-          success: false,
-          message: 'Email, token et nouveau mot de passe requis',
-        });
-      }
+      const { email, token, password } = req.body;
 
       if (password.length < 6) {
         return res.status(400).json({
@@ -298,7 +260,7 @@ export class AuthController {
         });
       }
 
-      const user = await UserService.getUserByEmail(normalizedEmail);
+      const user = await UserService.getUserByEmail(email);
       if (!user || !user.passwordResetTokenHash || !user.passwordResetTokenExpiresAt) {
         return res.status(400).json({
           success: false,
@@ -314,7 +276,7 @@ export class AuthController {
         });
       }
 
-      const providedTokenHash = hashResetToken(normalizedToken);
+      const providedTokenHash = hashResetToken(token);
       if (providedTokenHash !== user.passwordResetTokenHash) {
         return res.status(400).json({
           success: false,
